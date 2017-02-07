@@ -57,9 +57,7 @@ public class ULUA extends IPV6Utils {
 	}// ULUA(String address)
 
 	/**
-	 * @param a
-	 *            global ID field of the ULUA, the prefix (0xfd00::/8) and
-	 *            Global ID
+	 * @param a global ID field of the ULUA, the prefix (0xfd00::/8) and Global ID
 	 * @see experts.net.ipv6.IPV6Utils#setGlobalID(java.lang.String)
 	 */
 	@Override
@@ -80,8 +78,7 @@ public class ULUA extends IPV6Utils {
 	}// setGlobalID
 
 	/**
-	 * @param Subnet
-	 *            ID of the ULUA
+	 * @param Subnet ID of the ULUA
 	 * @see experts.net.ipv6.IPV6Utils#setSubnetID(int)
 	 */
 	@Override
@@ -90,8 +87,7 @@ public class ULUA extends IPV6Utils {
 	}// setSubnetID
 
 	/**
-	 * @param Interface
-	 *            ID of the ULUA
+	 * @param Interface ID of the ULUA
 	 * @see experts.net.ipv6.IPV6Utils#setInterfaceID(java.lang.String)
 	 */
 	@Override
@@ -109,8 +105,7 @@ public class ULUA extends IPV6Utils {
 	/**
 	 * Obtain NTP time stamp value
 	 *
-	 * @param address
-	 *            - a NTP server address
+	 * @param address a NTP server address
 	 * @return the current time of day in 64-bit NTP format
 	 * @throws UnknownHostException
 	 * @throws SocketException
@@ -132,8 +127,7 @@ public class ULUA extends IPV6Utils {
 	/**
 	 * Generate Global ID according to RFC 4193 Section 3.2.2.
 	 *
-	 * @param timeStamp
-	 *            - 64-bit NTP format
+	 * @param timeStamp 64-bit NTP format
 	 */
 	public final void generateGlobalID(long timeStamp) {
 		ByteBuffer buf = ByteBuffer.allocate(SEED_BYTES);
@@ -152,7 +146,7 @@ public class ULUA extends IPV6Utils {
 	/**
 	 * Create Interface ID by the Modified EUI-64 format (RFC 4291)
 	 *
-	 * @param macAddr
+	 * @param macAddr MAC (NIC) address
 	 */
 	public final void createInterfaceIDByEUI64(byte[] macAddr) {
 		ByteBuffer buf = ByteBuffer.allocate(INTERFACE_ID_LENGTH);
