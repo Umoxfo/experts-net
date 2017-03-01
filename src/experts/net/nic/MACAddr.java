@@ -40,8 +40,7 @@ public class MACAddr {
 	 * @throws java.net.SocketException
 	 * @throws java.net.UnknownHostException
 	 */
-	public static byte[] getMACAddress(
-		String address) throws SocketException, UnknownHostException {
+	public static byte[] getMACAddress(String address) throws SocketException, UnknownHostException {
 		// Stored in a NIC network interface corresponding to the IP address or the host name
 		NetworkInterface nic = NetworkInterface.getByInetAddress(InetAddress.getByName(address));
 
@@ -58,8 +57,7 @@ public class MACAddr {
 	 * @throws SocketException
 	 * @throws UnknownHostException
 	 */
-	public static String toMACAddressString(
-		String address) throws SocketException, UnknownHostException {
+	public static String toMACAddressString(String address) throws SocketException, UnknownHostException {
 		return format(getMACAddress(address));
 	}// toMACAddressString
 

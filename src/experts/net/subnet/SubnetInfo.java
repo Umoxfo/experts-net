@@ -238,7 +238,6 @@ public final class SubnetInfo {
 		return addresses.toArray(new String[addresses.size()]);
 	}//getAllAddresses
 
-
 	/**
 	 * {@inheritDoc}
 	 */

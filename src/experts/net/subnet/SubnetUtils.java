@@ -200,7 +200,7 @@ public class SubnetUtils {
 		/* Check range of each element and convert to integer */
 		int addr = 0;
 		for (int i = 0; i < 4; i++) {
-			int n = SubnetUtils.checkRange(Integer.parseInt(addrArry[i]), 0, 255);
+			int n = checkRange(Integer.parseInt(addrArry[i]), 0, 255);
 			addr |= (n & 0xff) << 8 * (3 - i);
 		}//for
 

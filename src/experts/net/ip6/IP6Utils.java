@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package experts.net.ipv6;
+package experts.net.ip6;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -97,7 +97,7 @@ public class IP6Utils {
 		int index = list.indexOf(0);
 		while (index != -1 && index < 7) {
 			int j = index + 1;
-			while (j < IP.IPV6.getGrups() && list.get(j) == 0) {
+			while (j < IP.IP6.getGrups() && list.get(j) == 0) {
 				j++;
 			} // while
 
@@ -112,7 +112,7 @@ public class IP6Utils {
 				break;
 			}
 
-			index = list.subList(++j, IP.IPV6.getGrups()).indexOf(0) + j;
+			index = list.subList(++j, IP.IP6.getGrups()).indexOf(0) + j;
 		} // while
 
 		// The 4-digit hexadecimal each string

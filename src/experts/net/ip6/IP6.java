@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package experts.net.ipv6;
+package experts.net.ip6;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +25,8 @@ import experts.net.subnet.SubnetUtils.IP;
 /**
  * @author Makoto Sakaguchi
  *
- * @version 0.0.1-dev
- * @since 2.0.6-dev
+ * @version 2.0.6-dev
+ * @since 2.0.6
  */
 public abstract class IP6 {
 	/**
@@ -99,7 +99,7 @@ public abstract class IP6 {
 	 */
 	@Override
 	public String toString() {
-		ArrayList<Short> ipv6 = new ArrayList<>(IP.IPV6.getGrups());
+		ArrayList<Short> ipv6 = new ArrayList<>(IP.IP6.getGrups());
 
 		// Set Global ID
 		ipv6.addAll(globalID);

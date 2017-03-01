@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package experts.net.ipv6;
+package experts.net.ip6;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -58,8 +58,7 @@ public class ULUA extends IP6 {
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-	public ULUA(
-		byte[] address) throws SocketException, UnknownHostException, IOException {
+	public ULUA(byte[] address) throws SocketException, UnknownHostException, IOException {
 		createInterfaceIDByEUI64(address);
 		subnetID = Arrays.asList(DEFAULT_SUBNT_ID);
 		generateGlobalID(obtainNTPTime(NTP_SERVER_ADDRESS));
@@ -68,7 +67,7 @@ public class ULUA extends IP6 {
 	/**
 	 * @param gID
 	 *            a global ID field of the ULUA, the prefix (0xfd00::/8) and Global ID
-	 * @see experts.net.ipv6.IP6Utils#setGlobalID(java.lang.String)
+	 * @see experts.net.ip6.IP6Utils#setGlobalID(java.lang.String)
 	 */
 	@Override
 	public void setGlobalID(String gID) {
@@ -77,12 +76,12 @@ public class ULUA extends IP6 {
 		// Check length
 		if (tmp.length > GLOBAL_ID_LENGTH) {
 			throw new IllegalArgumentException("The length of the prefix and Global ID of ULUA must be 48 bits.");
-		}//if
+		}// if
 
 		// Check prefix
 		if (!tmp[0].startsWith(GLOBAL_ID_PREFIX_FORMAT)) {
 			throw new IllegalArgumentException("ULUA must be 0xfd00::/8.");
-		}//if
+		}// if
 
 		/*
 		 * Check prefix by short value
@@ -91,12 +90,12 @@ public class ULUA extends IP6 {
 		 * (byte) (tmp.get(0) & 0xff00) != GLOBAL_ID_PREFIX ? throw new IllegalArgumentException("ULUA must be 0xfd00::/8.");
 		 */
 		globalID = IP6Utils.toShortList(tmp);
-	}//setGlobalID
+	}// setGlobalID
 
 	/**
 	 * @param Subnet
 	 *            ID of the ULUA
-	 * @see experts.net.ipv6.IP6Utils#setSubnetID(int)
+	 * @see experts.net.ip6.IP6Utils#setSubnetID(int)
 	 */
 	@Override
 	public void setSubnetID(String sID) {
@@ -106,7 +105,7 @@ public class ULUA extends IP6 {
 	/**
 	 * @param Interface
 	 *            ID of the ULUA
-	 * @see experts.net.ipv6.IP6Utils#setInterfaceID(java.lang.String)
+	 * @see experts.net.ip6.IP6Utils#setInterfaceID(java.lang.String)
 	 */
 	@Override
 	public void setInterfaceID(String iID) {
@@ -132,8 +131,7 @@ public class ULUA extends IP6 {
 	 *             If the host could not be found.
 	 * @throws IOException
 	 */
-	public static long obtainNTPTime(
-		String address) throws SocketException, UnknownHostException, IOException {
+	public static long obtainNTPTime(String address) throws SocketException, UnknownHostException, IOException {
 		NTPUDPClient client = new NTPUDPClient();
 		client.setVersion(NtpV3Packet.VERSION_4);
 
