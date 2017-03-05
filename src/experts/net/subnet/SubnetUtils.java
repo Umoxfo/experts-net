@@ -32,10 +32,10 @@ package experts.net.subnet;
  * @version 2.0.6-dev
  * @since 2.0.5
  */
-public class SubnetUtils {
+public final class SubnetUtils {
 	public static enum IP {
-		IPV4(32, 4, 255),
-		IPV6(128, 8, 0xffff);
+		IP4(32, 4, 255),
+		IP6(128, 8, 0xffff);
 
 		private final int size;
 		private final int grups;
@@ -81,27 +81,31 @@ public class SubnetUtils {
 	}// Subnet
 
 	/**
-	 * Converts a dotted decimal mask to CIDR-notation.
+	 * Converts a dotted decimal mask to CIDR.
 	 *
 	 * @param mask
 	 *            A dotted decimal subnet mask, e.g. "255.255.0.0"
-	 * @return A CIDR-notation integer
+	 * @return An integer of CIDR value
 	 * @throws IllegalArgumentException
 	 *             if the parameter is invalid,
-	 *             i.e. does not match n.n.n.n which n=[0, 128, 192, 224, 240, 248, 252, 254, 255] and all fields after the number other than 255 are zero
+	 *             i.e. does not match n.n.n.n which n={0, 128, 192, 224, 240, 248, 252, 254, 255}
+	 *             and after the 0-field, it is all zeros.
 	 */
 	public static int toCIDR(String mask) {
-		// Check the length of the array and range of each element and convert to integer
 		int maskInt = toInteger(mask);
 
 		/*
-		 * Calculates CIDR from variable-length subnet masking (VLSM).
+		 *  Check the subnet mask
+		 *
+		 *  An IPv4 subnet mask must consist of a set of contiguous 1-bits followed by a block of 0-bits.
+		 *  The numbers of subtracting one from the lowest one bit of the mask equals to
+		 *  the bitwise complement of the mask is followed the form.
 		 */
-		/* Check the Subnet Mask */
-		if (Integer.numberOfTrailingZeros(maskInt) != Integer.bitCount(~maskInt)) {
+		if (Integer.lowestOneBit(maskInt) - 1 != ~maskInt) {
 			throw new IllegalArgumentException("Could not parse [" + mask + "]");
 		}// if
 
+		/* Calculates CIDR by counting the 1-bit population in the mask address */
 		return Integer.bitCount(maskInt);
 	}// toCIDR
 
@@ -110,13 +114,12 @@ public class SubnetUtils {
 	 *
 	 * @param cidr CIDR-notation value in range 0-32
 	 * @return A subnet mask e.g. "255.255.0.0"
-	 * @throws IllegalArgumentException
-	 *             if the parameter is invalid
+	 * @throws IllegalArgumentException if the parameter is invalid, i.e. out of range 0-32.
 	 */
 	public static String toMask(int cidr) {
 		// Set the default subnet mask
-		int[] mask = new int[IP.IPV4.getGrups()];
-		int index = checkRange(cidr, 0, IP.IPV4.getSize()) / 8;
+		int[] mask = new int[IP.IP4.getGrups()];
+		int index = checkRange(cidr, 0, IP.IP4.getSize()) / 8;
 		switch (index) {
 			case 0:
 				mask = Subnet.Mask.CLASS_LESS;
@@ -140,7 +143,7 @@ public class SubnetUtils {
 			 * Set the variable-length subnet masking (VLSM) by bit shift.
 			 * Also, 255 << 8 - [out of classified default subnet mask bits] & 0xff.
 			 */
-			mask[index] = IP.IPV4.getMaxRange() >> prefixSize ^ 0xff;
+			mask[index] = IP.IP4.getMaxRange() >> prefixSize ^ 0xff;
 		}// if
 
 		// Separate by dots
@@ -157,15 +160,19 @@ public class SubnetUtils {
 	public static long numberOfHosts(int prefix, IP terget) {
 		int addressSize = 0;
 		switch (terget) {
-			case IPV4:
-				addressSize = IP.IPV4.getSize();
+			case IP4:
+				addressSize = IP.IP4.getSize();
 				break;
-			case IPV6:
-				addressSize = IP.IPV6.getSize();
+			case IP6:
+				addressSize = IP.IP6.getSize();
 				break;
 		}// switch
 
-		// Calculate the number of hosts from the CIDR notation
+		/*
+		 * Calculate the number of hosts from the CIDR value
+		 *
+		 * The sizes of address - CIDR = host bits, and 2 ^ the bits = the number of hosts
+		 */
 		long hosts = (long) Math.pow(2, addressSize - prefix);
 
 		// For routed subnets larger than 31 or 127, subtract 2 from the number of available hosts
@@ -192,8 +199,8 @@ public class SubnetUtils {
 	private static int toInteger(String address) {
 		String[] addrArry = address.split("\\.");
 
-		// Check the length of the array
-		if (addrArry.length != IP.IPV4.getGrups()) {
+		// Check the length of the array, must be 4
+		if (addrArry.length != IP.IP4.getGrups()) {
 			throw new IllegalArgumentException("Could not parse [" + address + "]");
 		}// if
 
@@ -221,22 +228,33 @@ public class SubnetUtils {
 	}// checkRange
 
 	/*
+	 * Converts a packed integer address into dotted decimal format
+	 */
+	static String format(int val) {
+		int ret[] = new int[4];
+		for (int i = 3; i >= 0; i--) {
+			ret[i] = val >>> 8 * (3 - i) & 0xff;
+		}//for
+
+		return SubnetUtils.format(ret);
+	}// format(int val)
+
+	/*
 	 * Converts a 4-element integer array into dotted decimal format.
 	 */
-	static String format(int[] arry) {
+	private static String format(int[] arry) {
 		StringBuilder buf = new StringBuilder();
 		int iMax = arry.length - 1;
 
-		for (int i = 0;; i++) {
+		for (int i = 0; i <= iMax; i++) {
 			buf.append(arry[i]);
 
-			if (i == iMax) {
-				return buf.toString();
+			if (i != iMax) {
+				buf.append(".");
 			}// if
-
-			buf.append(".");
 		}// for
 
+		return buf.toString();
 		// Arrays.stream(arry).mapToObj(Integer::toString).collect(Collectors.joining("."));
-	}// format
+	}// format(int[] arry)
 }
