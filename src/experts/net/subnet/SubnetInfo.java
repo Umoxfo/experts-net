@@ -69,14 +69,16 @@ public final class SubnetInfo {
 	 * @param mask A dotted decimal netmask e.g. "255.255.0.0"
 	 * @throws IllegalArgumentException
 	 *             if the address or mask is invalid,
-	 *             i.e. does not match n.n.n.n where n=1-3 decimal digits and the mask is not all zeros
+	 *             i.e. the address does not match n.n.n.n where n=1-3 decimal digits, or
+	 *             the mask does not match n.n.n.n which n={0, 128, 192, 224, 240, 248, 252, 254, 255}
+	 *             and after the 0-field, it is all zeros.
 	 */
 	public SubnetInfo(String address, String mask) {
 		calculate(address, SubnetUtils.toCIDR(mask));
 	}// SubnetInfo(String address, String mask)
 
 	public String getAddress() {
-		return format(address);
+		return SubnetUtils.format(address);
 	}//getAddress
 
 	public int getCIDR() {
@@ -84,15 +86,15 @@ public final class SubnetInfo {
 	}//getCIDR
 
 	public String getNetmask() {
-		return format(netmask);
+		return SubnetUtils.format(netmask);
 	}//getNetmask
 
 	public String getNetworkAddress() {
-		return format(network);
+		return SubnetUtils.format(network);
 	}//getNetworkAddress
 
 	public String getBroadcastAddress() {
-		return format(broadcast);
+		return SubnetUtils.format(broadcast);
 	}//getBroadcastAddress
 
 	/*
@@ -129,23 +131,11 @@ public final class SubnetInfo {
 		return isInclusiveHostCount() ? broadcast : broadcastLong() - networkLong() > 1 ? broadcast - 1 : 0;
 	}// high
 
-	/*
-	 * Converts a packed integer address into dotted decimal format
-	 */
-	private String format(int val) {
-		int ret[] = new int[4];
-		for (int i = 3; i >= 0; i--) {
-			ret[i] = val >>> 8 * (3 - i) & 0xff;
-		}//for
-
-		return SubnetUtils.format(ret);
-	}// toArray
-
 	/**
 	 * Returns <code>true</code> if the return value of {@link SubnetInfo#getAddressCount()}
 	 * includes the network and broadcast addresses.
 	 *
-	 * @return true if the hostcount includes the network and broadcast addresses
+	 * @return true if the host count includes the network and broadcast addresses
 	 */
 	public boolean isInclusiveHostCount() {
 		return inclusiveHostCount;
@@ -187,7 +177,7 @@ public final class SubnetInfo {
 	 *  Returns a single xxx.xxx.xxx.xxx/yy format by counting the 1-bit population in the mask address.
 	 */
 	public String getCIDRNotation() {
-		return format(address) + "/" + cidr;
+		return SubnetUtils.format(address) + "/" + cidr;
 	}//getCIDRNotation
 
 	/**
@@ -197,7 +187,7 @@ public final class SubnetInfo {
 	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
 	 */
 	public String getLowAddress() {
-		return format(low());
+		return SubnetUtils.format(low());
 	}// getLowAddress
 
 	/**
@@ -207,7 +197,7 @@ public final class SubnetInfo {
 	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
 	 */
 	public String getHighAddress() {
-		return format(high());
+		return SubnetUtils.format(high());
 	}// getHighAddress
 
 	/**
@@ -230,7 +220,7 @@ public final class SubnetInfo {
 		if (ct != 0) {
 			int high = high();
 			for (int addr = low(); addr <= high; addr++) {
-				addresses.add(format(addr));
+				addresses.add(SubnetUtils.format(addr));
 			}//for
 		}//if
 
@@ -244,7 +234,7 @@ public final class SubnetInfo {
 	@Override
 	public String toString() {
 		final StringBuilder buf = new StringBuilder();
-		buf.append("CIDR-Notatio:\t[").append(getCIDRNotation()).append("]")
+		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append("]")
 		.append(" Netmask: [").append(getNetmask()).append("]\n")
 		.append("Network:\t[").append(getNetworkAddress()).append("]\n")
 		.append("Broadcast:\t[").append(getBroadcastAddress()).append("]\n")
