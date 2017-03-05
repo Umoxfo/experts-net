@@ -95,11 +95,11 @@ public final class SubnetUtils {
 		int maskInt = toInteger(mask);
 
 		/*
-		 *  Check the subnet mask
+		 * Check the subnet mask
 		 *
-		 *  An IPv4 subnet mask must consist of a set of contiguous 1-bits followed by a block of 0-bits.
-		 *  The numbers of subtracting one from the lowest one bit of the mask equals to
-		 *  the bitwise complement of the mask is followed the form.
+		 * An IPv4 subnet mask must consist of a set of contiguous 1-bits followed by a block of 0-bits.
+		 * If the mask follows the format, the numbers of subtracting one from the lowest one bit of the mask,
+		 * see Hacker's Delight section 2.1, equals to the bitwise complement of the mask.
 		 */
 		if (Integer.lowestOneBit(maskInt) - 1 != ~maskInt) {
 			throw new IllegalArgumentException("Could not parse [" + mask + "]");
@@ -153,18 +153,21 @@ public final class SubnetUtils {
 	/**
 	 * Calculates the number of usable hosts from a network prefix of the address, which used CIDR value.
 	 *
-	 * @param prefix the prefix in range 0-32 (IPv4) or 0-128 (IPv6)
+	 * @param prefix the prefix in range 0-32 (IPv4) or 0-64 (IPv6)
 	 * @param terget a flag of the IP version
 	 * @return Number of available hosts, including the gateway
 	 */
 	public static long numberOfHosts(int prefix, IP terget) {
 		int addressSize = 0;
+		int unavailableHosts = 0;
 		switch (terget) {
 			case IP4:
 				addressSize = IP.IP4.getSize();
+				unavailableHosts = 2; // network and broadcast addresses
 				break;
 			case IP6:
-				addressSize = IP.IP6.getSize();
+				addressSize = 64; // The maximum subnet bits in IPv6
+				unavailableHosts = 1; // network address
 				break;
 		}// switch
 
@@ -175,9 +178,9 @@ public final class SubnetUtils {
 		 */
 		long hosts = (long) Math.pow(2, addressSize - prefix);
 
-		// For routed subnets larger than 31 or 127, subtract 2 from the number of available hosts
+		// For routed subnets larger than 31 or 63, subtract 2 from the number of available hosts
 		if (prefix < addressSize - 1) {
-			hosts -= 2;
+			hosts -= unavailableHosts;
 		} else {
 			hosts = 0;
 		}//if-else
