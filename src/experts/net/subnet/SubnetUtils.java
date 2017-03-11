@@ -105,7 +105,7 @@ public final class SubnetUtils {
 		}// if
 
 		// Separate by dots
-		return format(mask);
+		return format(mask, '.');
 	}// toMask
 
 	/**
@@ -182,21 +182,9 @@ public final class SubnetUtils {
 	}// checkRange
 
 	/*
-	 * Converts a packed integer address into dotted decimal format
-	 */
-	static String format(int val) {
-		int ret[] = new int[4];
-		for (int i = 3; i >= 0; i--) {
-			ret[i] = val >>> 8 * (3 - i) & 0xff;
-		}//for
-
-		return SubnetUtils.format(ret);
-	}// format(int val)
-
-	/*
 	 * Converts a 4-element integer array into dotted decimal format.
 	 */
-	private static String format(int[] arry) {
+	static String format(int[] arry, char symbol) {
 		StringBuilder buf = new StringBuilder();
 		int iMax = arry.length - 1;
 
@@ -204,7 +192,7 @@ public final class SubnetUtils {
 			buf.append(arry[i]);
 
 			if (i != iMax) {
-				buf.append(".");
+				buf.append(symbol);
 			}// if
 		}// for
 
