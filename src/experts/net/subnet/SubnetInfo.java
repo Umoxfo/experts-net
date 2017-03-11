@@ -43,29 +43,6 @@ public class SubnetInfo {
 	int network = 0;
 	int broadcast = 0;
 
-	/* Whether the broadcast/network address on IPv4 or the network address on IPv6 are included in host count */
-	boolean inclusiveHostCount = false;
-
-	/**
-	 * Returns <code>true</code> if the return value of {@link SubnetInfo#getAddressCount()}
-	 * includes the network and broadcast addresses.
-	 *
-	 * @return true if the host count includes the network and broadcast addresses
-	 */
-	public boolean isInclusiveHostCount() {
-		return inclusiveHostCount;
-	}// isInclusiveHostCount
-
-	/**
-	 * Set to <code>true</code> if you want the return value of {@link SubnetInfo#getAddressCount()}
-	 * to include the network and broadcast addresses.
-	 *
-	 * @param inclusiveHostCount true if network and broadcast addresses are to be included
-	 */
-	public void setInclusiveHostCount(boolean inclusiveHostCount) {
-		this.inclusiveHostCount = inclusiveHostCount;
-	}// setInclusiveHostCount
-
 	// long versions of the values (as unsigned int) which are more suitable for range checking
 	private long networkLong() {
 		return 0;

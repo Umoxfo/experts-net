@@ -38,6 +38,9 @@ public final class IP4 extends SubnetInfo {
 	private static final long UNSIGNED_INT_MASK = 0x0FFFF_FFFFL;
 	private static final int NBITS = 32;
 
+	/* Whether the broadcast/network address on IPv4 or the network address on IPv6 are included in host count */
+	boolean inclusiveHostCount = false;
+
 	/**
 	 * Constructor that takes a CIDR-notation string, e.g. "192.168.0.1/16"
 	 *
@@ -74,7 +77,6 @@ public final class IP4 extends SubnetInfo {
 	 *
 	 * @return true if the host count includes the network and broadcast addresses
 	 */
-	@Override
 	public boolean isInclusiveHostCount() {
 		return inclusiveHostCount;
 	}// isInclusiveHostCount
@@ -85,7 +87,6 @@ public final class IP4 extends SubnetInfo {
 	 *
 	 * @param inclusiveHostCount true if network and broadcast addresses are to be included
 	 */
-	@Override
 	public void setInclusiveHostCount(boolean inclusiveHostCount) {
 		this.inclusiveHostCount = inclusiveHostCount;
 	}// setInclusiveHostCount
