@@ -24,8 +24,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import experts.net.subnet.SubnetUtils.IP;
-
 /**
  * IPV6Utils
  *
@@ -97,7 +95,7 @@ public class IP6Utils {
 		int index = list.indexOf(0);
 		while (index != -1 && index < 7) {
 			int j = index + 1;
-			while (j < IP.IP6.getGrups() && list.get(j) == 0) {
+			while (j < 8 && list.get(j) == 0) {
 				j++;
 			} // while
 
@@ -112,7 +110,7 @@ public class IP6Utils {
 				break;
 			}
 
-			index = list.subList(++j, IP.IP6.getGrups()).indexOf(0) + j;
+			index = list.subList(++j, 8).indexOf(0) + j;
 		} // while
 
 		// The 4-digit hexadecimal each string

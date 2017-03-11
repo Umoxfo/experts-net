@@ -20,8 +20,6 @@ package experts.net.ip6;
 import java.util.ArrayList;
 import java.util.List;
 
-import experts.net.subnet.SubnetUtils.IP;
-
 /**
  * @author Makoto Sakaguchi
  *
@@ -99,7 +97,7 @@ public abstract class IP6 {
 	 */
 	@Override
 	public String toString() {
-		ArrayList<Short> ipv6 = new ArrayList<>(IP.IP6.getGrups());
+		ArrayList<Short> ipv6 = new ArrayList<>(8);
 
 		// Set Global ID
 		ipv6.addAll(globalID);

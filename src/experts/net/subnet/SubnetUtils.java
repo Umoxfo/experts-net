@@ -34,30 +34,7 @@ package experts.net.subnet;
  */
 public final class SubnetUtils {
 	public static enum IP {
-		IP4(32, 4, 255),
-		IP6(128, 8, 0xffff);
-
-		private final int size;
-		private final int grups;
-		private final int maxRange;
-
-		private IP(int size, int grups, int maxRange) {
-			this.size = size;
-			this.grups = grups;
-			this.maxRange = maxRange;
-		}
-
-		public int getSize() {
-			return size;
-		}
-
-		public int getGrups() {
-			return grups;
-		}
-
-		public int getMaxRange() {
-			return maxRange;
-		}
+		IP4, 	IP6
 	}// IP
 
 	public static class Subnet {
@@ -118,8 +95,8 @@ public final class SubnetUtils {
 	 */
 	public static String toMask(int cidr) {
 		// Set the default subnet mask
-		int[] mask = new int[IP.IP4.getGrups()];
-		int index = checkRange(cidr, 0, IP.IP4.getSize()) / 8;
+		int[] mask = new int[4];
+		int index = checkRange(cidr, 0, 32) / 8;
 		switch (index) {
 			case 0:
 				mask = Subnet.Mask.CLASS_LESS;
@@ -143,7 +120,7 @@ public final class SubnetUtils {
 			 * Set the variable-length subnet masking (VLSM) by bit shift.
 			 * Also, 255 << 8 - [out of classified default subnet mask bits] & 0xff.
 			 */
-			mask[index] = IP.IP4.getMaxRange() >> prefixSize ^ 0xff;
+			mask[index] = 255 >> prefixSize ^ 0xff;
 		}// if
 
 		// Separate by dots
@@ -162,7 +139,7 @@ public final class SubnetUtils {
 		int unavailableHosts = 0;
 		switch (terget) {
 			case IP4:
-				addressSize = IP.IP4.getSize();
+				addressSize = 32;
 				unavailableHosts = 2; // network and broadcast addresses
 				break;
 			case IP6:
@@ -196,7 +173,7 @@ public final class SubnetUtils {
 		String[] addrArry = address.split("\\.");
 
 		// Check the length of the array, must be 4
-		if (addrArry.length != IP.IP4.getGrups()) {
+		if (addrArry.length != 4) {
 			throw new IllegalArgumentException("Could not parse [" + address + "]");
 		}// if
 
