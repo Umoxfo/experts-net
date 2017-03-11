@@ -97,6 +97,26 @@ public final class SubnetInfo {
 		return SubnetUtils.format(broadcast);
 	}//getBroadcastAddress
 
+	/**
+	 * Returns <code>true</code> if the return value of {@link SubnetInfo#getAddressCount()}
+	 * includes the network and broadcast addresses.
+	 *
+	 * @return true if the host count includes the network and broadcast addresses
+	 */
+	public boolean isInclusiveHostCount() {
+		return inclusiveHostCount;
+	}// isInclusiveHostCount
+
+	/**
+	 * Set to <code>true</code> if you want the return value of {@link SubnetInfo#getAddressCount()}
+	 * to include the network and broadcast addresses.
+	 *
+	 * @param inclusiveHostCount true if network and broadcast addresses are to be included
+	 */
+	public void setInclusiveHostCount(boolean inclusiveHostCount) {
+		this.inclusiveHostCount = inclusiveHostCount;
+	}// setInclusiveHostCount
+
 	/*
 	 * Initialize the internal fields from the supplied CIDR
 	 */
@@ -130,26 +150,6 @@ public final class SubnetInfo {
 	private int high() {
 		return inclusiveHostCount ? broadcast : broadcastLong() - networkLong() > 1 ? broadcast - 1 : 0;
 	}// high
-
-	/**
-	 * Returns <code>true</code> if the return value of {@link SubnetInfo#getAddressCount()}
-	 * includes the network and broadcast addresses.
-	 *
-	 * @return true if the host count includes the network and broadcast addresses
-	 */
-	public boolean isInclusiveHostCount() {
-		return inclusiveHostCount;
-	}// isInclusiveHostCount
-
-	/**
-	 * Set to <code>true</code> if you want the return value of {@link SubnetInfo#getAddressCount()}
-	 * to include the network and broadcast addresses.
-	 *
-	 * @param inclusiveHostCount true if network and broadcast addresses are to be included
-	 */
-	public void setInclusiveHostCount(boolean inclusiveHostCount) {
-		this.inclusiveHostCount = inclusiveHostCount;
-	}// setInclusiveHostCount
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
