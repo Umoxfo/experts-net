@@ -23,7 +23,6 @@
  */
 package experts.net.subnet;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 /**
@@ -37,37 +36,15 @@ import java.util.regex.Pattern;
 public class SubnetInfo {
 	private static final String IPV4_ADDRESS = "(\\d{1,3}\\.){3}\\d{1,3}/\\d{1,2}";
 	private static final String IPV6_ADDRESS = "([0-9a-f]{1,4}\\:){7}[0-9a-f]{1,4}/\\d{1,2}";
-	/* Mask to convert unsigned int to a long (i.e. keep 32 bits) */
-	private static final long UNSIGNED_INT_MASK = 0x0FFFFFFFFL;
 
-	private int address = 0;
-	private int cidr = 0;
-	private int netmask = 0;
-	private int network = 0;
-	private int broadcast = 0;
+	int address = 0;
+	int cidr = 0;
+	int netmask = 0;
+	int network = 0;
+	int broadcast = 0;
 
 	/* Whether the broadcast/network address on IPv4 or the network address on IPv6 are included in host count */
-	private boolean inclusiveHostCount = false;
-
-	public String getAddress() {
-		return format(address);
-	}//getAddress
-
-	public int getCIDR() {
-		return cidr;
-	}//getCIDR
-
-	public String getNetmask() {
-		return format(netmask);
-	}//getNetmask
-
-	public String getNetworkAddress() {
-		return format(network);
-	}//getNetworkAddress
-
-	public String getBroadcastAddress() {
-		return format(broadcast);
-	}//getBroadcastAddress
+	boolean inclusiveHostCount = false;
 
 	/**
 	 * Returns <code>true</code> if the return value of {@link SubnetInfo#getAddressCount()}
@@ -89,36 +66,24 @@ public class SubnetInfo {
 		this.inclusiveHostCount = inclusiveHostCount;
 	}// setInclusiveHostCount
 
-	/**
-	 * Returns true if the parameter <code>address</code> is in the
-	 * range of usable endpoint addresses for this subnet. This excludes the
-	 * network and broadcast addresses.
-	 *
-	 * @param address A dot-delimited IPv4 address, e.g. "192.168.0.1"
-	 * @return True if in range, false otherwise
-	 */
-	public boolean isInRange(String address) {
-		return isInRange(SubnetUtils.toInteger(address));
-	}// isInRange
-
 	// long versions of the values (as unsigned int) which are more suitable for range checking
 	private long networkLong() {
-		return network & UNSIGNED_INT_MASK;
+		return 0;
 	}// networkLong
 
 	private long broadcastLong() {
-		return broadcast & UNSIGNED_INT_MASK;
+		return 0;
 	}// broadcastLong
 
 	private int low() {
-		return inclusiveHostCount ? network : broadcastLong() - networkLong() > 1 ? network + 1 : 0;
+		return 0;
 	}// low
 
 	private int high() {
-		return inclusiveHostCount ? broadcast : broadcastLong() - networkLong() > 1 ? broadcast - 1 : 0;
+		return 0;
 	}// high
 
-	/**
+	/*
 	 * Converts a packed integer address into dotted decimal format
 	 *
 	 * @param val an address in binary
@@ -147,6 +112,70 @@ public class SubnetInfo {
 		}//if
 	}//getByCIDRNortation
 
+	public String getAddresss() {
+		return null;
+	}//getAddressString
+
+	public int getCIDR() {
+		return cidr;
+	}//getCIDRValue
+
+	public String getNetmask() {
+		return null;
+	}//getNetmaskString
+
+	public String getNetworkAddress() {
+		return null;
+	}//getNetworkAddressString
+
+	public String getBroadcastAddress() {
+		return null;
+	}//getBroadcastAddressString
+
+	/**
+	 * Returns an IP address/CIDR format by counting the 1-bit population in the mask address.
+	 * IP address: A dot-decimal notation as 192.168.0.1 in IPv4 or
+	 * eight groups of four hexadecimal digits and the groups are separated by colons, i.e. 2001:db8:0:0:0:ff00:42:8329 in IPv6
+	 * CIDR: 0-32 in IPv4 or 0-128 in IPv6
+	 */
+	public String getCIDRNotation() {
+		return null;
+	}//getCIDRNotation
+
+	/**
+	 * Return the low address as a dotted IP address.
+	 * Will be zero for CIDR/31 and CIDR/32 in IPv4 if the inclusive flag is false.
+	 *
+	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
+	 */
+	public String getLowAddress() {
+		return null;
+	}// getLowAddress
+
+	/**
+	 * Return the high address as a dotted IP address.
+	 * Will be zero for CIDR/31 and CIDR/32 in IPv4 if the inclusive flag is false.
+	 *
+	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
+	 */
+	public String getHighAddress() {
+		return null;
+	}// getHighAddress
+
+	/**
+	 * Get the count of available addresses.
+	 * Will be zero for CIDR/31 and CIDR/32 in IPv4 if the inclusive flag is false.
+	 *
+	 * @return the count of addresses, may be zero.
+	 */
+	public long getAddressCountLong() {
+		return 0;
+	}//getAddressCountLong
+
+	public String[] getAllAddresses() {
+		return null;
+	}//getAllAddresses
+
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
 	 * range of usable endpoint addresses for this subnet. This excludes the
@@ -156,62 +185,19 @@ public class SubnetInfo {
 	 * @return True if in range, false otherwise
 	 */
 	public boolean isInRange(int address) {
-		return true;
+		return false;
 	}//isRange
 
 	/**
-	 * Returns an IP address/CIDR format by counting the 1-bit population in the mask address.
-	 * IP address: A dot-decimal notation as 192.168.0.1 in IPv4 or
-	 * four hexadecimal digits and the groups are separated by colons, i.e. 2001:db8:0:0:0:ff00:42:8329 in IPv6
-	 * CIDR: 0-32 in IPv4 or 0-128 in IPv6
-	 */
-	public String getCIDRNotation() {
-		return format(address) + "/" + cidr;
-	}//getCIDRNotation
-
-	/**
-	 * Return the low address as a dotted IP address.
-	 * Will be zero for CIDR/31 and CIDR/32 on IPv4 or CIDR/64 on IPv6 if the inclusive flag is false.
+	 * Returns true if the parameter <code>address</code> is in the
+	 * range of usable endpoint addresses for this subnet. This excludes the
+	 * network and broadcast addresses.
 	 *
-	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
+	 * @param address A dot-delimited IPv4 address, e.g. "192.168.0.1", or
+	 * an IPv6 address is four hexadecimal digits and the groups are separated by colons, e.g. "2001:db8:0:0:0:ff00:42:8329"
+	 * @return True if in range, false otherwise
 	 */
-	public String getLowAddress() {
-		return format(low());
-	}// getLowAddress
-
-	/**
-	 * Return the high address as a dotted IP address.
-	 * Will be zero for CIDR/31 and CIDR/32 on IPv4 or CIDR/64 on IPv6 if the inclusive flag is false.
-	 *
-	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
-	 */
-	public String getHighAddress() {
-		return format(high());
-	}// getHighAddress
-
-	/**
-	 * Get the count of available addresses.
-	 * Will be zero for CIDR/31 and CIDR/32 on IPv4 or CIDR/64 on IPv6 if the inclusive flag is false.
-	 *
-	 * @return the count of addresses, may be zero.
-	 */
-	public long getAddressCountLong() {
-		return 0;
-	}//getAddressCountLong
-
-	public String[] getAllAddresses() {
-		long ct = getAddressCountLong();
-		ArrayList<String> addresses = new ArrayList<>();
-
-		if (ct != 0) {
-			int high = high();
-			for (int addr = low(); addr <= high; addr++) {
-				addresses.add(format(addr));
-			}//for
-		}//if
-
-		addresses.trimToSize();
-		return addresses.toArray(new String[addresses.size()]);
-	}//getAllAddresses
-
+	public boolean isInRange(String address) {
+		return false;
+	}// isInRange
 }
