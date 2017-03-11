@@ -1,5 +1,5 @@
 /*
- * Experts_Net
+ * Experts Net
  * Copyright (c) 2017 Makoto Sakaguchi.
  *
  * This program is free software: you can redistribute it and/or modify
