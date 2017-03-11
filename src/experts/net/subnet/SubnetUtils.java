@@ -192,14 +192,7 @@ public final class SubnetUtils {
 	/*
 	 * Convert a dotted decimal format address to a packed integer format
 	 */
-	static int toAddressInteger(String address) {
-		return toInteger(address);
-	}// toAddressInteger
-
-	/*
-	 * Convert a dotted decimal format address to a packed integer format
-	 */
-	private static int toInteger(String address) {
+	static int toInteger(String address) {
 		String[] addrArry = address.split("\\.");
 
 		// Check the length of the array, must be 4

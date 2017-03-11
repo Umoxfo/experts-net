@@ -101,7 +101,7 @@ public final class SubnetInfo {
 	 * Initialize the internal fields from the supplied CIDR
 	 */
 	private void calculate(String addr, int cidr) {
-		address = SubnetUtils.toAddressInteger(addr);
+		address = SubnetUtils.toInteger(addr);
 
 		this.cidr = SubnetUtils.checkRange(cidr, 0, NBITS);
 		/* Create a binary netmask from the number of bits specification /x */
@@ -160,7 +160,7 @@ public final class SubnetInfo {
 	 * @return True if in range, false otherwise
 	 */
 	public boolean isInRange(String address) {
-		return isInRange(SubnetUtils.toAddressInteger(address));
+		return isInRange(SubnetUtils.toInteger(address));
 	}// isInRange
 
 	/*
