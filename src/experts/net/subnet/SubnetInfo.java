@@ -24,6 +24,7 @@
 package experts.net.subnet;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 /**
  * Convenience container for subnet summary information.
@@ -34,6 +35,8 @@ import java.util.ArrayList;
  * @since 2.0.6
  */
 public class SubnetInfo {
+	private static final String IPV4_ADDRESS = "(\\d{1,3}\\.){3}\\d{1,3}/\\d{1,2}";
+	private static final String IPV6_ADDRESS = "([0-9a-f]{1,4}\\:){7}[0-9a-f]{1,4}/\\d{1,2}";
 	/* Mask to convert unsigned int to a long (i.e. keep 32 bits) */
 	private static final long UNSIGNED_INT_MASK = 0x0FFFFFFFFL;
 
@@ -124,6 +127,25 @@ public class SubnetInfo {
 	private String format(int val) {
 		return null;
 	}//format
+
+	/**
+	 * Constructor that takes a CIDR-notation string that both IPv4 and IPv6 allow,
+	 * e.g. "192.168.0.1/16" or "2001:db8:0:0:0:ff00:42:8329/46"
+	 *
+	 * NOTE: IPv6 address does NOT allow to omit consecutive sections of zeros in the current version.
+	 *
+	 * @param address An IPv4 or IPv6 address
+	 * @return The class of SubnetInfo
+	 */
+	public static SubnetInfo getByCIDRNortation(String cidrNotation) {
+		if (Pattern.matches(IPV4_ADDRESS, cidrNotation)) {
+			return new IP4(cidrNotation);
+		} else if (Pattern.matches(IPV6_ADDRESS, cidrNotation)) {
+			return null;
+		} else {
+			throw new IllegalArgumentException("Could not parse [" + cidrNotation + "]");
+		}//if
+	}//getByCIDRNortation
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
