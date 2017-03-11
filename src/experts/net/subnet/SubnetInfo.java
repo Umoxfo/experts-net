@@ -124,11 +124,11 @@ public final class SubnetInfo {
 	}// broadcastLong
 
 	private int low() {
-		return isInclusiveHostCount() ? network : broadcastLong() - networkLong() > 1 ? network + 1 : 0;
+		return inclusiveHostCount ? network : broadcastLong() - networkLong() > 1 ? network + 1 : 0;
 	}// low
 
 	private int high() {
-		return isInclusiveHostCount() ? broadcast : broadcastLong() - networkLong() > 1 ? broadcast - 1 : 0;
+		return inclusiveHostCount ? broadcast : broadcastLong() - networkLong() > 1 ? broadcast - 1 : 0;
 	}// high
 
 	/**
@@ -209,7 +209,7 @@ public final class SubnetInfo {
 	public long getAddressCountLong() {
 		long b = broadcastLong();
 		long n = networkLong();
-		long count = b - n + (isInclusiveHostCount() ? 1 : -1);
+		long count = b - n + (inclusiveHostCount ? 1 : -1);
 		return count < 0 ? 0 : count;
 	}// getAddressCountLong
 
