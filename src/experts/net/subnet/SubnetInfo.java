@@ -39,36 +39,6 @@ public class SubnetInfo {
 
 	int address = 0;
 	int cidr = 0;
-	int netmask = 0;
-	int network = 0;
-	int broadcast = 0;
-
-	// long versions of the values (as unsigned int) which are more suitable for range checking
-	private long networkLong() {
-		return 0;
-	}// networkLong
-
-	private long broadcastLong() {
-		return 0;
-	}// broadcastLong
-
-	private int low() {
-		return 0;
-	}// low
-
-	private int high() {
-		return 0;
-	}// high
-
-	/*
-	 * Converts a packed integer address into dotted decimal format
-	 *
-	 * @param val an address in binary
-	 * @return A dot-delimited address
-	 */
-	private String format(int val) {
-		return null;
-	}//format
 
 	/**
 	 * Constructor that takes a CIDR-notation string that both IPv4 and IPv6 allow,
@@ -96,18 +66,6 @@ public class SubnetInfo {
 	public int getCIDR() {
 		return cidr;
 	}//getCIDRValue
-
-	public String getNetmask() {
-		return null;
-	}//getNetmaskString
-
-	public String getNetworkAddress() {
-		return null;
-	}//getNetworkAddressString
-
-	public String getBroadcastAddress() {
-		return null;
-	}//getBroadcastAddressString
 
 	/**
 	 * Returns an IP address/CIDR format by counting the 1-bit population in the mask address.
@@ -152,18 +110,6 @@ public class SubnetInfo {
 	public String[] getAllAddresses() {
 		return null;
 	}//getAllAddresses
-
-	/**
-	 * Returns true if the parameter <code>address</code> is in the
-	 * range of usable endpoint addresses for this subnet. This excludes the
-	 * network and broadcast addresses.
-	 *
-	 * @param address An IPv4 or IPv6 address in binary
-	 * @return True if in range, false otherwise
-	 */
-	public boolean isInRange(int address) {
-		return false;
-	}//isRange
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the

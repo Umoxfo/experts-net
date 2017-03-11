@@ -1,5 +1,5 @@
 /*
- * Experts_Net
+ * Experts Net
  * Copyright (c) 2017 Makoto Sakaguchi.
  *
  * This program is free software: you can redistribute it and/or modify
@@ -37,6 +37,10 @@ public final class IP4 extends SubnetInfo {
 	/* Mask to convert unsigned int to a long (i.e. keep 32 bits) */
 	private static final long UNSIGNED_INT_MASK = 0x0FFFF_FFFFL;
 	private static final int NBITS = 32;
+
+	int netmask = 0;
+	int network = 0;
+	int broadcast = 0;
 
 	/* Whether the broadcast/network address on IPv4 or the network address on IPv6 are included in host count */
 	boolean inclusiveHostCount = false;
@@ -150,17 +154,14 @@ public final class IP4 extends SubnetInfo {
 		return cidr;
 	}//getCIDRValue
 
-	@Override
 	public String getNetmask() {
 		return format(netmask);
 	}//getNetmaskString
 
-	@Override
 	public String getNetworkAddress() {
 		return format(network);
 	}//getNetworkAddressString
 
-	@Override
 	public String getBroadcastAddress() {
 		return format(broadcast);
 	}//getBroadcastAddressString
@@ -230,22 +231,6 @@ public final class IP4 extends SubnetInfo {
 	 * range of usable endpoint addresses for this subnet. This excludes the
 	 * network and broadcast addresses.
 	 *
-	 * @param address An IPv4 address in binary
-	 * @return True if in range, false otherwise
-	 */
-	@Override
-	public boolean isInRange(int address) {
-		long addLong = address & UNSIGNED_INT_MASK;
-		long lowLong = low() & UNSIGNED_INT_MASK;
-		long highLong = high() & UNSIGNED_INT_MASK;
-		return addLong >= lowLong && addLong <= highLong;
-	}// isInRange
-
-	/**
-	 * Returns true if the parameter <code>address</code> is in the
-	 * range of usable endpoint addresses for this subnet. This excludes the
-	 * network and broadcast addresses.
-	 *
 	 * @param address A dot-delimited IPv4 address, e.g. "192.168.0.1"
 	 * @return True if in range, false otherwise
 	 */
@@ -255,7 +240,26 @@ public final class IP4 extends SubnetInfo {
 	}// isInRange
 
 	/**
-	 * {@inheritDoc}
+	 * Returns true if the parameter <code>address</code> is in the
+	 * range of usable endpoint addresses for this subnet. This excludes the
+	 * network and broadcast addresses.
+	 *
+	 * @param address An IPv4 address in binary
+	 * @return True if in range, false otherwise
+	 */
+	public boolean isInRange(int address) {
+		long addLong = address & UNSIGNED_INT_MASK;
+		long lowLong = low() & UNSIGNED_INT_MASK;
+		long highLong = high() & UNSIGNED_INT_MASK;
+		return addLong >= lowLong && addLong <= highLong;
+	}// isInRange
+
+	/**
+	 * Returns subnet summary information of the address,
+	 * which includes an IP address by CIDR-Notation with the netmask,
+	 * network address, broadcast address, the first and last addresses of the network,
+	 * and the number of available addresses in the network which includes
+	 * the network and broadcast addresses if the inclusive flag is true.
 	 */
 	@Override
 	public String toString() {

@@ -197,6 +197,6 @@ public final class SubnetUtils {
 		}// for
 
 		return buf.toString();
-		// Arrays.stream(arry).mapToObj(Integer::toString).collect(Collectors.joining("."));
+		// Arrays.stream(arry).mapToObj(Integer::toString).collect(Collectors.joining(symbol));
 	}// format(int[] arry)
 }
