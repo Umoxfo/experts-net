@@ -23,6 +23,8 @@
  */
 package experts.net.subnet;
 
+import java.util.Arrays;
+
 /**
  * A class that performs some subnet calculations given a network address and a subnet mask.
  *
@@ -41,14 +43,6 @@ public final class SubnetUtils {
 		public static enum Type {
 			MASK, CIDR
 		}// Type
-
-		public static class Mask {
-			public static final int[] CLASS_LESS = {0, 0, 0, 0};
-			public static final int[] CLASS_A = {255, 0, 0, 0};
-			public static final int[] CLASS_B = {255, 255, 0, 0};
-			public static final int[] CLASS_C = {255, 255, 255, 0};
-			public static final int[] CLASS_FULL = {255, 255, 255, 255};
-		}// Mask
 
 		public static class CIDR {
 			public static final int CLASS_A = 8;
@@ -87,37 +81,24 @@ public final class SubnetUtils {
 	}// toCIDR
 
 	/**
-	 * Converts CIDR-notation to a dotted decimal mask.
+	 * Converts CIDR to a dotted decimal mask.
 	 *
-	 * @param cidr CIDR-notation value in range 0-32
+	 * @param cidr CIDR value in range 0-32
 	 * @return A subnet mask e.g. "255.255.0.0"
 	 * @throws IllegalArgumentException if the parameter is invalid, i.e. out of range 0-32.
 	 */
 	public static String toMask(int cidr) {
-		// Set the default subnet mask
 		int[] mask = new int[4];
 		int index = checkRange(cidr, 0, 32) / 8;
-		switch (index) {
-			case 0:
-				mask = Subnet.Mask.CLASS_LESS;
-				break;
-			case 1:
-				mask = Subnet.Mask.CLASS_A;
-				break;
-			case 2:
-				mask = Subnet.Mask.CLASS_B;
-				break;
-			case 3:
-				mask = Subnet.Mask.CLASS_C;
-				break;
-			case 4: return format(Subnet.Mask.CLASS_FULL);
-		}// switch
 
-		// Either default subnet mask
+		// Set the default subnet mask of CIDR
+		Arrays.fill(mask, 0, index, 255);
+
+		// Either a default subnet mask
 		int prefixSize = cidr % 8;
 		if (prefixSize != 0) {
 			/*
-			 * Set the variable-length subnet masking (VLSM) by bit shift.
+			 * Set the out of classified default subnet mask bits by bit shift.
 			 * Also, 255 << 8 - [out of classified default subnet mask bits] & 0xff.
 			 */
 			mask[index] = 255 >> prefixSize ^ 0xff;
