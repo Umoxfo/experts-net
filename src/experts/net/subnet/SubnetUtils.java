@@ -72,7 +72,7 @@ public final class SubnetUtils {
 		 * If the mask follows the format, the numbers of subtracting one from the lowest one bit of the mask,
 		 * see Hacker's Delight section 2.1, equals to the bitwise complement of the mask.
 		 */
-		if (Integer.lowestOneBit(maskInt) - 1 != ~maskInt) {
+		if ((Integer.lowestOneBit(maskInt) - 1) != ~maskInt) {
 			throw new IllegalArgumentException("Could not parse [" + mask + "]");
 		}// if
 
@@ -101,7 +101,7 @@ public final class SubnetUtils {
 			 * Set the out of classified default subnet mask bits by bit shift.
 			 * Also, 255 << 8 - [out of classified default subnet mask bits] & 0xff.
 			 */
-			mask[index] = 255 >> prefixSize ^ 0xff;
+			mask[index] = (255 >> prefixSize) ^ 0xff;
 		}// if
 
 		// Separate by dots
@@ -137,7 +137,7 @@ public final class SubnetUtils {
 		long hosts = (long) Math.pow(2, addressSize - prefix);
 
 		// For routed subnets larger than 31 or 63, subtract 2 from the number of available hosts
-		if (prefix < addressSize - 1) {
+		if (prefix < (addressSize - 1)) {
 			hosts -= unavailableHosts;
 		} else {
 			hosts = 0;
@@ -162,11 +162,23 @@ public final class SubnetUtils {
 		int addr = 0;
 		for (int i = 0; i < 4; i++) {
 			int n = checkRange(Integer.parseInt(addrArry[i]), 0, 255);
-			addr |= (n & 0xff) << 8 * (3 - i);
+			addr |= (n & 0xff) << (8 * (3 - i));
 		}//for
 
 		return addr;
 	}//toInteger
+
+	static short[] toArray(String address) {
+		short[] ret = new short[8];
+		String[] addrArry = address.split(":");
+
+		/* Initialize the internal fields from the supplied CIDR */
+		for (int i = 0; i < addrArry.length; i++) {
+			ret[i] = Short.parseShort(addrArry[i], 16);
+		} // for
+
+		return ret;
+	}//toArray
 
 	/**
 	 * Convenience function to check integer boundaries.
@@ -174,7 +186,7 @@ public final class SubnetUtils {
 	 * Returns x if it is in range, throws an exception otherwise.
 	 */
 	static int checkRange(int value, int begin, int end) {
-		if (value < begin || value > end) {
+		if ((value < begin) || (value > end)) {
 			throw new IllegalArgumentException("Value [" + value + "] not in range [" + 0 + ", " + end + "]");
 		}// if
 

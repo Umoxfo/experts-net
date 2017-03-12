@@ -45,20 +45,20 @@ public final class IP4 extends SubnetInfo {
 	/* Whether the broadcast/network address on IPv4 or the network address on IPv6 are included in host count */
 	boolean inclusiveHostCount = false;
 
-	/**
+	/*
 	 * Constructor that takes a CIDR-notation string, e.g. "192.168.0.1/16"
 	 *
 	 * @param cidrNotation A CIDR-notation string, e.g. "192.168.0.1/16"
 	 * @throws IllegalArgumentException
 	 *             if the parameter is invalid,
-	 *             i.e. does not match n.n.n.n/m where n=1-3 decimal digits, m = 1-3 decimal digits in range 1-32
+	 *             i.e. does not match n.n.n.n/m where n=1-3 decimal digits, m is in range 0-32
 	 */
-	public IP4(String cidrNotation) {
+	IP4(String cidrNotation) {
 		String[] tmp = cidrNotation.split("/");
 
 		// calculate(address, CIDR)
 		calculate(tmp[0], Integer.parseInt(tmp[1]));
-	}// SubnetInfo(String cidrNotation)
+	}//IP4(String cidrNotation)
 
 	/**
 	 * Constructor that takes a dotted decimal address and a dotted decimal mask.
@@ -73,7 +73,7 @@ public final class IP4 extends SubnetInfo {
 	 */
 	public IP4(String address, String mask) {
 		calculate(address, SubnetUtils.toCIDR(mask));
-	}// SubnetInfo(String address, String mask)
+	}//IP4(String address, String mask)
 
 	/**
 	 * Returns <code>true</code> if the return value of {@link IP4#getAddressCount()}
@@ -103,7 +103,7 @@ public final class IP4 extends SubnetInfo {
 
 		this.cidr = SubnetUtils.checkRange(cidr, 0, NBITS);
 		/* Create a binary netmask from the number of bits specification /x */
-		netmask = (int) (UNSIGNED_INT_MASK << NBITS - cidr);
+		netmask = (int) (UNSIGNED_INT_MASK << (NBITS - cidr));
 
 		/* Calculate base network address */
 		network = address & netmask;
@@ -122,11 +122,11 @@ public final class IP4 extends SubnetInfo {
 	}// broadcastLong
 
 	private int low() {
-		return inclusiveHostCount ? network : broadcastLong() - networkLong() > 1 ? network + 1 : 0;
+		return inclusiveHostCount ? network : (broadcastLong() - networkLong()) > 1 ? network + 1 : 0;
 	}// low
 
 	private int high() {
-		return inclusiveHostCount ? broadcast : broadcastLong() - networkLong() > 1 ? broadcast - 1 : 0;
+		return inclusiveHostCount ? broadcast : (broadcastLong() - networkLong()) > 1 ? broadcast - 1 : 0;
 	}// high
 
 	/*
@@ -138,7 +138,7 @@ public final class IP4 extends SubnetInfo {
 	private String format(int val) {
 		int ret[] = new int[4];
 		for (int i = 3; i >= 0; i--) {
-			ret[i] = val >>> 8 * (3 - i) & 0xff;
+			ret[i] = (val >>> (8 * (3 - i))) & 0xff;
 		}//for
 
 		return SubnetUtils.format(ret, '.');
@@ -206,7 +206,7 @@ public final class IP4 extends SubnetInfo {
 	public long getAddressCountLong() {
 		long b = broadcastLong();
 		long n = networkLong();
-		long count = b - n + (inclusiveHostCount ? 1 : -1);
+		long count = (b - n) + (inclusiveHostCount ? 1 : -1);
 		return count < 0 ? 0 : count;
 	}// getAddressCountLong
 
@@ -251,7 +251,7 @@ public final class IP4 extends SubnetInfo {
 		long addLong = address & UNSIGNED_INT_MASK;
 		long lowLong = low() & UNSIGNED_INT_MASK;
 		long highLong = high() & UNSIGNED_INT_MASK;
-		return addLong >= lowLong && addLong <= highLong;
+		return (addLong >= lowLong) && (addLong <= highLong);
 	}// isInRange
 
 	/**

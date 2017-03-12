@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  */
 public class SubnetInfo {
 	private static final String IPV4_ADDRESS = "(\\d{1,3}\\.){3}\\d{1,3}/\\d{1,2}";
-	private static final String IPV6_ADDRESS = "([0-9a-f]{1,4}\\:){7}[0-9a-f]{1,4}/\\d{1,2}";
+	private static final String IPV6_ADDRESS = "([0-9a-f]{1,4}\\:){7}[0-9a-f]{1,4}/\\d{1,3}";
 
 	int address = 0;
 	int cidr = 0;
