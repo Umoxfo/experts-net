@@ -38,9 +38,9 @@ public final class IP4Subnet extends SubnetInfo {
 	private static final long UNSIGNED_INT_MASK = 0x0FFFF_FFFFL;
 	private static final int NBITS = 32;
 
-	int netmask = 0;
-	int network = 0;
-	int broadcast = 0;
+	private int netmask = 0;
+	private int network = 0;
+	private int broadcast = 0;
 
 	/* Whether the broadcast/network address on IPv4 or the network address on IPv6 are included in host count */
 	boolean inclusiveHostCount = false;
