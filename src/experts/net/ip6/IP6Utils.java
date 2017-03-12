@@ -17,7 +17,6 @@
  */
 package experts.net.ip6;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -86,7 +85,7 @@ public class IP6Utils {
 	 * @param list
 	 * @return String of an IPv6 address
 	 */
-	public static String buildIP6String(ArrayList<Short> list) {
+	public static String buildIP6String(List<Short> list) {
 		int fromIndex = 0;
 		int toIndex = 0;
 		int maxCnt = 0;
