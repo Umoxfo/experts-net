@@ -124,8 +124,7 @@ public final class SubnetUtils {
 				unavailableHosts = 2; // network and broadcast addresses
 				break;
 			case IP6:
-				addressSize = 64; // The maximum subnet bits in IPv6
-				unavailableHosts = 1; // network address
+				addressSize = 128; // The maximum subnet bits in IPv6
 				break;
 		}// switch
 
