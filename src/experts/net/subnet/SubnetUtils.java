@@ -168,18 +168,6 @@ public final class SubnetUtils {
 		return addr;
 	}//toInteger
 
-	static short[] toArray(String address) {
-		short[] ret = new short[8];
-		String[] addrArry = address.split(":");
-
-		/* Initialize the internal fields from the supplied CIDR */
-		for (int i = 0; i < addrArry.length; i++) {
-			ret[i] = Short.parseShort(addrArry[i], 16);
-		} // for
-
-		return ret;
-	}//toArray
-
 	/**
 	 * Convenience function to check integer boundaries.
 	 * Checks if a value x is in the range [begin,end].

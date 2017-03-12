@@ -46,7 +46,7 @@ public final class IP6Subnet extends SubnetInfo {
 	IP6Subnet(String cidrNotation) {
 		String[] tmp = cidrNotation.split("/");
 
-		ip6Address = SubnetUtils.toArray(tmp[0]);
+		ip6Address = toArray(tmp[0]);
 		cidr = SubnetUtils.checkRange(Integer.parseInt(tmp[1]), 0, NBITS);
 	}// IP6
 
@@ -83,6 +83,18 @@ public final class IP6Subnet extends SubnetInfo {
 		return addr;
 	}//createBoundaryAddresses
 
+	private static short[] toArray(String address) {
+		short[] ret = new short[8];
+		String[] addrArry = address.split(":");
+
+		/* Initialize the internal fields from the supplied CIDR */
+		for (int i = 0; i < addrArry.length; i++) {
+			ret[i] = Short.parseShort(addrArry[i], 16);
+		} // for
+
+		return ret;
+	}//toArray
+
 	/*
 	 * Converts a packed integer address into dotted decimal format
 	 */
@@ -105,7 +117,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 */
 	@Override
 	public boolean isInRange(String address) {
-		return isInRange(SubnetUtils.toArray(address));
+		return isInRange(toArray(address));
 	}// isInRange
 
 	/**
