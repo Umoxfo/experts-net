@@ -14,12 +14,6 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * NOTE:
- * This part of the program includes the code of "Apache Commons Net,"
- * which developed at The Apache Software Foundation (http://www.apache.org/)
- * and be distributed in the Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0),
- * by Makoto Sakaguchi on February 20, 2017.
  */
 package experts.net.subnet;
 
@@ -51,7 +45,7 @@ public class SubnetInfo {
 	 */
 	public static SubnetInfo getByCIDRNortation(String cidrNotation) {
 		if (Pattern.matches(IPV4_ADDRESS, cidrNotation)) {
-			return new IP4(cidrNotation);
+			return new IP4Subnet(cidrNotation);
 		} else if (Pattern.matches(IPV6_ADDRESS, cidrNotation)) {
 			return null;
 		} else {

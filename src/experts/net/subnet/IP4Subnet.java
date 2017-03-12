@@ -19,7 +19,7 @@
  * This part of the program includes the code of "Apache Commons Net,"
  * which developed at The Apache Software Foundation (http://www.apache.org/)
  * and be distributed in the Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0),
- * by Makoto Sakaguchi on February 20, 2017.
+ * by Makoto Sakaguchi on March 11, 2017.
  */
 package experts.net.subnet;
 
@@ -33,7 +33,7 @@ import java.util.ArrayList;
  * @version 2.0.6-dev
  * @since 2.0.6
  */
-public final class IP4 extends SubnetInfo {
+public final class IP4Subnet extends SubnetInfo {
 	/* Mask to convert unsigned int to a long (i.e. keep 32 bits) */
 	private static final long UNSIGNED_INT_MASK = 0x0FFFF_FFFFL;
 	private static final int NBITS = 32;
@@ -53,7 +53,7 @@ public final class IP4 extends SubnetInfo {
 	 *             if the parameter is invalid,
 	 *             i.e. does not match n.n.n.n/m where n=1-3 decimal digits, m is in range 0-32
 	 */
-	IP4(String cidrNotation) {
+	IP4Subnet(String cidrNotation) {
 		String[] tmp = cidrNotation.split("/");
 
 		// calculate(address, CIDR)
@@ -71,12 +71,12 @@ public final class IP4 extends SubnetInfo {
 	 *             the mask does not match n.n.n.n which n={0, 128, 192, 224, 240, 248, 252, 254, 255}
 	 *             and after the 0-field, it is all zeros.
 	 */
-	public IP4(String address, String mask) {
+	public IP4Subnet(String address, String mask) {
 		calculate(address, SubnetUtils.toCIDR(mask));
 	}//IP4(String address, String mask)
 
 	/**
-	 * Returns <code>true</code> if the return value of {@link IP4#getAddressCount()}
+	 * Returns <code>true</code> if the return value of {@link IP4Subnet#getAddressCount()}
 	 * includes the network and broadcast addresses.
 	 *
 	 * @return true if the host count includes the network and broadcast addresses
@@ -86,7 +86,7 @@ public final class IP4 extends SubnetInfo {
 	}// isInclusiveHostCount
 
 	/**
-	 * Set to <code>true</code> if you want the return value of {@link IP4#getAddressCount()}
+	 * Set to <code>true</code> if you want the return value of {@link IP4Subnet#getAddressCount()}
 	 * to include the network and broadcast addresses.
 	 *
 	 * @param inclusiveHostCount true if network and broadcast addresses are to be included

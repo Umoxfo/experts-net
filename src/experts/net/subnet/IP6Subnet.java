@@ -14,15 +14,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * NOTE:
- * This part of the program includes the code of "Apache Commons Net,"
- * which developed at The Apache Software Foundation (http://www.apache.org/)
- * and be distributed in the Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0),
- * by Makoto Sakaguchi on February 20, 2017.
  */
 package experts.net.subnet;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -36,7 +31,7 @@ import experts.net.ip6.IP6Utils;
  * @version 2.0.6-dev
  * @since 2.0.6
  */
-public final class IP6 extends SubnetInfo {
+public final class IP6Subnet extends SubnetInfo {
 	private static final int NBITS = 128;
 
 	private static enum Range {
@@ -48,7 +43,7 @@ public final class IP6 extends SubnetInfo {
 	/*
 	 * Constructor that takes a CIDR-notation string, e.g. "2001:db8:0:0:0:ff00:42:8329/48"
 	 */
-	IP6(String cidrNotation) {
+	IP6Subnet(String cidrNotation) {
 		String[] tmp = cidrNotation.split("/");
 
 		ip6Address = SubnetUtils.toArray(tmp[0]);
@@ -188,11 +183,9 @@ public final class IP6 extends SubnetInfo {
 	 *
 	 * @return the count of addresses, may be zero.
 	 */
-	@Override
-	public long getAddressCountLong() {
-		return 0;
-	}// getAddressCountLong
-
+	public String getAddressCount() {
+		return new BigInteger("2").pow(128 - cidr).toString();
+	}// getAddressCount
 
 	/**
 	 * Returns subnet summary information of the address,
