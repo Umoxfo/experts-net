@@ -54,26 +54,21 @@ public final class IP4Subnet extends SubnetInfo {
 	 *             i.e. does not match n.n.n.n/m where n=1-3 decimal digits, m is in range 0-32
 	 */
 	IP4Subnet(String cidrNotation) {
-		String[] tmp = cidrNotation.split("/");
+		String[] addr = cidrNotation.split("/");
 
-		// calculate(address, CIDR)
-		calculate(tmp[0], Integer.parseInt(tmp[1]));
-	}//IP4(String cidrNotation)
+		address = SubnetUtils.toInteger(addr[0]);
 
-	/**
-	 * Constructor that takes a dotted decimal address and a dotted decimal mask.
-	 *
-	 * @param address An IP address, e.g. "192.168.0.1"
-	 * @param mask A dotted decimal netmask e.g. "255.255.0.0"
-	 * @throws IllegalArgumentException
-	 *             if the address or mask is invalid,
-	 *             i.e. the address does not match n.n.n.n where n=1-3 decimal digits, or
-	 *             the mask does not match n.n.n.n which n={0, 128, 192, 224, 240, 248, 252, 254, 255}
-	 *             and after the 0-field, it is all zeros.
-	 */
-	public IP4Subnet(String address, String mask) {
-		calculate(address, SubnetUtils.toCIDR(mask));
-	}//IP4(String address, String mask)
+		cidr = SubnetUtils.checkRange(Integer.parseInt(addr[1]), 0, NBITS);
+
+		/* Create a binary netmask from the number of bits specification /x */
+		netmask = (int) (UNSIGNED_INT_MASK << (NBITS - cidr));
+
+		/* Calculate base network address */
+		network = address & netmask;
+
+		/* Calculate broadcast address */
+		broadcast = network | ~netmask;
+	}//IP4Subnet(String cidrNotation)
 
 	/**
 	 * Returns <code>true</code> if the return value of {@link IP4Subnet#getAddressCount()}
@@ -95,23 +90,6 @@ public final class IP4Subnet extends SubnetInfo {
 		this.inclusiveHostCount = inclusiveHostCount;
 	}// setInclusiveHostCount
 
-	/*
-	 * Initialize the internal fields from the supplied CIDR
-	 */
-	private void calculate(String addr, int cidr) {
-		address = SubnetUtils.toInteger(addr);
-
-		this.cidr = SubnetUtils.checkRange(cidr, 0, NBITS);
-		/* Create a binary netmask from the number of bits specification /x */
-		netmask = (int) (UNSIGNED_INT_MASK << (NBITS - cidr));
-
-		/* Calculate base network address */
-		network = address & netmask;
-
-		/* Calculate broadcast address */
-		broadcast = network | ~netmask;
-	}// calculate
-
 	// long versions of the values (as unsigned int) which are more suitable for range checking
 	private long networkLong() {
 		return network & UNSIGNED_INT_MASK;
@@ -131,9 +109,6 @@ public final class IP4Subnet extends SubnetInfo {
 
 	/*
 	 * Converts a packed integer address into dotted decimal format
-	 *
-	 * @param val an address in binary
-	 * @return A dot-delimited address
 	 */
 	private String format(int val) {
 		int ret[] = new int[4];
@@ -143,6 +118,49 @@ public final class IP4Subnet extends SubnetInfo {
 
 		return SubnetUtils.format(ret, '.');
 	}//format
+
+	/**
+	 * Creates a dotted decimal address and a dotted decimal mask.
+	 *
+	 * @param address An IP address, e.g. "192.168.0.1"
+	 * @param mask A dotted decimal netmask e.g. "255.255.0.0"
+	 * @throws IllegalArgumentException
+	 *             if the address or mask is invalid,
+	 *             i.e. the address does not match n.n.n.n where n=1-3 decimal digits, or
+	 *             the mask does not match n.n.n.n which n={0, 128, 192, 224, 240, 248, 252, 254, 255}
+	 *             and after the 0-field, it is all zeros.
+	 */
+	public static IP4Subnet getBySubnet(String address, String mask) {
+		return new IP4Subnet(address  + "/" + SubnetUtils.toCIDR(mask));
+	}//getBySubnet
+
+	/**
+	 * Returns true if the parameter <code>address</code> is in the
+	 * range of usable endpoint addresses for this subnet. This excludes the
+	 * network and broadcast addresses.
+	 *
+	 * @param address A dot-delimited IPv4 address, e.g. "192.168.0.1"
+	 * @return True if in range, false otherwise
+	 */
+	@Override
+	public boolean isInRange(String address) {
+		return isInRange(SubnetUtils.toInteger(address));
+	}// isInRange
+
+	/**
+	 * Returns true if the parameter <code>address</code> is in the
+	 * range of usable endpoint addresses for this subnet. This excludes the
+	 * network and broadcast addresses.
+	 *
+	 * @param address An IPv4 address in binary
+	 * @return True if in range, false otherwise
+	 */
+	public boolean isInRange(int address) {
+		long addLong = address & UNSIGNED_INT_MASK;
+		long lowLong = low() & UNSIGNED_INT_MASK;
+		long highLong = high() & UNSIGNED_INT_MASK;
+		return (addLong >= lowLong) && (addLong <= highLong);
+	}// isInRange
 
 	@Override
 	public String getAddresss() {
@@ -226,33 +244,6 @@ public final class IP4Subnet extends SubnetInfo {
 		return addresses.toArray(new String[addresses.size()]);
 	}//getAllAddresses
 
-	/**
-	 * Returns true if the parameter <code>address</code> is in the
-	 * range of usable endpoint addresses for this subnet. This excludes the
-	 * network and broadcast addresses.
-	 *
-	 * @param address A dot-delimited IPv4 address, e.g. "192.168.0.1"
-	 * @return True if in range, false otherwise
-	 */
-	@Override
-	public boolean isInRange(String address) {
-		return isInRange(SubnetUtils.toInteger(address));
-	}// isInRange
-
-	/**
-	 * Returns true if the parameter <code>address</code> is in the
-	 * range of usable endpoint addresses for this subnet. This excludes the
-	 * network and broadcast addresses.
-	 *
-	 * @param address An IPv4 address in binary
-	 * @return True if in range, false otherwise
-	 */
-	public boolean isInRange(int address) {
-		long addLong = address & UNSIGNED_INT_MASK;
-		long lowLong = low() & UNSIGNED_INT_MASK;
-		long highLong = high() & UNSIGNED_INT_MASK;
-		return (addLong >= lowLong) && (addLong <= highLong);
-	}// isInRange
 
 	/**
 	 * Returns subnet summary information of the address,
