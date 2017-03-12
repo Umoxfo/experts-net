@@ -38,12 +38,12 @@ public final class IP4Subnet extends SubnetInfo {
 	private static final long UNSIGNED_INT_MASK = 0x0FFFF_FFFFL;
 	private static final int NBITS = 32;
 
-	private int netmask = 0;
-	private int network = 0;
-	private int broadcast = 0;
+	private final int netmask;
+	private final int network;
+	private final int broadcast;
 
 	/* Whether the broadcast/network address on IPv4 or the network address on IPv6 are included in host count */
-	boolean inclusiveHostCount = false;
+	private boolean inclusiveHostCount = false;
 
 	/*
 	 * Constructor that takes a CIDR-notation string, e.g. "192.168.0.1/16"
@@ -220,7 +220,6 @@ public final class IP4Subnet extends SubnetInfo {
 	 *
 	 * @return the count of addresses, may be zero.
 	 */
-	@Override
 	public long getAddressCountLong() {
 		long b = broadcastLong();
 		long n = networkLong();

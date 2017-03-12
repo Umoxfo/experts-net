@@ -160,7 +160,7 @@ public class ULUA extends IP6 {
 
 		byte[] digest = DigestUtils.sha1(buf.array());
 
-		buf = ByteBuffer.allocate(6);
+		buf.clear().limit(6);
 		buf.put(GLOBAL_ID_PREFIX).put(digest, 15, 5);
 
 		globalID = toList(buf);
@@ -190,11 +190,11 @@ public class ULUA extends IP6 {
 	 * @return Short List
 	 */
 	private static List<Short> toList(ByteBuffer buf) {
-		int cap = buf.capacity() / 2;
-		List<Short> tmp = new ArrayList<>(cap);
+		int lim = buf.limit() / 2;
+		List<Short> tmp = new ArrayList<>(lim);
 
 		buf.rewind();
-		for (int i = 0; i < cap; i++) {
+		for (int i = 0; i < lim; i++) {
 			tmp.add(buf.getShort());
 		} // for
 

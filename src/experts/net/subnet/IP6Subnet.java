@@ -89,7 +89,7 @@ public final class IP6Subnet extends SubnetInfo {
 
 		/* Initialize the internal fields from the supplied CIDR */
 		for (int i = 0; i < addrArry.length; i++) {
-			ret[i] = Short.parseShort(addrArry[i], 16);
+			ret[i] = (short) Integer.parseInt(addrArry[i], 16);
 		} // for
 
 		return ret;
@@ -145,6 +145,7 @@ public final class IP6Subnet extends SubnetInfo {
 		int addr = address[prefixSize] & 0xffff;
 		int lowAddr = lowAddress[prefixSize] & 0xffff;
 		int highAddr = highAddress[prefixSize] & 0xffff;
+
 		if ((addr < lowAddr) || (addr > highAddr)) {
 			return false;
 		}//if
@@ -211,7 +212,7 @@ public final class IP6Subnet extends SubnetInfo {
 		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append("]")
 		.append("First Address:\t[").append(getLowAddress()).append("]\n")
 		.append("Last Address:\t[").append(getHighAddress()).append("]\n")
-		.append("# Addresses:\t[").append(getAddressCountLong()).append("]\n");
+		.append("# Addresses:\t[").append(getAddressCount()).append("]\n");
 
 		return buf.toString();
 	}// toString

@@ -30,7 +30,7 @@ import org.apache.commons.codec.binary.Hex;
  * @author Makoto Sakaguchi
  * @version 2.0.6-dev
  */
-public class MACAddr {
+public final class MACAddr {
 	/**
 	 * Obtains the hardware address (usually MAC) of an interface which is from an IP address or a host name (e.g. "10.0.0.1" or "example").
 	 *
@@ -62,9 +62,9 @@ public class MACAddr {
 	}// toMACAddressString
 
 	/**
-	 * Converts a byte array contains a hardware address to a String of the form: %x:%x:%x:%x:%x:%x
+	 * Converts a byte array contains a hardware address to a string of the form: x:x:x:x:x:x
 	 */
-	private static final String format(byte[] macAddr) {
+	private static String format(byte[] macAddr) {
 		// Converting to a String MAC address obtained
 		StringBuilder sb = new StringBuilder().append(Hex.encodeHex(macAddr, false));
 

@@ -29,9 +29,16 @@ import java.util.stream.Stream;
  * @author Makoto Sakaguchi
  * @version 2.0.6-dev
  */
-public class IP6Utils {
+public final class IP6Utils {
+	/*
+	 * Converts a short list to a string list.
+	 */
+	private static List<String> toHexStringList(List<Short> list) {
+		return list.stream().map(i -> Integer.toHexString(i & 0xffff)).collect(Collectors.toList());
+	}// toHexStringArryList
+
 	/**
-	 * Convert String array to List (Short).
+	 * Converts String array to List (Short).
 	 *
 	 * @param strArry
 	 *            String array
@@ -68,18 +75,6 @@ public class IP6Utils {
 	}// toHexIntList
 
 	/**
-	 * Convert List (Short) to ArrayList (String).
-	 *
-	 * @param list
-	 *            List (Short)
-	 * @return ArrayList (String)
-	 * @since 2.0.4
-	 */
-	private static List<String> toHexStringList(List<Short> list) {
-		return list.stream().map(i -> Integer.toHexString(i & 0xffff)).collect(Collectors.toList());
-	}// toHexStringArryList
-
-	/**
 	 * Consecutive sections of zeroes are replaced with a double colon (::).
 	 *
 	 * @param list
@@ -92,9 +87,10 @@ public class IP6Utils {
 
 		// The longest run of consecutive 16-bit 0 fields MUST be shortened.
 		int index = list.indexOf(0);
-		while (index != -1 && index < 7) {
+		int lastIndex = list.lastIndexOf(0);
+		while (index < lastIndex) {
 			int j = index + 1;
-			while (j < 8 && list.get(j) == 0) {
+			while ((j <= lastIndex) && (list.get(j) == 0)) {
 				j++;
 			} // while
 
@@ -105,11 +101,11 @@ public class IP6Utils {
 				maxCnt = cnt;
 			} // if
 
-			if (j == 8) {
+			if (j >= lastIndex) {
 				break;
 			}
 
-			index = list.subList(++j, 8).indexOf(0) + j;
+			index = list.subList(++j, lastIndex).indexOf(0) + j;
 		} // while
 
 		// The 4-digit hexadecimal each string

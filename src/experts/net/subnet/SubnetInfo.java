@@ -40,17 +40,38 @@ public class SubnetInfo {
 	 *
 	 * NOTE: IPv6 address does NOT allow to omit consecutive sections of zeros in the current version.
 	 *
-	 * @param address An IPv4 or IPv6 address
+	 * @param cidrNotation An IPv4 or IPv6 address
 	 * @return The class of SubnetInfo
+	 */
+	/*
+	 * @throws UnknownHostException {@link InetAddress.getByName(String host)}
+	 * @throws SecurityException if a security manager exists and its checkConnect method doesn't allow the operation
 	 */
 	public static SubnetInfo getByCIDRNortation(String cidrNotation) {
 		if (Pattern.matches(IPV4_ADDRESS, cidrNotation)) {
 			return new IP4Subnet(cidrNotation);
 		} else if (Pattern.matches(IPV6_ADDRESS, cidrNotation)) {
-			return null;
+			return new IP6Subnet(cidrNotation);
 		} else {
 			throw new IllegalArgumentException("Could not parse [" + cidrNotation + "]");
 		}//if
+
+		/*
+		if (cidrNotation.contains("/")) {
+			String[] arry = cidrNotation.split("/");
+
+			byte[] address = InetAddress.getByName(arry[0]).getAddress();
+			int cidr = Integer.parseInt(arry[1]);
+
+			if (address.length == 4) {
+				return new IP4Subnet(address, cidr);
+			} else {
+				return new IP6Subnet(address, cidr);
+			}//if-else
+		} else {
+			throw new IllegalArgumentException("Could not parse [" + cidrNotation + "]");
+		}//if-else
+		 */
 	}//getByCIDRNortation
 
 	public String getAddresss() {
@@ -90,16 +111,6 @@ public class SubnetInfo {
 	public String getHighAddress() {
 		return null;
 	}// getHighAddress
-
-	/**
-	 * Get the count of available addresses.
-	 * Will be zero for CIDR/31 and CIDR/32 in IPv4 if the inclusive flag is false.
-	 *
-	 * @return the count of addresses, may be zero.
-	 */
-	public long getAddressCountLong() {
-		return 0;
-	}//getAddressCountLong
 
 	public String[] getAllAddresses() {
 		return null;

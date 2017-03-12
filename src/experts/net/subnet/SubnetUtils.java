@@ -23,6 +23,7 @@
  */
 package experts.net.subnet;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 /**
@@ -36,7 +37,7 @@ import java.util.Arrays;
  */
 public final class SubnetUtils {
 	public static enum IP {
-		IP4, 	IP6
+		IPv4, 	IPv6
 	}// IP
 
 	public static class Subnet {
@@ -115,36 +116,35 @@ public final class SubnetUtils {
 	 * @param terget a flag of the IP version
 	 * @return Number of available hosts, including the gateway
 	 */
-	public static long numberOfHosts(int prefix, IP terget) {
-		int addressSize = 0;
-		int unavailableHosts = 0;
-		switch (terget) {
-			case IP4:
-				addressSize = 32;
-				unavailableHosts = 2; // network and broadcast addresses
-				break;
-			case IP6:
-				addressSize = 128; // The maximum subnet bits in IPv6
-				break;
-		}// switch
+	public static String getHostCount(int prefix, IP target) {
+		String hosts = "";
 
 		/*
 		 * Calculate the number of hosts from the CIDR value
 		 *
 		 * The sizes of address - CIDR = host bits, and 2 ^ the bits = the number of hosts
 		 */
-		long hosts = (long) Math.pow(2, addressSize - prefix);
+		switch (target) {
+			case IPv4:
+				long hl = (long) Math.pow(2, 32 - prefix);
 
-		// For routed subnets larger than 31 or 63, subtract 2 from the number of available hosts
-		if (prefix < (addressSize - 1)) {
-			hosts -= unavailableHosts;
-		} else {
-			hosts = 0;
-		}//if-else
+				// Length of the network prefix is larger than 31, subtract 2 from the number of available hosts
+				if (prefix < 31) {
+					hl -= 2;
+				} else {
+					hl = 0;
+				}//if-else
 
-		// Return number of available hosts, including the gateway
+				hosts = Long.toString(hl);
+				break;
+			case IPv6:
+				// The maximum subnet bits in IPv6
+				hosts = new BigInteger("2").pow(128 - prefix).toString();
+				break;
+		}// switch
+
 		return hosts;
-	}// numberOfHosts
+	}//getHostCount
 
 	/*
 	 * Convert a dotted decimal format address to a packed integer format
