@@ -34,11 +34,7 @@ import experts.net.ip6.IP6Utils;
 public final class IP6Subnet extends SubnetInfo {
 	private static final int NBITS = 128;
 
-	private static enum Range {
-		LOW, HIGH
-	}// Range
-
-	short[] ip6Address = new short[8];
+	private short[] ip6Address = new short[8];
 
 	/*
 	 * Constructor that takes a CIDR-notation string, e.g. "2001:db8:0:0:0:ff00:42:8329/48"
@@ -50,18 +46,12 @@ public final class IP6Subnet extends SubnetInfo {
 		cidr = SubnetUtils.checkRange(Integer.parseInt(tmp[1]), 0, NBITS);
 	}// IP6
 
-	private short[] low() {
-		return createBoundaryAddresses(new short[8], Range.LOW);
-	}// low
-
-	private short[] high() {
-		return createBoundaryAddresses(new short[8], Range.HIGH);
-	}// high
-
 	/*
-	 * Creates boundary addresses in an address.
+	 * Creates lowest address in an address.
 	 */
-	private short[] createBoundaryAddresses(short[] addr, Range type) {
+	private short[] low() {
+		short[] addr = new short[8];
+
 		// Copy of the network prefix in the address
 		int index = cidr / 16;
 		for (int i = 0; i <= index; i++) {
@@ -69,19 +59,30 @@ public final class IP6Subnet extends SubnetInfo {
 		}// for
 
 		// Set the out of the network prefix bits.
-		switch (type) {
-			case LOW:
-				addr[index] &= (0xffff >> (cidr % 16)) ^ 0xffff;
-				break;
-			case HIGH:
-				// Fill the following fields with 1-bits
-				Arrays.fill(addr, index + 1, addr.length, (short)0xffff);
-				addr[index] |= 0xffff >> (cidr % 16);
-				break;
-		}// switch
-
+		addr[index] &= (0xffff >> (cidr % 16)) ^ 0xffff;
 		return addr;
-	}//createBoundaryAddresses
+	}// low
+
+	/*
+	 * Creates highest address in an address.
+	 */
+	private short[] high() {
+		short[] highAddr = new short[8];
+
+		// Copy of the network prefix in the address
+		int index = cidr / 16;
+		for (int i = 0; i <= index; i++) {
+			highAddr[i] = ip6Address[i];
+		}// for
+
+		// Fill the following fields with 1-bits
+		Arrays.fill(highAddr, index + 1, highAddr.length, (short)0xffff);
+
+		// Set the out of the network prefix bits
+		highAddr[index] |= 0xffff >> (cidr % 16);
+
+		return highAddr;
+	}// high
 
 	private static short[] toArray(String address) {
 		short[] ret = new short[8];
