@@ -23,8 +23,6 @@
  */
 package experts.net.subnet;
 
-import java.util.ArrayList;
-
 /**
  * Convenience container for IPv4 subnet summary information.
  *
@@ -228,21 +226,6 @@ public final class IP4Subnet implements SubnetInfo {
 		long count = (b - n) + (inclusiveHostCount ? 1 : -1);
 		return count < 0 ? 0 : count;
 	}// getAddressCountLong
-
-	public String[] getAllAddresses() {
-		long ct = getAddressCountLong();
-		ArrayList<String> addresses = new ArrayList<>();
-
-		if (ct != 0) {
-			int high = high();
-			for (int addr = low(); addr <= high; addr++) {
-				addresses.add(format(addr));
-			}//for
-		}//if
-
-		addresses.trimToSize();
-		return addresses.toArray(new String[addresses.size()]);
-	}//getAllAddresses
 
 	/**
 	 * Returns subnet summary information of the address,
