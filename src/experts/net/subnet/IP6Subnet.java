@@ -19,7 +19,6 @@ package experts.net.subnet;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import experts.net.ip6.IP6Utils;
 
@@ -77,7 +76,9 @@ public final class IP6Subnet implements SubnetInfo {
 		}// for
 
 		// Fill the following fields with 1-bits
-		Arrays.fill(highAddr, index + 1, highAddr.length, (short)0xffff);
+		for (int i = index + 1; i < 8; i++) {
+			highAddr[i] = (short) 0xffff;
+		}//for
 
 		// Set the out of the network prefix bits
 		highAddr[index] |= 0xffff >> (cidr % 16);
