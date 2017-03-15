@@ -19,7 +19,7 @@
  * This part of the program includes the code of "Apache Commons Net,"
  * which developed at The Apache Software Foundation (http://www.apache.org/)
  * and be distributed in the Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0),
- * by Makoto Sakaguchi on February 20, 2017.
+ * by Makoto Sakaguchi from February 20, 2017 to March 14, 2017.
  */
 package experts.net.subnet;
 
