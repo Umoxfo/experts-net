@@ -42,10 +42,6 @@ public final class SubnetUtils {
 	}// IP
 
 	public static final class Subnet {
-		public static enum Type {
-			MASK, CIDR
-		}// Type
-
 		public static final class CIDR {
 			public static final int CLASS_A = 8;
 			public static final int CLASS_B = 16;
