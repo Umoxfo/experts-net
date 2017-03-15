@@ -19,7 +19,7 @@
  * This part of the program includes the code of "Apache Commons Net,"
  * which developed at The Apache Software Foundation (http://www.apache.org/)
  * and be distributed in the Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0),
- * by Makoto Sakaguchi on March 11, 2017.
+ * by Makoto Sakaguchi form March 11, 2017 to March 14, 2017.
  */
 package experts.net.subnet;
 
@@ -33,11 +33,13 @@ import java.util.ArrayList;
  * @version 2.0.6-dev
  * @since 2.0.6
  */
-public final class IP4Subnet extends SubnetInfo {
+public final class IP4Subnet implements SubnetInfo {
 	/* Mask to convert unsigned int to a long (i.e. keep 32 bits) */
 	private static final long UNSIGNED_INT_MASK = 0x0FFFF_FFFFL;
 	private static final int NBITS = 32;
 
+	private final int address;
+	private final int cidr;
 	private final int netmask;
 	private final int network;
 	private final int broadcast;
@@ -227,7 +229,6 @@ public final class IP4Subnet extends SubnetInfo {
 		return count < 0 ? 0 : count;
 	}// getAddressCountLong
 
-	@Override
 	public String[] getAllAddresses() {
 		long ct = getAddressCountLong();
 		ArrayList<String> addresses = new ArrayList<>();
@@ -242,7 +243,6 @@ public final class IP4Subnet extends SubnetInfo {
 		addresses.trimToSize();
 		return addresses.toArray(new String[addresses.size()]);
 	}//getAllAddresses
-
 
 	/**
 	 * Returns subnet summary information of the address,

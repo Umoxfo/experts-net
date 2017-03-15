@@ -17,8 +17,6 @@
  */
 package experts.net.subnet;
 
-import java.util.regex.Pattern;
-
 /**
  * Convenience container for subnet summary information.
  *
@@ -27,105 +25,16 @@ import java.util.regex.Pattern;
  * @version 2.0.6-dev
  * @since 2.0.6
  */
-public class SubnetInfo {
-	private static final String IPV4_ADDRESS = "(\\d{1,3}\\.){3}\\d{1,3}/\\d{1,2}";
-	private static final String IPV6_ADDRESS = "([0-9a-f]{1,4}\\:){7}[0-9a-f]{1,4}/\\d{1,3}";
+public interface SubnetInfo {
+	String getAddresss();
 
-	int address = 0;
-	int cidr = 0;
+	int getCIDR();
 
-	/**
-	 * Constructor that takes a CIDR-notation string that both IPv4 and IPv6 allow,
-	 * e.g. "192.168.0.1/16" or "2001:db8:0:0:0:ff00:42:8329/46"
-	 *
-	 * NOTE: IPv6 address does NOT allow to omit consecutive sections of zeros in the current version.
-	 *
-	 * @param cidrNotation An IPv4 or IPv6 address
-	 * @return The class of SubnetInfo
-	 */
-	/*
-	 * @throws UnknownHostException {@link InetAddress.getByName(String host)}
-	 * @throws SecurityException if a security manager exists and its checkConnect method doesn't allow the operation
-	 */
-	public static SubnetInfo getByCIDRNortation(String cidrNotation) {
-		if (Pattern.matches(IPV4_ADDRESS, cidrNotation)) {
-			return new IP4Subnet(cidrNotation);
-		} else if (Pattern.matches(IPV6_ADDRESS, cidrNotation)) {
-			return new IP6Subnet(cidrNotation);
-		} else {
-			throw new IllegalArgumentException("Could not parse [" + cidrNotation + "]");
-		}//if
+	String getCIDRNotation();
 
-		/*
-		if (cidrNotation.contains("/")) {
-			String[] arry = cidrNotation.split("/");
+	String getLowAddress();
 
-			byte[] address = InetAddress.getByName(arry[0]).getAddress();
-			int cidr = Integer.parseInt(arry[1]);
+	String getHighAddress();
 
-			if (address.length == 4) {
-				return new IP4Subnet(address, cidr);
-			} else {
-				return new IP6Subnet(address, cidr);
-			}//if-else
-		} else {
-			throw new IllegalArgumentException("Could not parse [" + cidrNotation + "]");
-		}//if-else
-		 */
-	}//getByCIDRNortation
-
-	public String getAddresss() {
-		return null;
-	}//getAddressString
-
-	public int getCIDR() {
-		return cidr;
-	}//getCIDRValue
-
-	/**
-	 * Returns an IP address/CIDR format by counting the 1-bit population in the mask address.
-	 * IP address: A dot-decimal notation as 192.168.0.1 in IPv4 or
-	 * eight groups of four hexadecimal digits and the groups are separated by colons, i.e. 2001:db8:0:0:0:ff00:42:8329 in IPv6
-	 * CIDR: 0-32 in IPv4 or 0-128 in IPv6
-	 */
-	public String getCIDRNotation() {
-		return null;
-	}//getCIDRNotation
-
-	/**
-	 * Return the low address as a dotted IP address.
-	 * Will be zero for CIDR/31 and CIDR/32 in IPv4 if the inclusive flag is false.
-	 *
-	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
-	 */
-	public String getLowAddress() {
-		return null;
-	}// getLowAddress
-
-	/**
-	 * Return the high address as a dotted IP address.
-	 * Will be zero for CIDR/31 and CIDR/32 in IPv4 if the inclusive flag is false.
-	 *
-	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
-	 */
-	public String getHighAddress() {
-		return null;
-	}// getHighAddress
-
-	public String[] getAllAddresses() {
-		return null;
-	}//getAllAddresses
-
-	/**
-	 * Returns true if the parameter <code>address</code> is in the
-	 * range of usable endpoint addresses for this subnet. This excludes the
-	 * network and broadcast addresses.
-	 *
-	 * @param address A dot-delimited IPv4 address, e.g. "192.168.0.1", or
-	 * an IPv6 address is four hexadecimal digits and the groups are separated by colons, e.g. "2001:db8:0:0:0:ff00:42:8329"
-	 * @return True if in range, false otherwise
-	 */
-	public boolean isInRange(String address) {
-		return false;
-	}// isInRange
+	boolean isInRange(String address);
 }

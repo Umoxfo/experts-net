@@ -25,6 +25,7 @@ package experts.net.subnet;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 /**
  * A class that performs some subnet calculations given a network address and a subnet mask.
@@ -37,20 +38,63 @@ import java.util.Arrays;
  */
 public final class SubnetUtils {
 	public static enum IP {
-		IPv4, 	IPv6
+		IPv4, IPv6
 	}// IP
 
-	public static class Subnet {
+	public static final class Subnet {
 		public static enum Type {
 			MASK, CIDR
 		}// Type
 
-		public static class CIDR {
+		public static final class CIDR {
 			public static final int CLASS_A = 8;
 			public static final int CLASS_B = 16;
 			public static final int CLASS_C = 24;
 		}// CIDR
 	}// Subnet
+
+	private static final String IPV4_ADDRESS = "(\\d{1,3}\\.){3}\\d{1,3}/\\d{1,2}";
+	private static final String IPV6_ADDRESS = "([0-9a-f]{1,4}\\:){7}[0-9a-f]{1,4}/\\d{1,3}";
+
+	/**
+	 * Constructor that takes a CIDR-notation string that both IPv4 and IPv6 allow,
+	 * e.g. "192.168.0.1/16" or "2001:db8:0:0:0:ff00:42:8329/46"
+	 *
+	 * NOTE: IPv6 address does NOT allow to omit consecutive sections of zeros in the current version.
+	 *
+	 * @param cidrNotation An IPv4 or IPv6 address
+	 * @return The class of SubnetInfo
+	 */
+	/*
+	 * @throws UnknownHostException {@link InetAddress.getByName(String host)}
+	 * @throws SecurityException if a security manager exists and its checkConnect method doesn't allow the operation
+	 */
+	public static SubnetInfo getByCIDRNortation(String cidrNotation) {
+		if (Pattern.matches(IPV4_ADDRESS, cidrNotation)) {
+			return new IP4Subnet(cidrNotation);
+		} else if (Pattern.matches(IPV6_ADDRESS, cidrNotation)) {
+			return new IP6Subnet(cidrNotation);
+		} else {
+			throw new IllegalArgumentException("Could not parse [" + cidrNotation + "]");
+		}//if
+
+		/*
+		if (cidrNotation.contains("/")) {
+			String[] arry = cidrNotation.split("/");
+
+			byte[] address = InetAddress.getByName(arry[0]).getAddress();
+			int cidr = Integer.parseInt(arry[1]);
+
+			if (address.length == 4) {
+				return new IP4Subnet(address, cidr);
+			} else {
+				return new IP6Subnet(address, cidr);
+			}//if-else
+		} else {
+			throw new IllegalArgumentException("Could not parse [" + cidrNotation + "]");
+		}//if-else
+		 */
+	}//getByCIDRNortation
 
 	/**
 	 * Converts a dotted decimal mask to CIDR.

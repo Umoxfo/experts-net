@@ -31,13 +31,14 @@ import experts.net.ip6.IP6Utils;
  * @version 2.0.6-dev
  * @since 2.0.6
  */
-public final class IP6Subnet extends SubnetInfo {
+public final class IP6Subnet implements SubnetInfo {
 	private static final int NBITS = 128;
 
-	private short[] ip6Address = new short[8];
+	private final short[] ip6Address;
+	private final int cidr;
 
 	/*
-	 * Constructor that takes a CIDR-notation string, e.g. "2001:db8:0:0:0:ff00:42:8329/48"
+	 * Constructor that takes an IPv6 address with CIDR of a string, e.g. "2001:db8:0:0:0:ff00:42:8329/48"
 	 */
 	IP6Subnet(String cidrNotation) {
 		String[] tmp = cidrNotation.split("/");
@@ -173,7 +174,7 @@ public final class IP6Subnet extends SubnetInfo {
 	}// getCIDRNotation
 
 	/**
-	 * Return the low address as a colon IP address.
+	 * Returns the low address as a colon IP address.
 	 *
 	 * @return the IP address in colon format
 	 */
@@ -183,7 +184,7 @@ public final class IP6Subnet extends SubnetInfo {
 	}// getLowAddress
 
 	/**
-	 * Return the high address as a colon IP address.
+	 * Returns the high address as a colon IP address.
 	 *
 	 * @return the IP address in colon format
 	 */
@@ -193,7 +194,7 @@ public final class IP6Subnet extends SubnetInfo {
 	}// getHighAddress
 
 	/**
-	 * Get the count of available addresses.
+	 * Gets the count of available addresses.
 	 *
 	 * @return the count of addresses, may be zero.
 	 */
