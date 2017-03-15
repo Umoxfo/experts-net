@@ -52,6 +52,59 @@ public final class SubnetUtils {
 	private static final String IPV4_ADDRESS = "(\\d{1,3}\\.){3}\\d{1,3}/\\d{1,2}";
 	private static final String IPV6_ADDRESS = "([0-9a-f]{1,4}\\:){7}[0-9a-f]{1,4}/\\d{1,3}";
 
+	/*
+	 * Convert a dotted decimal format address to a packed integer format
+	 */
+	static int toInteger(String address) {
+		String[] addrArry = address.split("\\.");
+
+		// Check the length of the array, must be 4
+		if (addrArry.length != 4) {
+			throw new IllegalArgumentException("Could not parse [" + address + "]");
+		}// if
+
+		/* Check range of each element and convert to integer */
+		int addr = 0;
+		for (int i = 0; i < 4; i++) {
+			int n = checkRange(Integer.parseInt(addrArry[i]), 0, 255);
+			addr |= (n & 0xff) << (8 * (3 - i));
+		}//for
+
+		return addr;
+	}//toInteger
+
+	/*
+	 * Convenience function to check integer boundaries.
+	 * Checks if a value x is in the range [begin,end].
+	 * Returns x if it is in range, throws an exception otherwise.
+	 */
+	static int checkRange(int value, int begin, int end) {
+		if ((value < begin) || (value > end)) {
+			throw new IllegalArgumentException("Value [" + value + "] not in range [" + 0 + ", " + end + "]");
+		}// if
+
+		return value;
+	}// checkRange
+
+	/*
+	 * Converts a 4-element integer array into dotted decimal format.
+	 */
+	static String format(int[] arry, char symbol) {
+		StringBuilder buf = new StringBuilder();
+		int iMax = arry.length - 1;
+
+		for (int i = 0; i <= iMax; i++) {
+			buf.append(arry[i]);
+
+			if (i != iMax) {
+				buf.append(symbol);
+			}// if
+		}// for
+
+		return buf.toString();
+		// Arrays.stream(arry).mapToObj(Integer::toString).collect(Collectors.joining(symbol));
+	}// format(int[] arry)
+
 	/**
 	 * Constructor that takes a CIDR-notation string that both IPv4 and IPv6 allow,
 	 * e.g. "192.168.0.1/16" or "2001:db8:0:0:0:ff00:42:8329/46"
@@ -185,57 +238,4 @@ public final class SubnetUtils {
 
 		return hosts;
 	}//getHostCount
-
-	/*
-	 * Convert a dotted decimal format address to a packed integer format
-	 */
-	static int toInteger(String address) {
-		String[] addrArry = address.split("\\.");
-
-		// Check the length of the array, must be 4
-		if (addrArry.length != 4) {
-			throw new IllegalArgumentException("Could not parse [" + address + "]");
-		}// if
-
-		/* Check range of each element and convert to integer */
-		int addr = 0;
-		for (int i = 0; i < 4; i++) {
-			int n = checkRange(Integer.parseInt(addrArry[i]), 0, 255);
-			addr |= (n & 0xff) << (8 * (3 - i));
-		}//for
-
-		return addr;
-	}//toInteger
-
-	/**
-	 * Convenience function to check integer boundaries.
-	 * Checks if a value x is in the range [begin,end].
-	 * Returns x if it is in range, throws an exception otherwise.
-	 */
-	static int checkRange(int value, int begin, int end) {
-		if ((value < begin) || (value > end)) {
-			throw new IllegalArgumentException("Value [" + value + "] not in range [" + 0 + ", " + end + "]");
-		}// if
-
-		return value;
-	}// checkRange
-
-	/*
-	 * Converts a 4-element integer array into dotted decimal format.
-	 */
-	static String format(int[] arry, char symbol) {
-		StringBuilder buf = new StringBuilder();
-		int iMax = arry.length - 1;
-
-		for (int i = 0; i <= iMax; i++) {
-			buf.append(arry[i]);
-
-			if (i != iMax) {
-				buf.append(symbol);
-			}// if
-		}// for
-
-		return buf.toString();
-		// Arrays.stream(arry).mapToObj(Integer::toString).collect(Collectors.joining(symbol));
-	}// format(int[] arry)
 }
