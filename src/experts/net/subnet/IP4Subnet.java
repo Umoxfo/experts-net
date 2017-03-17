@@ -31,7 +31,7 @@ package experts.net.subnet;
  * @version 2.0.6-dev
  * @since 2.0.6
  */
-public final class IP4Subnet implements SubnetInfo {
+public final class IP4Subnet extends SubnetInfo {
 	/* Mask to convert unsigned int to a long (i.e. keep 32 bits) */
 	private static final long UNSIGNED_INT_MASK = 0x0FFFF_FFFFL;
 	private static final int NBITS = 32;
@@ -101,10 +101,24 @@ public final class IP4Subnet implements SubnetInfo {
 		return broadcast & UNSIGNED_INT_MASK;
 	}//broadcastLong
 
+	/*
+	 * Creates the minimum address in the network to which the address belongs.
+	 *
+	 * inclusiveHostCount
+	 *  - true the network address
+	 *  - false the first address of the available as host addresses or 0 if no corresponding address.
+	 */
 	private int low() {
 		return inclusiveHostCount ? network : (broadcastLong() - networkLong()) > 1 ? network + 1 : 0;
 	}//low
 
+	/*
+	 * Creates the minimum address in the network to which the address belongs.
+	 *
+	 * inclusiveHostCount
+	 *  - true the network address
+	 *  - false the last address of the available as host addresses or 0 if no corresponding address.
+	 */
 	private int high() {
 		return inclusiveHostCount ? broadcast : (broadcastLong() - networkLong()) > 1 ? broadcast - 1 : 0;
 	}//high
@@ -141,8 +155,8 @@ public final class IP4Subnet implements SubnetInfo {
 	 * range of usable endpoint addresses for this subnet. This excludes the
 	 * network and broadcast addresses.
 	 *
-	 * @param address A dot-delimited IPv4 address, e.g. "192.168.0.1"
-	 * @return True if in range, false otherwise
+	 * @param address a dot-delimited IPv4 address, e.g. "192.168.0.1"
+	 * @return true if in range, false otherwise
 	 */
 	@Override
 	public boolean isInRange(String address) {
@@ -154,8 +168,8 @@ public final class IP4Subnet implements SubnetInfo {
 	 * range of usable endpoint addresses for this subnet. This excludes the
 	 * network and broadcast addresses.
 	 *
-	 * @param address An IPv4 address in binary
-	 * @return True if in range, false otherwise
+	 * @param address an IPv4 address in binary
+	 * @return true if in range, false otherwise
 	 */
 	@Override
 	public boolean isInRange(int address) {
@@ -191,7 +205,10 @@ public final class IP4Subnet implements SubnetInfo {
 	}//getBroadcastAddressString
 
 	/**
-	 *  Returns a single xxx.xxx.xxx.xxx/yy format by counting the 1-bit population in the mask address.
+	 * Returns a CIDR notation, in which the address is followed by a slash character (/) and
+	 * the count of counting the 1-bit population in the subnet mask.
+	 *
+	 * @return the CIDR notation of the address, e.g. "192.168.0.1/24"
 	 */
 	@Override
 	public String getCIDRNotation() {
@@ -220,13 +237,8 @@ public final class IP4Subnet implements SubnetInfo {
 		return format(high());
 	}//getHighAddress
 
-	@Override
-	public String getAddressCount() {
-		return Long.toString(getAddressCountLong());
-	}//getAddressCount
-
 	/**
-	 * Get the count of available addresses.
+	 * Returns the count of available addresses.
 	 * Will be zero for CIDR/31 and CIDR/32 if the inclusive flag is false.
 	 *
 	 * @return the count of addresses, may be zero.

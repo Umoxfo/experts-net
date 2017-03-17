@@ -30,7 +30,7 @@ import experts.net.ip6.IP6Utils;
  * @version 2.0.6-dev
  * @since 2.0.6
  */
-public final class IP6Subnet implements SubnetInfo {
+public final class IP6Subnet extends SubnetInfo {
 	private static final int NBITS = 128;
 
 	private final short[] ip6Address;
@@ -46,16 +46,9 @@ public final class IP6Subnet implements SubnetInfo {
 		cidr = SubnetUtils.checkRange(Integer.parseInt(tmp[1]), 0, NBITS);
 	}//IP6Subnet
 
-	@Override
-	public boolean isInclusiveHostCount() {
-		return false;
-	}//isInclusiveHostCount
-
-	@Override
-	public void setInclusiveHostCount(boolean inclusiveHostCount) {}
-
 	/*
-	 * Creates lowest address in an address.
+	 * Creates the minimum address in the network
+	 * to which the address belongs, it has all-zero in the host fields.
 	 */
 	private short[] low() {
 		short[] addr = new short[8];
@@ -72,7 +65,8 @@ public final class IP6Subnet implements SubnetInfo {
 	}//low
 
 	/*
-	 * Creates highest address in an address.
+	 * Creates the maximum address in the network
+	 * to which the address belongs, it has all-ones in the host fields.
 	 */
 	private short[] high() {
 		short[] highAddr = new short[8];
@@ -109,7 +103,7 @@ public final class IP6Subnet implements SubnetInfo {
 	/*
 	 * Converts a packed integer address into dotted decimal format
 	 */
-	private String format(short[] val) {
+	private static String format(short[] val) {
 		ArrayList<Short> al = new ArrayList<>(val.length);
 		for (short i : val) {
 			al.add(i);
@@ -120,29 +114,24 @@ public final class IP6Subnet implements SubnetInfo {
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
-	 * range of usable endpoint addresses for this subnet. This excludes the
-	 * network and broadcast addresses.
+	 * range of usable endpoint addresses for this subnet.
 	 *
-	 * @param address A colon-delimited IPv6 address, e.g. "2001:db8:0:0:0:ff00:42:8329"
-	 * @return True if in range, false otherwise
+	 * @param address a colon-delimited address, e.g. "2001:db8:0:0:0:ff00:42:8329"
+	 * @return true if in range, false otherwise
 	 */
 	@Override
 	public boolean isInRange(String address) {
 		return isInRange(toArray(address));
 	}// isInRange(String address)
 
-	@Override
-	public boolean isInRange(int address) {
-		return false;
-	}//isInRange(int address)
-
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
 	 * range of usable endpoint addresses for this subnet.
 	 *
-	 * @param address An IPv6 address in binary
-	 * @return True if in range, false otherwise
+	 * @param address an IPv6 address in binary
+	 * @return true if in range, false otherwise
 	 */
+	@Override
 	public boolean isInRange(short[] address) {
 		int prefixSize = cidr / 16;
 		short[] lowAddress = low();
@@ -165,33 +154,33 @@ public final class IP6Subnet implements SubnetInfo {
 		return (addr >= lowAddr) && (addr <= highAddr);
 	}//isInRange(short[] address)
 
+	/**
+	 * Gets the <code>address</code>, that is a colon 16-bit delimited hexadecimal format
+	 * for IPv6 addresses, e.g. "2001:db8::ff00:42:8329".
+	 *
+	 * @return a string of the IP address
+	 */
 	@Override
 	public String getAddresss() {
 		return format(ip6Address);
 	}// getAddress
 
+	/**
+	 * Gets the CIDR suffixes, the count of consecutive 1-bit in the subnet mask.
+	 * The IPv6 address is between 0 and 128, but it is actually less than 64.
+	 *
+	 * @return the CIDR suffixes of the address in an integer.
+	 */
 	@Override
 	public int getCIDR() {
 		return cidr;
 	}//getCIDR
 
-	@Override
-	public String getNetmask() {
-		return null;
-	}//getNetmask
-
-	@Override
-	public String getNetworkAddress() {
-		return null;
-	}//getNetworkAddress
-
-	@Override
-	public String getBroadcastAddress() {
-		return null;
-	}//getBroadcastAddress
-
 	/**
-	 * Returns a single xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/yyy format by counting the 1-bit population in the mask address.
+	 * Returns an IPv6-CIDR notation, in which the address is followed by a slash character (/) and
+	 * the count of counting the 1-bit population in the subnet mask.
+	 *
+	 * @return the CIDR notation of the address, e.g. "2001:db8::ff00:42:8329/48"
 	 */
 	@Override
 	public String getCIDRNotation() {
@@ -199,9 +188,10 @@ public final class IP6Subnet implements SubnetInfo {
 	}//getCIDRNotation
 
 	/**
-	 * Returns the low address as a colon IP address.
+	 * Returns the low address as a colon-separated IP address.
 	 *
-	 * @return the IP address in colon format
+	 * @return the IP address in a colon 16-bit delimited hexadecimal format,
+	 * may be "::" if there is no valid address
 	 */
 	@Override
 	public String getLowAddress() {
@@ -209,9 +199,10 @@ public final class IP6Subnet implements SubnetInfo {
 	}//getLowAddress
 
 	/**
-	 * Returns the high address as a colon IP address.
+	 * Returns the high address as a colon-separated IP address.
 	 *
-	 * @return the IP address in colon format
+	 * @return the IP address in a colon 16-bit delimited hexadecimal format,
+	 * may be "::" if there is no valid address
 	 */
 	@Override
 	public String getHighAddress() {
@@ -219,25 +210,21 @@ public final class IP6Subnet implements SubnetInfo {
 	}//getHighAddress
 
 	/**
-	 * Gets the count of available addresses.
+	 * Returns the count of available addresses.
 	 *
-	 * @return the count of addresses, may be zero.
+	 * @return the count of addresses in a string, may be zero
 	 */
 	@Override
 	public String getAddressCount() {
 		return new BigInteger("2").pow(128 - cidr).toString();
 	}//getAddressCount
 
-	@Override
-	public long getAddressCountLong() {
-		return 0;
-	}//getAddressCountLong()
-
 	/**
 	 * Returns subnet summary information of the address,
-	 * which includes an IP address by CIDR-Notation, the first and last addresses of the network,
-	 * and the number of available addresses in the network which includes
-	 * the network and broadcast addresses if the inclusive flag is true.
+	 * which includes an IP address by CIDR-Notation, the first and
+	 * the last addresses of the network, and the number of available addresses
+	 * in the network which includes all-zero and all-ones in the host fields,
+	 * known as network or broadcast addresses.
 	 */
 	@Override
 	public String toString() {
