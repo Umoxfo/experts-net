@@ -46,6 +46,14 @@ public final class IP6Subnet implements SubnetInfo {
 		cidr = SubnetUtils.checkRange(Integer.parseInt(tmp[1]), 0, NBITS);
 	}//IP6Subnet
 
+	@Override
+	public boolean isInclusiveHostCount() {
+		return false;
+	}//isInclusiveHostCount
+
+	@Override
+	public void setInclusiveHostCount(boolean inclusiveHostCount) {}
+
 	/*
 	 * Creates lowest address in an address.
 	 */
@@ -61,7 +69,7 @@ public final class IP6Subnet implements SubnetInfo {
 		// Set the out of the network prefix bits.
 		addr[index] &= (0xffff >> (cidr % 16)) ^ 0xffff;
 		return addr;
-	}// low
+	}//low
 
 	/*
 	 * Creates highest address in an address.
@@ -84,7 +92,7 @@ public final class IP6Subnet implements SubnetInfo {
 		highAddr[index] |= 0xffff >> (cidr % 16);
 
 		return highAddr;
-	}// high
+	}//high
 
 	private static short[] toArray(String address) {
 		short[] ret = new short[8];
@@ -108,7 +116,7 @@ public final class IP6Subnet implements SubnetInfo {
 		}// for
 
 		return IP6Utils.buildIP6String(al);
-	}// format
+	}//format
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
@@ -121,7 +129,12 @@ public final class IP6Subnet implements SubnetInfo {
 	@Override
 	public boolean isInRange(String address) {
 		return isInRange(toArray(address));
-	}// isInRange
+	}// isInRange(String address)
+
+	@Override
+	public boolean isInRange(int address) {
+		return false;
+	}//isInRange(int address)
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
@@ -150,17 +163,32 @@ public final class IP6Subnet implements SubnetInfo {
 		int highAddr = highAddress[prefixSize] & 0xffff;
 
 		return (addr >= lowAddr) && (addr <= highAddr);
-	}// isInRange
+	}//isInRange(short[] address)
 
 	@Override
 	public String getAddresss() {
 		return format(ip6Address);
-	}// getAddressString
+	}// getAddress
 
 	@Override
 	public int getCIDR() {
 		return cidr;
-	}// getCIDRValue
+	}//getCIDR
+
+	@Override
+	public String getNetmask() {
+		return null;
+	}//getNetmask
+
+	@Override
+	public String getNetworkAddress() {
+		return null;
+	}//getNetworkAddress
+
+	@Override
+	public String getBroadcastAddress() {
+		return null;
+	}//getBroadcastAddress
 
 	/**
 	 * Returns a single xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx:xxxx/yyy format by counting the 1-bit population in the mask address.
@@ -168,7 +196,7 @@ public final class IP6Subnet implements SubnetInfo {
 	@Override
 	public String getCIDRNotation() {
 		return format(ip6Address) + "/" + cidr;
-	}// getCIDRNotation
+	}//getCIDRNotation
 
 	/**
 	 * Returns the low address as a colon IP address.
@@ -178,7 +206,7 @@ public final class IP6Subnet implements SubnetInfo {
 	@Override
 	public String getLowAddress() {
 		return format(low());
-	}// getLowAddress
+	}//getLowAddress
 
 	/**
 	 * Returns the high address as a colon IP address.
@@ -188,16 +216,22 @@ public final class IP6Subnet implements SubnetInfo {
 	@Override
 	public String getHighAddress() {
 		return format(high());
-	}// getHighAddress
+	}//getHighAddress
 
 	/**
 	 * Gets the count of available addresses.
 	 *
 	 * @return the count of addresses, may be zero.
 	 */
+	@Override
 	public String getAddressCount() {
 		return new BigInteger("2").pow(128 - cidr).toString();
-	}// getAddressCount
+	}//getAddressCount
+
+	@Override
+	public long getAddressCountLong() {
+		return 0;
+	}//getAddressCountLong()
 
 	/**
 	 * Returns subnet summary information of the address,
@@ -214,5 +248,5 @@ public final class IP6Subnet implements SubnetInfo {
 		.append("# Addresses:\t[").append(getAddressCount()).append("]\n");
 
 		return buf.toString();
-	}// toString
+	}//toString
 }

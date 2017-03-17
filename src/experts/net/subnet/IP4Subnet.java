@@ -79,7 +79,7 @@ public final class IP4Subnet implements SubnetInfo {
 	@Override
 	public boolean isInclusiveHostCount() {
 		return inclusiveHostCount;
-	}// isInclusiveHostCount
+	}//isInclusiveHostCount
 
 	/**
 	 * Set to <code>true</code> if you want the return value of {@link IP4Subnet#getAddressCount()}
@@ -90,24 +90,24 @@ public final class IP4Subnet implements SubnetInfo {
 	@Override
 	public void setInclusiveHostCount(boolean inclusiveHostCount) {
 		this.inclusiveHostCount = inclusiveHostCount;
-	}// setInclusiveHostCount
+	}//setInclusiveHostCount
 
 	// long versions of the values (as unsigned int) which are more suitable for range checking
 	private long networkLong() {
 		return network & UNSIGNED_INT_MASK;
-	}// networkLong
+	}//networkLong
 
 	private long broadcastLong() {
 		return broadcast & UNSIGNED_INT_MASK;
-	}// broadcastLong
+	}//broadcastLong
 
 	private int low() {
 		return inclusiveHostCount ? network : (broadcastLong() - networkLong()) > 1 ? network + 1 : 0;
-	}// low
+	}//low
 
 	private int high() {
 		return inclusiveHostCount ? broadcast : (broadcastLong() - networkLong()) > 1 ? broadcast - 1 : 0;
-	}// high
+	}//high
 
 	/*
 	 * Converts a packed integer address into dotted decimal format
@@ -147,7 +147,7 @@ public final class IP4Subnet implements SubnetInfo {
 	@Override
 	public boolean isInRange(String address) {
 		return isInRange(SubnetUtils.toInteger(address));
-	}// isInRange
+	}//isInRange
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
@@ -163,7 +163,7 @@ public final class IP4Subnet implements SubnetInfo {
 		long netLong = networkLong();
 		long broadLong = broadcastLong();
 		return (addLong > netLong) && (addLong < broadLong);
-	}// isInRange
+	}//isInRange
 
 	@Override
 	public String getAddresss() {
@@ -207,7 +207,7 @@ public final class IP4Subnet implements SubnetInfo {
 	@Override
 	public String getLowAddress() {
 		return format(low());
-	}// getLowAddress
+	}//getLowAddress
 
 	/**
 	 * Return the high address as a dotted IP address.
@@ -218,7 +218,12 @@ public final class IP4Subnet implements SubnetInfo {
 	@Override
 	public String getHighAddress() {
 		return format(high());
-	}// getHighAddress
+	}//getHighAddress
+
+	@Override
+	public String getAddressCount() {
+		return Long.toString(getAddressCountLong());
+	}//getAddressCount
 
 	/**
 	 * Get the count of available addresses.
@@ -232,7 +237,7 @@ public final class IP4Subnet implements SubnetInfo {
 		long n = networkLong();
 		long count = (b - n) + (inclusiveHostCount ? 1 : -1);
 		return count < 0 ? 0 : count;
-	}// getAddressCountLong
+	}//getAddressCountLong
 
 	/**
 	 * Returns subnet summary information of the address,
@@ -253,13 +258,5 @@ public final class IP4Subnet implements SubnetInfo {
 		.append("# Addresses:\t[").append(getAddressCountLong()).append("]\n");
 
 		return buf.toString();
-	}// toString
-
-	/* (非 Javadoc)
-	 * @see experts.net.subnet.SubnetInfo#getAddressCount()
-	 */
-	@Override
-	public String getAddressCount() {
-		return null;
-	}
+	}//toString
 }
