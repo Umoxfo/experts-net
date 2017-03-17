@@ -117,7 +117,7 @@ public final class IP6Utils {
 		// Convert to the 4-digit hexadecimal string that is separated with ":"
 		String address = list.stream().map(i -> Integer.toHexString(i & 0xffff)).collect(Collectors.joining(":"));
 
-		 The longest run of consecutive 0 fields MUST be shortened based on RFC 5952.
+		// The longest run of consecutive 0 fields MUST be shortened based on RFC 5952.
 		String regex = "";
 		int maxLength = 0;
 

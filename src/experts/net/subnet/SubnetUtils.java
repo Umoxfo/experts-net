@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 /**
  * A class that performs some subnet calculations given a network address and a subnet mask.
  *
- * @see "https://tools.ietf.org/html/rfc4632"
  * @author Apache Commons Net
  * @author Makoto Sakaguchi
  * @version 2.0.6-dev
@@ -87,7 +86,7 @@ public final class SubnetUtils {
 	}// checkRange
 
 	/*
-	 * Converts a 4-element integer array into dotted decimal format.
+	 * Converts an integer array into a decimal format separated by symbol.
 	 */
 	static String format(int[] arry, char symbol) {
 		StringBuilder buf = new StringBuilder();
@@ -103,7 +102,7 @@ public final class SubnetUtils {
 
 		return buf.toString();
 		// Arrays.stream(arry).mapToObj(Integer::toString).collect(Collectors.joining(symbol));
-	}// format(int[] arry)
+	}//format
 
 	/**
 	 * Constructor that takes a CIDR-notation string that both IPv4 and IPv6 allow,

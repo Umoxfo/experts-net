@@ -44,7 +44,7 @@ public final class IP6Subnet implements SubnetInfo {
 
 		ip6Address = toArray(tmp[0]);
 		cidr = SubnetUtils.checkRange(Integer.parseInt(tmp[1]), 0, NBITS);
-	}// IP6
+	}//IP6Subnet
 
 	/*
 	 * Creates lowest address in an address.
