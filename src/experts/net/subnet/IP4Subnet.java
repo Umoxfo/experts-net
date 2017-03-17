@@ -76,6 +76,7 @@ public final class IP4Subnet implements SubnetInfo {
 	 *
 	 * @return true if the host count includes the network and broadcast addresses
 	 */
+	@Override
 	public boolean isInclusiveHostCount() {
 		return inclusiveHostCount;
 	}// isInclusiveHostCount
@@ -86,6 +87,7 @@ public final class IP4Subnet implements SubnetInfo {
 	 *
 	 * @param inclusiveHostCount true if network and broadcast addresses are to be included
 	 */
+	@Override
 	public void setInclusiveHostCount(boolean inclusiveHostCount) {
 		this.inclusiveHostCount = inclusiveHostCount;
 	}// setInclusiveHostCount
@@ -155,11 +157,12 @@ public final class IP4Subnet implements SubnetInfo {
 	 * @param address An IPv4 address in binary
 	 * @return True if in range, false otherwise
 	 */
+	@Override
 	public boolean isInRange(int address) {
 		long addLong = address & UNSIGNED_INT_MASK;
-		long lowLong = low() & UNSIGNED_INT_MASK;
-		long highLong = high() & UNSIGNED_INT_MASK;
-		return (addLong >= lowLong) && (addLong <= highLong);
+		long netLong = networkLong();
+		long broadLong = broadcastLong();
+		return (addLong > netLong) && (addLong < broadLong);
 	}// isInRange
 
 	@Override
@@ -172,14 +175,17 @@ public final class IP4Subnet implements SubnetInfo {
 		return cidr;
 	}//getCIDRValue
 
+	@Override
 	public String getNetmask() {
 		return format(netmask);
 	}//getNetmaskString
 
+	@Override
 	public String getNetworkAddress() {
 		return format(network);
 	}//getNetworkAddressString
 
+	@Override
 	public String getBroadcastAddress() {
 		return format(broadcast);
 	}//getBroadcastAddressString
@@ -220,6 +226,7 @@ public final class IP4Subnet implements SubnetInfo {
 	 *
 	 * @return the count of addresses, may be zero.
 	 */
+	@Override
 	public long getAddressCountLong() {
 		long b = broadcastLong();
 		long n = networkLong();
@@ -247,4 +254,12 @@ public final class IP4Subnet implements SubnetInfo {
 
 		return buf.toString();
 	}// toString
+
+	/* (非 Javadoc)
+	 * @see experts.net.subnet.SubnetInfo#getAddressCount()
+	 */
+	@Override
+	public String getAddressCount() {
+		return null;
+	}
 }

@@ -149,11 +149,7 @@ public final class IP6Subnet implements SubnetInfo {
 		int lowAddr = lowAddress[prefixSize] & 0xffff;
 		int highAddr = highAddress[prefixSize] & 0xffff;
 
-		if ((addr < lowAddr) || (addr > highAddr)) {
-			return false;
-		}//if
-
-		return true;
+		return (addr >= lowAddr) && (addr <= highAddr);
 	}// isInRange
 
 	@Override
