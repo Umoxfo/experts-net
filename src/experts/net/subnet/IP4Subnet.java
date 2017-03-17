@@ -68,7 +68,7 @@ public final class IP4Subnet implements SubnetInfo {
 
 		/* Calculate broadcast address */
 		broadcast = network | ~netmask;
-	}//IP4Subnet(String cidrNotation)
+	}//IP4Subnet
 
 	/**
 	 * Returns <code>true</code> if the return value of {@link IP4Subnet#getAddressCount()}
@@ -130,9 +130,9 @@ public final class IP4Subnet implements SubnetInfo {
 	 *             the mask does not match n.n.n.n which n={0, 128, 192, 224, 240, 248, 252, 254, 255}
 	 *             and after the 0-field, it is all zeros.
 	 */
-	public static IP4Subnet getBySubnet(String address, String mask) {
+	public static IP4Subnet getByMask(String address, String mask) {
 		return new IP4Subnet(address  + "/" + SubnetUtils.toCIDR(mask));
-	}//getBySubnet
+	}//getByMask
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
