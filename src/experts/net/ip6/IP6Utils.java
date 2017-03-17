@@ -17,8 +17,8 @@
  */
 package experts.net.ip6;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,12 +30,8 @@ import java.util.stream.Stream;
  * @version 2.0.6-dev
  */
 public final class IP6Utils {
-	/*
-	 * Converts a short list to a string list.
-	 */
-	private static List<String> toHexStringList(List<Short> list) {
-		return list.stream().map(i -> Integer.toHexString(i & 0xffff)).collect(Collectors.toList());
-	}// toHexStringArryList
+	private static final short ZERO = 0;
+	//private static final String ZERO_FIELDS = "(0\\:){2,}";
 
 	/**
 	 * Converts String array to List (Short).
@@ -85,12 +81,13 @@ public final class IP6Utils {
 		int toIndex = 0;
 		int maxCnt = 0;
 
-		// The longest run of consecutive 16-bit 0 fields MUST be shortened.
-		int index = list.indexOf(0);
-		int lastIndex = list.lastIndexOf(0);
+		/* The longest run of consecutive 16-bit 0 fields MUST be shortened based on RFC5952. */
+		// Find the longest zero fields
+		int index = list.indexOf(ZERO);
+		int lastIndex = list.lastIndexOf(ZERO);
 		while (index < lastIndex) {
-			int j = index + 1;
-			while ((j <= lastIndex) && (list.get(j) == 0)) {
+			int j = index + (list.subList(index + 1, lastIndex).indexOf(ZERO) + 1);
+			while ((j <= lastIndex) && (list.get(j) == ZERO)) {
 				j++;
 			} // while
 
@@ -101,17 +98,13 @@ public final class IP6Utils {
 				maxCnt = cnt;
 			} // if
 
-			if (j >= lastIndex) {
-				break;
-			}
-
-			index = list.subList(++j, lastIndex).indexOf(0) + j;
+			index =  j + 1;
 		} // while
 
-		// The 4-digit hexadecimal each string
-		LinkedList<String> buf = new LinkedList<>(toHexStringList(list));
+		// Convert to a list of the 4-digit hexadecimal each string
+		ArrayList<String> buf = new ArrayList<>(list.stream().map(i -> Integer.toHexString(i & 0xffff)).collect(Collectors.toList()));
 
-		// Removing all leading zeroes. (RFC 5952)
+		// Remove all leading zeroes
 		if (1 < maxCnt) {
 			buf.subList(fromIndex, toIndex).clear();
 			buf.add(fromIndex, "");
@@ -119,5 +112,29 @@ public final class IP6Utils {
 
 		// Separated the array list with a colon ":"
 		return String.join(":", buf);
+
+		/*
+		// Convert to the 4-digit hexadecimal string that is separated with ":"
+		String address = list.stream().map(i -> Integer.toHexString(i & 0xffff)).collect(Collectors.joining(":"));
+
+		 The longest run of consecutive 0 fields MUST be shortened based on RFC 5952.
+		String regex = "";
+		int maxLength = 0;
+
+		// Find the longest zero fields
+		Matcher match = Pattern.compile(ZERO_FIELDS).matcher(address);
+		while (match.find()) {
+			String reg = match.group();
+			int len = reg.length();
+
+			if (maxLength < len) {
+				regex = reg;
+				maxLength = len;
+			}//if
+		}//while
+
+		// Remove all leading zeroes
+		return address.replace(regex, ":");
+		 */
 	}// formatIP6String
 }
