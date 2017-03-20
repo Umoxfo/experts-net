@@ -37,7 +37,7 @@ import org.apache.commons.net.ntp.TimeInfo;
  * @author Makoto Sakaguchi
  * @version 2.0.6-dev
  */
-public class ULUA extends IP6 {
+public final class ULUA extends IP6 {
 	private final int GLOBAL_ID_LENGTH = 3;
 	private final String GLOBAL_ID_PREFIX_FORMAT = "fd";
 	private final byte GLOBAL_ID_PREFIX = (byte) 0xfd;
@@ -52,22 +52,22 @@ public class ULUA extends IP6 {
 	/**
 	 * Constructor that takes address of the machine.
 	 *
-	 * @param address
-	 *            a MAC address of the machine that creates Unique Local IPv6 Unicast Addresses
-	 * @throws SocketException
-	 * @throws UnknownHostException
-	 * @throws IOException
+	 * @param address MAC address of the machine that creates Unique Local IPv6 Unicast Addresses
+	 * @throws SocketException If the socket could not be opened which it might be not available any ports.
+	 * @throws UnknownHostException If the host could not be found.
+	 * @throws IOException If an error occurs while retrieving the time.
 	 */
 	public ULUA(byte[] address) throws SocketException, UnknownHostException, IOException {
 		createInterfaceIDByEUI64(address);
 		subnetID = Arrays.asList(DEFAULT_SUBNT_ID);
 		generateGlobalID(obtainNTPTime(NTP_SERVER_ADDRESS));
-	}// ULUA(String address)
+	}//ULUA
 
 	/**
-	 * @param gID
-	 *            a global ID field of the ULUA, the prefix (0xfd00::/8) and Global ID
-	 * @see experts.net.ip6.IP6Utils#setGlobalID(java.lang.String)
+	 * Sets a global ID that is the hexadecimal maximum 12 digits.
+	 *
+	 * @param gID a global ID of the ULUA, the prefix (0xfd00::/8) and Global ID
+	 * @see experts.net.ip6.IP6#setGlobalID(java.lang.String)
 	 */
 	@Override
 	public void setGlobalID(String gID) {
@@ -90,22 +90,24 @@ public class ULUA extends IP6 {
 		 * (byte) (tmp.get(0) & 0xff00) != GLOBAL_ID_PREFIX ? throw new IllegalArgumentException("ULUA must be 0xfd00::/8.");
 		 */
 		globalID = IP6Utils.toShortList(tmp);
-	}// setGlobalID
+	}//setGlobalID
 
 	/**
-	 * @param Subnet
-	 *            ID of the ULUA
-	 * @see experts.net.ip6.IP6Utils#setSubnetID(int)
+	 * Sets a subnet ID that is the hexadecimal maximum four digits.
+	 *
+	 * @param sID a Subnet ID of the ULUA
+	 * @see experts.net.ip6.IP6#setSubnetID(java.lang.String)
 	 */
 	@Override
 	public void setSubnetID(String sID) {
 		subnetID = Arrays.asList((short) Integer.parseInt(sID, 16));
-	}// setSubnetID
+	}//setSubnetID
 
 	/**
-	 * @param Interface
-	 *            ID of the ULUA
-	 * @see experts.net.ip6.IP6Utils#setInterfaceID(java.lang.String)
+	 * Sets a interface ID that is the hexadecimal maximum 16 digits.
+	 *
+	 * @param iID an Interface ID of the ULUA
+	 * @see experts.net.ip6.IP6#interfaceID
 	 */
 	@Override
 	public void setInterfaceID(String iID) {
@@ -117,19 +119,31 @@ public class ULUA extends IP6 {
 		} // if
 
 		interfaceID = IP6Utils.toShortList(tmp);
-	}// setInterfaceID
+	}//setInterfaceID
+
+	/*
+	 * Converts ByteBuffer to a list of the Short type.
+	 */
+	private List<Short> toList(ByteBuffer buf) {
+		int lim = buf.limit() / 2;
+		List<Short> tmp = new ArrayList<>(lim);
+
+		buf.rewind();
+		for (int i = 0; i < lim; i++) {
+			tmp.add(buf.getShort());
+		} // for
+
+		return tmp;
+	}//toList
 
 	/**
-	 * Obtain NTP time stamp value
+	 * Obtains NTP time stamp value
 	 *
-	 * @param address
-	 *            NTP server address
+	 * @param address a NTP server address
 	 * @return the current time of day in 64-bit NTP format
-	 * @throws SocketException
-	 *             If the socket could not be opened which it might be not available any ports.
-	 * @throws UnknownHostException
-	 *             If the host could not be found.
-	 * @throws IOException
+	 * @throws SocketException If the socket could not be opened which it might be not available any ports.
+	 * @throws UnknownHostException If the host could not be found.
+	 * @throws IOException If an error occurs while retrieving the time.
 	 */
 	public static long obtainNTPTime(String address) throws SocketException, UnknownHostException, IOException {
 		NTPUDPClient client = new NTPUDPClient();
@@ -144,15 +158,14 @@ public class ULUA extends IP6 {
 		time.computeDetails();
 
 		return time.getMessage().getTransmitTimeStamp().ntpValue();
-	}// obtainNTPTime
+	}//obtainNTPTime
 
 	/**
-	 * Generate Global ID according to RFC 4193 Section 3.2.2.
+	 * Generates a global ID according to RFC 4193 Section 3.2.2.
 	 *
-	 * @param timeStamp
-	 *            64-bit NTP format
+	 * @param timeStamp a time stamp in 64-bit NTP format
 	 */
-	public final void generateGlobalID(long timeStamp) {
+	public void generateGlobalID(long timeStamp) {
 		ByteBuffer buf = ByteBuffer.allocate(16);
 
 		buf.putLong(timeStamp);
@@ -164,15 +177,14 @@ public class ULUA extends IP6 {
 		buf.put(GLOBAL_ID_PREFIX).put(digest, 15, 5);
 
 		globalID = toList(buf);
-	}// generateGlobalID
+	}//generateGlobalID
 
 	/**
-	 * Create Interface ID by the Modified EUI-64 format (RFC 4291)
+	 * Creates Interface ID by the Modified EUI-64 format (RFC 4291)
 	 *
-	 * @param macAddr
-	 *            MAC (NIC) address
+	 * @param macAddr MAC (NIC) address of the network interface for setting the generated address
 	 */
-	public final void createInterfaceIDByEUI64(byte[] macAddr) {
+	public void createInterfaceIDByEUI64(byte[] macAddr) {
 		ByteBuffer buf = ByteBuffer.allocate(INTERFACE_ID_LENGTH);
 
 		buf.put(macAddr, 0, 3).putShort(ADDITIONAL_VALUES).put(macAddr, 3, 3);
@@ -180,24 +192,5 @@ public class ULUA extends IP6 {
 		buf.put(0, (byte) (buf.get(0) ^ 0x02));
 
 		interfaceID = toList(buf);
-	}// createInterfaceIDByEUI64
-
-	/**
-	 * Convert ByteBuffer to Short List
-	 *
-	 * @param buf
-	 *            ByteBuffer
-	 * @return Short List
-	 */
-	private static List<Short> toList(ByteBuffer buf) {
-		int lim = buf.limit() / 2;
-		List<Short> tmp = new ArrayList<>(lim);
-
-		buf.rewind();
-		for (int i = 0; i < lim; i++) {
-			tmp.add(buf.getShort());
-		} // for
-
-		return tmp;
-	}// toList
+	}//createInterfaceIDByEUI64
 }

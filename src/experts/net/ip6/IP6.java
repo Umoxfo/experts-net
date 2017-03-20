@@ -21,14 +21,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author Makoto Sakaguchi
+ * Convenience container for IPv6 address summary information.
  *
+ * @author Makoto Sakaguchi
  * @version 2.0.6-dev
  * @since 2.0.6
  */
 public abstract class IP6 {
 	/**
-	 * 48 bits devited by 16bits of each for Unique Local IPv6 Unicast Addresses (ULUA) or 64 bits or less for Global Unicast Address (GUA).
+	 * 48 bits for Unique Local IPv6 Unicast Addresses (ULUA) or 64 bits or less for Global Unicast Address (GUA).
 	 */
 	protected List<Short> globalID;
 
@@ -49,28 +50,28 @@ public abstract class IP6 {
 	 */
 	public List<Short> getGlobalID() {
 		return globalID;
-	}// getGlobalID
+	}//getGlobalID
 
 	/**
 	 * Sets the Global ID of IPv6 address.
 	 *
-	 * @param globalID
+	 * @param globalID a global ID of an IP address
 	 */
 	abstract public void setGlobalID(String globalID);
 
 	/**
-	 * Returns the Subnet ID represented by short type list.
+	 * Returns the Subnet ID.
 	 *
 	 * @return list of the Subnet ID
 	 */
 	public List<Short> getSubnetID() {
 		return subnetID;
-	}// getSubnetID
+	}//getSubnetID
 
 	/**
 	 * Sets the Subnet ID of IPv6 address.
 	 *
-	 * @param subntID
+	 * @param subnetID a subnet ID of an IP address
 	 */
 	abstract public void setSubnetID(String subnetID);
 
@@ -81,19 +82,19 @@ public abstract class IP6 {
 	 */
 	public List<Short> getInterfaceID() {
 		return interfaceID;
-	}// getInterfaceID
+	}//getInterfaceID
 
 	/**
 	 * Sets the Interface ID of IPv6 address.
 	 *
-	 * @param interfaceID
+	 * @param interfaceID an interface ID of an IP address
 	 */
 	abstract public void setInterfaceID(String interfaceID);
 
 	/**
 	 * Build the IPv6 address.
 	 *
-	 * @return a string representation of the IPv6 address
+	 * @return the IPv6 address in the colon 16-bit delimited hexadecimal format
 	 */
 	@Override
 	public String toString() {
@@ -110,5 +111,5 @@ public abstract class IP6 {
 
 		// Replace consecutive sections of zeros to a double colon (::).
 		return IP6Utils.buildIP6String(ipv6);
-	}// toString
+	}//toString
 }

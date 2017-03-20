@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * IPV6Utils
+ * A class that helps to generate IPv6 address.
  *
  * @author Makoto Sakaguchi
  * @version 2.0.6-dev
@@ -47,7 +47,7 @@ public final class IP6Utils {
 		// Check values
 		if (arryStream.map(i -> Integer.parseInt(i, 16)).anyMatch(i -> i > 0xffff)) {
 			throw new IllegalArgumentException("Each group which is separated by colons must be within 16 bits.");
-		} // if
+		}//if
 
 		// Convert to the short list
 		return arryStream.map(i -> (short) Integer.parseInt(i, 16)).collect(Collectors.toList());
@@ -68,13 +68,13 @@ public final class IP6Utils {
 		 * });
 		 * return buf;
 		 */
-	}// toHexIntList
+	}//toShortList
 
 	/**
 	 * Consecutive sections of zeroes are replaced with a double colon (::).
 	 *
-	 * @param list
-	 * @return String of an IPv6 address
+	 * @param list a list of IP address
+	 * @return an IPv6 address in the colon 16-bit delimited hexadecimal format
 	 */
 	public static String buildIP6String(List<Short> list) {
 		int fromIndex = 0;
@@ -89,7 +89,7 @@ public final class IP6Utils {
 			int j = index + (list.subList(index + 1, lastIndex).indexOf(ZERO) + 1);
 			while ((j <= lastIndex) && (list.get(j) == ZERO)) {
 				j++;
-			} // while
+			}//while
 
 			int cnt = j - index;
 			if (maxCnt < cnt) {
@@ -99,7 +99,7 @@ public final class IP6Utils {
 			} // if
 
 			index =  j + 1;
-		} // while
+		}//while
 
 		// Convert to a list of the 4-digit hexadecimal each string
 		ArrayList<String> buf = new ArrayList<>(list.stream().map(i -> Integer.toHexString(i & 0xffff)).collect(Collectors.toList()));
@@ -108,7 +108,7 @@ public final class IP6Utils {
 		if (1 < maxCnt) {
 			buf.subList(fromIndex, toIndex).clear();
 			buf.add(fromIndex, "");
-		} // if
+		}//if
 
 		// Separated the array list with a colon ":"
 		return String.join(":", buf);
