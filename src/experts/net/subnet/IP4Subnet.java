@@ -165,7 +165,7 @@ public final class IP4Subnet extends SubnetInfo {
 	}//isInRange
 
 	@Override
-	public String getAddresss() {
+	public String getAddress() {
 		return SubnetUtils.format(address, '.');
 	}//getAddressString
 

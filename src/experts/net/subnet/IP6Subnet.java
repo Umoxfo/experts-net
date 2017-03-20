@@ -93,7 +93,7 @@ public final class IP6Subnet extends SubnetInfo {
 	private static short[] toShortArray(byte[] address) {
 		short[] ret = new short[8];
 
-		for (int i = 0, j = 0; i < 16; i++) {
+		for (int i = 0, j = 0; i < 8; i++) {
 			ret[i] = (short) ((address[j] << 8) + (address[j + 1] & 0xff));
 			j += 2;
 		}//for
@@ -158,11 +158,11 @@ public final class IP6Subnet extends SubnetInfo {
 		}//for
 
 		//The host identifier is in range between the lowest and the hightest addresses
-		prefixSize++;
 		int addr = address[prefixSize] & 0xffff;
 		int lowAddr = lowAddress[prefixSize] & 0xffff;
 		int highAddr = highAddress[prefixSize] & 0xffff;
 
+		System.out.println(Integer.toHexString(addr));
 		return (addr >= lowAddr) && (addr <= highAddr);
 	}//isInRange(short[] address)
 
@@ -173,7 +173,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * @return a string of the IP address
 	 */
 	@Override
-	public String getAddresss() {
+	public String getAddress() {
 		return format(ip6Address);
 	}// getAddress
 

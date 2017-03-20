@@ -60,7 +60,7 @@ public final class ULUA extends IP6 {
 	public ULUA(byte[] address) throws SocketException, UnknownHostException, IOException {
 		createInterfaceIDByEUI64(address);
 		subnetID = Arrays.asList(DEFAULT_SUBNT_ID);
-		generateGlobalID(obtainNTPTime(NTP_SERVER_ADDRESS));
+		generateGlobalID(getNTPTime(NTP_SERVER_ADDRESS));
 	}//ULUA
 
 	/**
@@ -124,7 +124,7 @@ public final class ULUA extends IP6 {
 	/*
 	 * Converts ByteBuffer to a list of the Short type.
 	 */
-	private List<Short> toList(ByteBuffer buf) {
+	private static List<Short> toList(ByteBuffer buf) {
 		int lim = buf.limit() / 2;
 		List<Short> tmp = new ArrayList<>(lim);
 
@@ -137,7 +137,7 @@ public final class ULUA extends IP6 {
 	}//toList
 
 	/**
-	 * Obtains NTP time stamp value
+	 * Returns NTP time stamp value
 	 *
 	 * @param address a NTP server address
 	 * @return the current time of day in 64-bit NTP format
@@ -145,7 +145,7 @@ public final class ULUA extends IP6 {
 	 * @throws UnknownHostException If the host could not be found.
 	 * @throws IOException If an error occurs while retrieving the time.
 	 */
-	public static long obtainNTPTime(String address) throws SocketException, UnknownHostException, IOException {
+	public static long getNTPTime(String address) throws SocketException, UnknownHostException, IOException {
 		NTPUDPClient client = new NTPUDPClient();
 		client.setVersion(NtpV3Packet.VERSION_4);
 

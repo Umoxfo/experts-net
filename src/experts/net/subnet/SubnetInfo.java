@@ -90,7 +90,7 @@ public abstract class SubnetInfo {
 	 *
 	 * @return a string of the IP address
 	 */
-	public abstract String getAddresss();
+	public abstract String getAddress();
 
 	/**
 	 * Gets the CIDR suffixes, the count of consecutive 1 bits in the subnet mask.
