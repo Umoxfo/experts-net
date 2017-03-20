@@ -53,18 +53,16 @@ public final class IP4Subnet extends SubnetInfo {
 	 *             if the parameter is invalid,
 	 *             i.e. does not match n.n.n.n/m where n=1-3 decimal digits, m is in range 0-32
 	 */
-	IP4Subnet(String cidrNotation) {
-		String[] addr = cidrNotation.split("/");
+	IP4Subnet(byte[] address, int cidr) {
+		this.address = toInteger(address);
 
-		address = SubnetUtils.toInteger(addr[0]);
-
-		cidr = SubnetUtils.checkRange(Integer.parseInt(addr[1]), 0, NBITS);
+		this.cidr = cidr;
 
 		/* Create a binary netmask from the number of bits specification /x */
 		netmask = (int) (UNSIGNED_INT_MASK << (NBITS - cidr));
 
 		/* Calculate base network address */
-		network = address & netmask;
+		network = this.address & netmask;
 
 		/* Calculate broadcast address */
 		broadcast = network | ~netmask;
@@ -124,31 +122,18 @@ public final class IP4Subnet extends SubnetInfo {
 	}//high
 
 	/*
-	 * Converts a packed integer address into dotted decimal format
+	 * Converts a raw address in network byte order to a packed integer format
 	 */
-	private String format(int val) {
-		int ret[] = new int[4];
-		for (int i = 3; i >= 0; i--) {
-			ret[i] = (val >>> (8 * (3 - i))) & 0xff;
+	private static int toInteger(byte[] address) {
+		/* Check range of each element and convert to integer */
+		int addr = 0;
+		for (int i = 0; i < 4; i++) {
+			int n = SubnetUtils.checkRange((address[i] & 0xff), 0, 255);
+			addr |= (n & 0xff) << (8 * (3 - i));
 		}//for
 
-		return SubnetUtils.format(ret, '.');
-	}//format
-
-	/**
-	 * Creates a dotted decimal address and a dotted decimal mask.
-	 *
-	 * @param address An IP address, e.g. "192.168.0.1"
-	 * @param mask A dotted decimal netmask e.g. "255.255.0.0"
-	 * @throws IllegalArgumentException
-	 *             if the address or mask is invalid,
-	 *             i.e. the address does not match n.n.n.n where n=1-3 decimal digits, or
-	 *             the mask does not match n.n.n.n which n={0, 128, 192, 224, 240, 248, 252, 254, 255}
-	 *             and after the 0-field, it is all zeros.
-	 */
-	public static IP4Subnet getByMask(String address, String mask) {
-		return new IP4Subnet(address  + "/" + SubnetUtils.toCIDR(mask));
-	}//getByMask
+		return addr;
+	}//toInteger
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
@@ -181,7 +166,7 @@ public final class IP4Subnet extends SubnetInfo {
 
 	@Override
 	public String getAddresss() {
-		return format(address);
+		return SubnetUtils.format(address, '.');
 	}//getAddressString
 
 	@Override
@@ -191,17 +176,17 @@ public final class IP4Subnet extends SubnetInfo {
 
 	@Override
 	public String getNetmask() {
-		return format(netmask);
+		return SubnetUtils.format(netmask, '.');
 	}//getNetmaskString
 
 	@Override
 	public String getNetworkAddress() {
-		return format(network);
+		return SubnetUtils.format(network, '.');
 	}//getNetworkAddressString
 
 	@Override
 	public String getBroadcastAddress() {
-		return format(broadcast);
+		return SubnetUtils.format(broadcast, '.');
 	}//getBroadcastAddressString
 
 	/**
@@ -212,7 +197,7 @@ public final class IP4Subnet extends SubnetInfo {
 	 */
 	@Override
 	public String getCIDRNotation() {
-		return format(address) + "/" + cidr;
+		return SubnetUtils.format(address, '.') + "/" + cidr;
 	}//getCIDRNotation
 
 	/**
@@ -223,7 +208,7 @@ public final class IP4Subnet extends SubnetInfo {
 	 */
 	@Override
 	public String getLowAddress() {
-		return format(low());
+		return SubnetUtils.format(low(), '.');
 	}//getLowAddress
 
 	/**
@@ -234,7 +219,7 @@ public final class IP4Subnet extends SubnetInfo {
 	 */
 	@Override
 	public String getHighAddress() {
-		return format(high());
+		return SubnetUtils.format(high(), '.');
 	}//getHighAddress
 
 	/**

@@ -18,6 +18,8 @@
 package experts.net.subnet;
 
 import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import experts.net.ip6.IP6Utils;
@@ -31,19 +33,15 @@ import experts.net.ip6.IP6Utils;
  * @since 2.0.6
  */
 public final class IP6Subnet extends SubnetInfo {
-	private static final int NBITS = 128;
-
 	private final short[] ip6Address;
 	private final int cidr;
 
 	/*
-	 * Constructor that takes an IPv6 address with CIDR of a string, e.g. "2001:db8:0:0:0:ff00:42:8329/48"
+	 * Constructor that takes a raw IPv6 address and CIDR, e.g. "2001:db8:0:0:0:ff00:42:8329/48"
 	 */
-	IP6Subnet(String cidrNotation) {
-		String[] tmp = cidrNotation.split("/");
-
-		ip6Address = toArray(tmp[0]);
-		cidr = SubnetUtils.checkRange(Integer.parseInt(tmp[1]), 0, NBITS);
+	IP6Subnet(byte[] address, int cidr) {
+		ip6Address = toShortArray(address);
+		this.cidr = cidr;
 	}//IP6Subnet
 
 	/*
@@ -51,17 +49,18 @@ public final class IP6Subnet extends SubnetInfo {
 	 * to which the address belongs, it has all-zero in the host fields.
 	 */
 	private short[] low() {
-		short[] addr = new short[8];
+		short[] lowAddr = new short[8];
 
 		// Copy of the network prefix in the address
 		int index = cidr / 16;
 		for (int i = 0; i <= index; i++) {
-			addr[i] = ip6Address[i];
+			lowAddr[i] = ip6Address[i];
 		}// for
 
 		// Set the out of the network prefix bits.
-		addr[index] &= (0xffff >> (cidr % 16)) ^ 0xffff;
-		return addr;
+		lowAddr[index] &= (0xffff >> (cidr % 16)) ^ 0xffff;
+
+		return lowAddr;
 	}//low
 
 	/*
@@ -88,26 +87,32 @@ public final class IP6Subnet extends SubnetInfo {
 		return highAddr;
 	}//high
 
-	private static short[] toArray(String address) {
+	/*
+	 * Copies an address in the byte array to a short array.
+	 */
+	private static short[] toShortArray(byte[] address) {
 		short[] ret = new short[8];
-		String[] addrArry = address.split(":");
 
-		/* Initialize the internal fields from the supplied CIDR */
-		for (int i = 0; i < addrArry.length; i++) {
-			ret[i] = (short) Integer.parseInt(addrArry[i], 16);
-		} // for
+		for (int i = 0, j = 0; i < 16; i++) {
+			ret[i] = (short) ((address[j] << 8) + (address[j + 1] & 0xff));
+			j += 2;
+		}//for
 
 		return ret;
-	}//toArray
+	}//toShortArray
 
 	/*
 	 * Converts a packed integer address into dotted decimal format
 	 */
-	private static String format(short[] val) {
-		ArrayList<Short> al = new ArrayList<>(val.length);
-		for (short i : val) {
-			al.add(i);
-		}// for
+	private static String format(short[] address) {
+		ArrayList<Short> al = new ArrayList<>(8);
+		/*
+		 * short = byte + byte (w/o a signal bit)
+		 * short c = (short) ((array[index] << 8) + (array[index + 1] & 0xff));
+		 */
+		for (short e : address) {
+			al.add(e);
+		}//for
 
 		return IP6Utils.buildIP6String(al);
 	}//format
@@ -118,10 +123,17 @@ public final class IP6Subnet extends SubnetInfo {
 	 *
 	 * @param address a colon-delimited address, e.g. "2001:db8:0:0:0:ff00:42:8329"
 	 * @return true if in range, false otherwise
+	 * @throws UnknownHostException {@link InetAddress#getByName(String host)}
 	 */
 	@Override
-	public boolean isInRange(String address) {
-		return isInRange(toArray(address));
+	public boolean isInRange(String address) throws UnknownHostException {
+		byte[] addrArry = InetAddress.getByName(address).getAddress();
+
+		if (addrArry.length != 16) {
+			throw new IllegalArgumentException();
+		}//if
+
+		return isInRange(toShortArray(addrArry));
 	}// isInRange(String address)
 
 	/**

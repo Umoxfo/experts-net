@@ -17,6 +17,9 @@
  */
 package experts.net.subnet;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+
 /**
  * Convenience container for subnet summary information.
  *
@@ -52,8 +55,9 @@ public abstract class SubnetInfo {
 	 *  a colon-hexadecimal IPv6 address, e.g. "2001:db8::ff00:42:8329"
 	 *
 	 * @return True if in range, false otherwise
+	 * @throws UnknownHostException {@link InetAddress#getByName(String host)}
 	 */
-	public abstract boolean isInRange(String address);
+	public abstract boolean isInRange(String address) throws UnknownHostException;
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
