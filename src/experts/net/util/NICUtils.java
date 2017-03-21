@@ -26,8 +26,7 @@ import java.net.UnknownHostException;
 import org.apache.commons.codec.binary.Hex;
 
 /**
- * This class represents a hardware address, also MAC address,
- * assigned to the interface.
+ * This class represents a hardware address, also MAC address, assigned to the interface.
  *
  * @author Makoto Sakaguchi
  * @version 2.0.6-dev
@@ -51,7 +50,7 @@ public final class NICUtils {
 
 	/**
 	 * Returns the hardware address (usually MAC address) of the interface
-	 * which is from an IP address or a host name (e.g. "10.0.0.1" or "example").
+	 * which is from an IP address or a host name, e.g. "10.0.0.1" or "example.com".
 	 *
 	 * @param address the IP address or the host name
 	 * @return a byte array containing the address, or {@code null}
@@ -72,7 +71,7 @@ public final class NICUtils {
 
 	/**
 	 * Returns the hardware address (usually MAC address) of the interface,
-	 * which is from an IP address or a host name (e.g. "10.0.0.1" or "example"),
+	 * which is from an IP address or a host name; e.g. "10.0.0.1" or "example.com",
 	 * in the standard (IEEE 802) format for printing MAC-48 addresses in human-friendly form,
 	 * e.g. "01-23-45-67-89-AB".
 	 *

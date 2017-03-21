@@ -57,7 +57,7 @@ public abstract class IP6 {
 	 *
 	 * @param globalID a global ID of an IP address
 	 */
-	abstract public void setGlobalID(String globalID);
+	public abstract void setGlobalID(String globalID);
 
 	/**
 	 * Returns the Subnet ID.
@@ -73,7 +73,7 @@ public abstract class IP6 {
 	 *
 	 * @param subnetID a subnet ID of an IP address
 	 */
-	abstract public void setSubnetID(String subnetID);
+	public abstract void setSubnetID(String subnetID);
 
 	/**
 	 * Returns the Interface ID represented by short type list.
@@ -89,7 +89,7 @@ public abstract class IP6 {
 	 *
 	 * @param interfaceID an interface ID of an IP address
 	 */
-	abstract public void setInterfaceID(String interfaceID);
+	public abstract void setInterfaceID(String interfaceID);
 
 	/**
 	 * Build the IPv6 address.
