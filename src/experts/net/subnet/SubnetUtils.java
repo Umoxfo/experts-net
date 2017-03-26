@@ -29,7 +29,12 @@ import java.net.UnknownHostException;
 import java.util.regex.Pattern;
 
 /**
- * This class that performs some subnet calculations given a network address and a subnet mask.
+ * This class that performs some subnet calculations given IP address in CIDR notation.
+ *
+ * <p>For IPv4 address subnet, especially Classless Inter-Domain Routing (CIDR),
+ * refer to <a href="https://tools.ietf.org/html/rfc4632">RFC4632</a>.</p>
+ * <p>For IPv6 address subnet, refer to <a href="https://tools.ietf.org/html/rfc4291#section-2.3">
+ * Section 2.3 of RFC 4291</a>.</p>
  *
  * @author Apache Commons Net
  * @author Makoto Sakaguchi
@@ -115,7 +120,7 @@ public final class SubnetUtils {
 	}//format
 
 	/**
-	 * Creates a SubnetInfo based on the provided in CIDR notation of IPv4 or IPv6 address,
+	 * Creates subnet summary information based on the provided in CIDR notation of IPv4 or IPv6 address,
 	 * e.g. "192.168.0.1/16" for IPv4 or "2001:db8:0:0:0:ff00:42:8329/46" for IPv6
 	 *
 	 * @param cidrNotation an IPv4 or IPv6 address in CIDR notation
@@ -143,7 +148,7 @@ public final class SubnetUtils {
 	}//getByCIDRNortation
 
 	/**
-	 * Creates a dotted decimal address and a dotted decimal mask.
+	 * Creates subnet summary information, given a dotted decimal address and a dotted decimal mask.
 	 *
 	 * @param address An IP address, e.g. "192.168.0.1"
 	 * @param mask A dotted decimal netmask e.g. "255.255.0.0"
@@ -223,7 +228,7 @@ public final class SubnetUtils {
 		String hosts = "";
 		switch (target) {
 			case IPv4:
-				long hl = (long) Math.pow(2, IP.IPv4.bits - prefix);
+				long hl = (long) Math.pow(2, IP.IPv4.bits - checkRange(prefix, 0, IP.IPv4.bits));
 
 				// Length of the network prefix is larger than 31, subtract 2 from the number of available hosts
 				if (prefix < 31) {
@@ -236,7 +241,7 @@ public final class SubnetUtils {
 				break;
 			case IPv6:
 				// The maximum subnet bits in IPv6
-				hosts = new BigInteger("2").pow(IP.IPv6.bits - prefix).toString();
+				hosts = new BigInteger("2").pow(IP.IPv6.bits - checkRange(prefix, 0, IP.IPv6.bits)).toString();
 				break;
 		}//switch
 

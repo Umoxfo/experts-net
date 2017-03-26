@@ -106,10 +106,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 */
 	private static String format(short[] address) {
 		ArrayList<Short> al = new ArrayList<>(8);
-		/*
-		 * short = byte + byte (w/o a signal bit)
-		 * short c = (short) ((array[index] << 8) + (array[index + 1] & 0xff));
-		 */
+
 		for (short e : address) {
 			al.add(e);
 		}//for
@@ -162,7 +159,6 @@ public final class IP6Subnet extends SubnetInfo {
 		int lowAddr = lowAddress[prefixSize] & 0xffff;
 		int highAddr = highAddress[prefixSize] & 0xffff;
 
-		System.out.println(Integer.toHexString(addr));
 		return (addr >= lowAddr) && (addr <= highAddr);
 	}//isInRange(short[] address)
 
@@ -240,7 +236,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 */
 	@Override
 	public String toString() {
-		final StringBuilder buf = new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append("]")
 		.append("First Address:\t[").append(getLowAddress()).append("]\n")
 		.append("Last Address:\t[").append(getHighAddress()).append("]\n")

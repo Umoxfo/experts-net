@@ -46,12 +46,7 @@ public final class IP4Subnet extends SubnetInfo {
 	private boolean inclusiveHostCount = false;
 
 	/*
-	 * Constructor that takes a CIDR-notation string, e.g. "192.168.0.1/16"
-	 *
-	 * @param cidrNotation A CIDR-notation string, e.g. "192.168.0.1/16"
-	 * @throws IllegalArgumentException
-	 *             if the parameter is invalid,
-	 *             i.e. does not match n.n.n.n/m where n=1-3 decimal digits, m is in range 0-32
+	 * Constructor that takes CIDR-notation, e.g. "192.168.0.1/16".
 	 */
 	IP4Subnet(byte[] address, int cidr) {
 		this.address = toInteger(address);
@@ -128,8 +123,7 @@ public final class IP4Subnet extends SubnetInfo {
 		/* Check range of each element and convert to integer */
 		int addr = 0;
 		for (int i = 0; i < 4; i++) {
-			int n = SubnetUtils.checkRange((address[i] & 0xff), 0, 255);
-			addr |= (n & 0xff) << (8 * (3 - i));
+			addr |= (address[i] & 0xff) << (8 * (3 - i));
 		}//for
 
 		return addr;
@@ -230,10 +224,18 @@ public final class IP4Subnet extends SubnetInfo {
 	 */
 	@Override
 	public long getAddressCountLong() {
-		long b = broadcastLong();
-		long n = networkLong();
-		long count = (b - n) + (inclusiveHostCount ? 1 : -1);
-		return count < 0 ? 0 : count;
+		long count = (long) Math.pow(2, 32 - cidr);
+
+		if (!inclusiveHostCount) {
+			// Length of the network prefix is larger than 31, subtract 2 from the number of available hosts
+			if (cidr < 31) {
+				count -= 2;
+			} else {
+				count = 0;
+			}//if-else
+		}//if
+
+		return count;
 	}//getAddressCountLong
 
 	/**
@@ -245,7 +247,7 @@ public final class IP4Subnet extends SubnetInfo {
 	 */
 	@Override
 	public String toString() {
-		final StringBuilder buf = new StringBuilder();
+		StringBuilder buf = new StringBuilder();
 		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append("]")
 		.append(" Netmask: [").append(getNetmask()).append("]\n")
 		.append("Network:\t[").append(getNetworkAddress()).append("]\n")
