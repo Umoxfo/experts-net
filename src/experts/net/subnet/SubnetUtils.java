@@ -31,10 +31,15 @@ import java.util.regex.Pattern;
 /**
  * This class that performs some subnet calculations given IP address in CIDR notation.
  *
- * <p>For IPv4 address subnet, especially Classless Inter-Domain Routing (CIDR),
- * refer to <a href="https://tools.ietf.org/html/rfc4632">RFC4632</a>.</p>
- * <p>For IPv6 address subnet, refer to <a href="https://tools.ietf.org/html/rfc4291#section-2.3">
- * Section 2.3 of RFC 4291</a>.</p>
+ * <p>
+ * For IPv4 address subnet, especially Classless Inter-Domain Routing (CIDR),
+ * refer to <a href="https://tools.ietf.org/html/rfc4632">RFC4632</a>.
+ * </p>
+ * <p>
+ * For IPv6 address subnet, refer to
+ * <a href="https://tools.ietf.org/html/rfc4291#section-2.3">
+ * Section 2.3 of RFC 4291</a>.
+ * </p>
  *
  * @author Apache Commons Net
  * @author Makoto Sakaguchi
@@ -52,15 +57,15 @@ public final class SubnetUtils {
 		private IP(int fL, int nBits) {
 			fieldLength = fL;
 			bits = nBits;
-		}//IP
+		}// IP
 
 		public int getFieldLength() {
 			return fieldLength;
-		}//getFieldLength
-	}//IP
+		}// getFieldLength
+	}// IP
 
 	/*
-	 * Convert a dotted decimal format address to a packed integer format
+	 * Converts a dotted decimal format address to a packed integer format
 	 */
 	static int toInteger(String address) {
 		String[] addrArry = address.split("\\.");
@@ -75,13 +80,12 @@ public final class SubnetUtils {
 		for (int i = 0; i < 4; i++) {
 			int n = checkRange(Integer.parseInt(addrArry[i]), 0, 255);
 			addr |= n << (8 * (3 - i));
-		}//for
+		}// for
 
 		return addr;
-	}//toInteger
+	}// toInteger
 
 	/*
-	 * Convenience function to check integer boundaries.
 	 * Checks if a value x is in the range [begin,end].
 	 * Returns x if it is in range, throws an exception otherwise.
 	 */
@@ -91,7 +95,7 @@ public final class SubnetUtils {
 		}// if
 
 		return value;
-	}//checkRange
+	}// checkRange
 
 	/*
 	 * Converts a packed integer address into a decimal format separated by symbol.
@@ -103,7 +107,9 @@ public final class SubnetUtils {
 			ret[i] = (val >>> (8 * (3 - i))) & 0xff;
 		}//for
 
-		/* Converts an integer array into a decimal format separated by symbol. */
+		/*
+		 * Converts an integer array into a decimal format separated by symbol.
+		 */
 		StringBuilder buf = new StringBuilder();
 		int iMax = ret.length - 1;
 
@@ -117,16 +123,18 @@ public final class SubnetUtils {
 
 		return buf.toString();
 		// Arrays.stream(arry).mapToObj(Integer::toString).collect(Collectors.joining(symbol));
-	}//format
+	}// format
 
 	/**
 	 * Creates subnet summary information based on the provided in CIDR notation of IPv4 or IPv6 address,
 	 * e.g. "192.168.0.1/16" for IPv4 or "2001:db8:0:0:0:ff00:42:8329/46" for IPv6
 	 *
 	 * @param cidrNotation an IPv4 or IPv6 address in CIDR notation
-	 * @return a SubnetInfo object, which is implication of {@link IP4Subnet} or {@link IP6Subnet}, created from the IP address.
+	 * @return a SubnetInfo object, which is implication of {@link IP4Subnet} or
+	 *         {@link IP6Subnet}, created from the IP address.
 	 * @throws UnknownHostException {@link InetAddress#getByName(String host)}
-	 * @throws SecurityException if a security manager exists and its checkConnect method doesn't allow the operation
+	 * @throws SecurityException if a security manager exists and its
+	 *             checkConnect method doesn't allow the operation
 	 */
 	public static SubnetInfo getByCIDRNortation(String cidrNotation) throws UnknownHostException {
 		if (cidrNotation.contains("/")) {
@@ -141,14 +149,15 @@ public final class SubnetUtils {
 			} else {
 				checkRange(cidr, 0, IP.IPv6.bits);
 				return new IP6Subnet(address, cidr);
-			}//if-else
+			}// if-else
 		} else {
 			throw new IllegalArgumentException("Could not parse [" + cidrNotation + "]");
-		}//if-else
-	}//getByCIDRNortation
+		}// if
+	}// getByCIDRNortation
 
 	/**
-	 * Creates subnet summary information, given a dotted decimal address and a dotted decimal mask.
+	 * Creates subnet summary information, given a dotted decimal address and a
+	 * dotted decimal mask.
 	 *
 	 * @param address An IP address, e.g. "192.168.0.1"
 	 * @param mask A dotted decimal netmask e.g. "255.255.0.0"
@@ -156,13 +165,14 @@ public final class SubnetUtils {
 	 * @throws UnknownHostException {@link InetAddress#getByName(String host)}
 	 * @throws IllegalArgumentException
 	 *             if the address or mask is invalid,
-	 *             i.e. the address does not match n.n.n.n where n=1-3 decimal digits, or
+	 *             i.e. the address does not match n.n.n.n where n=1-3 decimal
+	 *             digits, or
 	 *             the mask does not match n.n.n.n which n=[0, 128, 192, 224, 240, 248, 252, 254, 255]
 	 *             and after the 0-field, it is all zeros.
 	 */
 	public static IP4Subnet getByMask(String address, String mask) throws UnknownHostException {
 		return new IP4Subnet(InetAddress.getByName(address).getAddress(), toCIDR(mask));
-	}//getByMask
+	}// getByMask
 
 	/**
 	 * Converts a dotted decimal mask to CIDR.
@@ -188,9 +198,11 @@ public final class SubnetUtils {
 			throw new IllegalArgumentException("Could not parse [" + mask + "]");
 		}// if
 
-		/* Calculates CIDR by counting the 1-bit population in the mask address */
+		/*
+		 * Calculates CIDR by counting the 1-bit population in the mask address
+		 */
 		return Integer.bitCount(maskInt);
-	}//toCIDR
+	}// toCIDR
 
 	/**
 	 * Converts IPv4 CIDR to a dotted decimal mask.
@@ -209,8 +221,8 @@ public final class SubnetUtils {
 		 * Note that there is no unsigned left shift operator, so we have to use
 		 * a long to ensure that the left-most bit is shifted out correctly.
 		 */
-		return format( (int) (0x0FFFF_FFFFL << (32 - cidr) ), '.');
-	}//toMask
+		return format((int) (0x0FFFF_FFFFL << (32 - cidr)), '.');
+	}// toMask
 
 	/**
 	 * Calculates the number of usable hosts from a network prefix of the address, which used CIDR value.
@@ -221,8 +233,6 @@ public final class SubnetUtils {
 	 */
 	public static String getHostCount(int prefix, IP target) {
 		/*
-		 * Calculate the number of hosts from the CIDR value
-		 *
 		 * The sizes of address, either 32 or 128, - prefix is host bits, and "2 ^ the bits" is the number of hosts
 		 */
 		String hosts = "";
@@ -235,7 +245,7 @@ public final class SubnetUtils {
 					hl -= 2;
 				} else {
 					hl = 0;
-				}//if-else
+				} // if-else
 
 				hosts = Long.toString(hl);
 				break;
@@ -243,8 +253,8 @@ public final class SubnetUtils {
 				// The maximum subnet bits in IPv6
 				hosts = new BigInteger("2").pow(IP.IPv6.bits - checkRange(prefix, 0, IP.IPv6.bits)).toString();
 				break;
-		}//switch
+		}// switch
 
 		return hosts;
-	}//getHostCount
+	}// getHostCount
 }

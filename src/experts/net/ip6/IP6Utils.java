@@ -31,7 +31,7 @@ import java.util.stream.Stream;
  */
 public final class IP6Utils {
 	private static final short ZERO = 0;
-	//private static final String ZERO_FIELDS = "(0\\:){2,}";
+	// private static final String ZERO_FIELDS = "(0\\:){2,}";
 
 	/**
 	 * Converts String array to List (Short).
@@ -47,7 +47,7 @@ public final class IP6Utils {
 		// Check values
 		if (arryStream.map(i -> Integer.parseInt(i, 16)).anyMatch(i -> i > 0xffff)) {
 			throw new IllegalArgumentException("Each group which is separated by colons must be within 16 bits.");
-		}//if
+		} // if
 
 		// Convert to the short list
 		return arryStream.map(i -> (short) Integer.parseInt(i, 16)).collect(Collectors.toList());
@@ -60,7 +60,9 @@ public final class IP6Utils {
 		 *
 		 * // Check values
 		 * if (j > 0xffff) {
-		 * throw new IllegalArgumentException("Each group which is separated by colons must be within 16 bits." );
+		 * throw new
+		 * IllegalArgumentException("Each group which is separated by colons must be within 16 bits."
+		 * );
 		 * }//if
 		 *
 		 * // Convert to the short list
@@ -68,7 +70,7 @@ public final class IP6Utils {
 		 * });
 		 * return buf;
 		 */
-	}//toShortList
+	}// toShortList
 
 	/**
 	 * Consecutive sections of zeroes are replaced with a double colon (::).
@@ -81,7 +83,10 @@ public final class IP6Utils {
 		int toIndex = 0;
 		int maxCnt = 0;
 
-		/* The longest run of consecutive 16-bit 0 fields MUST be shortened based on RFC5952. */
+		/*
+		 * The longest run of consecutive 16-bit 0 fields MUST be shortened
+		 * based on RFC5952.
+		 */
 		// Find the longest zero fields
 		int index = list.indexOf(ZERO);
 		int lastIndex = list.lastIndexOf(ZERO);
@@ -89,7 +94,7 @@ public final class IP6Utils {
 			int j = index + (list.subList(index + 1, lastIndex).indexOf(ZERO) + 1);
 			while ((j <= lastIndex) && (list.get(j) == ZERO)) {
 				j++;
-			}//while
+			} // while
 
 			int cnt = j - index;
 			if (maxCnt < cnt) {
@@ -98,8 +103,8 @@ public final class IP6Utils {
 				maxCnt = cnt;
 			} // if
 
-			index =  j + 1;
-		}//while
+			index = j + 1;
+		} // while
 
 		// Convert to a list of the 4-digit hexadecimal each string
 		ArrayList<String> buf = new ArrayList<>(list.stream().map(i -> Integer.toHexString(i & 0xffff)).collect(Collectors.toList()));
@@ -108,33 +113,36 @@ public final class IP6Utils {
 		if (1 < maxCnt) {
 			buf.subList(fromIndex, toIndex).clear();
 			buf.add(fromIndex, "");
-		}//if
+		} // if
 
 		// Separated the array list with a colon ":"
 		return String.join(":", buf);
 
 		/*
-		// Convert to the 4-digit hexadecimal string that is separated with ":"
-		String address = list.stream().map(i -> Integer.toHexString(i & 0xffff)).collect(Collectors.joining(":"));
-
-		// The longest run of consecutive 0 fields MUST be shortened based on RFC 5952.
-		String regex = "";
-		int maxLength = 0;
-
-		// Find the longest zero fields
-		Matcher match = Pattern.compile(ZERO_FIELDS).matcher(address);
-		while (match.find()) {
-			String reg = match.group();
-			int len = reg.length();
-
-			if (maxLength < len) {
-				regex = reg;
-				maxLength = len;
-			}//if
-		}//while
-
-		// Remove all leading zeroes
-		return address.replace(regex, ":");
+		 * // Convert to the 4-digit hexadecimal string that is separated with
+		 * ":"
+		 * String address = list.stream().map(i -> Integer.toHexString(i &
+		 * 0xffff)).collect(Collectors.joining(":"));
+		 * 
+		 * // The longest run of consecutive 0 fields MUST be shortened based on
+		 * RFC 5952.
+		 * String regex = "";
+		 * int maxLength = 0;
+		 * 
+		 * // Find the longest zero fields
+		 * Matcher match = Pattern.compile(ZERO_FIELDS).matcher(address);
+		 * while (match.find()) {
+		 * String reg = match.group();
+		 * int len = reg.length();
+		 * 
+		 * if (maxLength < len) {
+		 * regex = reg;
+		 * maxLength = len;
+		 * }//if
+		 * }//while
+		 * 
+		 * // Remove all leading zeroes
+		 * return address.replace(regex, ":");
 		 */
 	}// formatIP6String
 }

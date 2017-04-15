@@ -29,12 +29,14 @@ import java.util.List;
  */
 public abstract class IP6 {
 	/**
-	 * 48 bits for Unique Local IPv6 Unicast Addresses (ULUA) or 64 bits or less for Global Unicast Address (GUA).
+	 * 48 bits for Unique Local IPv6 Unicast Addresses (ULUA) or 64 bits or less
+	 * for Global Unicast Address (GUA).
 	 */
 	protected List<Short> globalID;
 
 	/**
-	 * 16 bits for ULUA or 64 - n bits (these n bits equal GUA of the Global ID bits length) for GUA.
+	 * 16 bits for ULUA or 64 - n bits (these n bits equal GUA of the Global ID
+	 * bits length) for GUA.
 	 */
 	protected List<Short> subnetID;
 
@@ -50,7 +52,7 @@ public abstract class IP6 {
 	 */
 	public List<Short> getGlobalID() {
 		return globalID;
-	}//getGlobalID
+	}// getGlobalID
 
 	/**
 	 * Sets the Global ID of IPv6 address.
@@ -66,7 +68,7 @@ public abstract class IP6 {
 	 */
 	public List<Short> getSubnetID() {
 		return subnetID;
-	}//getSubnetID
+	}// getSubnetID
 
 	/**
 	 * Sets the Subnet ID of IPv6 address.
@@ -82,7 +84,7 @@ public abstract class IP6 {
 	 */
 	public List<Short> getInterfaceID() {
 		return interfaceID;
-	}//getInterfaceID
+	}// getInterfaceID
 
 	/**
 	 * Sets the Interface ID of IPv6 address.
@@ -111,5 +113,5 @@ public abstract class IP6 {
 
 		// Replace consecutive sections of zeros to a double colon (::).
 		return IP6Utils.buildIP6String(ipv6);
-	}//toString
+	}// toString
 }

@@ -18,7 +18,6 @@
 package experts.net.util;
 
 import java.net.InetAddress;
-import java.net.NetPermission;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -34,8 +33,8 @@ import org.apache.commons.codec.binary.Hex;
 public final class NICUtils {
 	/*
 	 * Converts a byte array contains a hardware address to the printing MAC-48 addresses;
-	 * which is six groups of two hexadecimal digits, separated by hyphens in transmission order.
-	 * E.g. "00-1B-63-84-45-E6"
+	 * which is six groups of two hexadecimal digits, separated by hyphens in transmission order,
+	 * e.g. "00-1B-63-84-45-E6".
 	 */
 	private static String format(byte[] macAddr) {
 		StringBuilder sb = new StringBuilder().append(Hex.encodeHex(macAddr, false));
@@ -43,14 +42,14 @@ public final class NICUtils {
 		// Separate two hexadecimal digits by hyphens
 		for (int i = 2; i < 17; i += 3) {
 			sb.insert(i, '-');
-		}// for
+		} // for
 
 		return sb.toString();
-	}//format
+	}// format
 
 	/**
 	 * Returns the hardware address (usually MAC address) of the interface
-	 * which is from an IP address or a host name, e.g. "10.0.0.1" or "example.com".
+	 * that has the specified IP address or host name, e.g. "10.0.0.1" or "example.com".
 	 *
 	 * @param address the IP address or the host name
 	 * @return a byte array containing the address, or {@code null}
@@ -59,7 +58,7 @@ public final class NICUtils {
 	 *         the permission {@link NetPermission}("getNetworkInformation")
 	 * @throws SocketException If an I/O error occurs.
 	 * @throws UnknownHostException If no IP address for the {@code host} could be found,
-	 *             or if a scope_id was specified for a global IPv6 address.
+	 *             or a scope_id was specified for a global IPv6 address.
 	 */
 	public static byte[] getMACAddress(String address) throws SocketException, UnknownHostException {
 		// Stored in a NIC network interface corresponding to the IP address or the host name
@@ -67,11 +66,11 @@ public final class NICUtils {
 
 		// Returns byte[] the hardware address
 		return nic.getHardwareAddress();
-	}//getMACAddress
+	}// getMACAddress
 
 	/**
-	 * Returns the hardware address (usually MAC address) of the interface,
-	 * which is from an IP address or a host name; e.g. "10.0.0.1" or "example.com",
+	 * Returns the hardware address (usually MAC address) of the interface
+	 * that has the specified IP address or host name, e.g. "10.0.0.1" or "example.com"
 	 * in the standard (IEEE 802) format for printing MAC-48 addresses in human-friendly form,
 	 * e.g. "01-23-45-67-89-AB".
 	 *
@@ -82,9 +81,9 @@ public final class NICUtils {
 	 *         the permission {@link NetPermission}("getNetworkInformation")
 	 * @throws SocketException If an I/O error occurs.
 	 * @throws UnknownHostException If no IP address for the {@code host} could be found,
-	 *             or if a scope_id was specified for a global IPv6 address.
+	 *             or a scope_id was specified for a global IPv6 address.
 	 */
 	public static String getMACAddressString(String address) throws SocketException, UnknownHostException {
 		return format(getMACAddress(address));
-	}//getMACAddressString
+	}// getMACAddressString
 }
