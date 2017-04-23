@@ -47,21 +47,19 @@ import java.util.regex.Pattern;
  * @since 2.0.5
  */
 public final class SubnetUtils {
-	public static enum IP {
+	public enum IP {
 		IPv4(4, 32),
 		IPv6(16, 128);
 
 		private final int fieldLength;
 		private final int bits;
 
-		private IP(int fL, int nBits) {
+		IP(int fL, int nBits) {
 			fieldLength = fL;
 			bits = nBits;
 		}// IP
 
-		public int getFieldLength() {
-			return fieldLength;
-		}// getFieldLength
+		public int getFieldLength() { return fieldLength; }
 	}// IP
 
 	/*
@@ -132,9 +130,9 @@ public final class SubnetUtils {
 	 * @param cidrNotation an IPv4 or IPv6 address in CIDR notation
 	 * @return a SubnetInfo object, which is implication of {@link IP4Subnet} or
 	 *         {@link IP6Subnet}, created from the IP address.
-	 * @throws UnknownHostException {@link InetAddress#getByName(String host)}
-	 * @throws SecurityException if a security manager exists and its
-	 *             checkConnect method doesn't allow the operation
+	 * @throws UnknownHostException see {@link InetAddress#getByName(String host)}
+	 * @throws SecurityException if a security manager exists and
+	 *             its checkConnect method doesn't allow the operation
 	 */
 	public static SubnetInfo getByCIDRNortation(String cidrNotation) throws UnknownHostException {
 		if (cidrNotation.contains("/")) {
@@ -156,17 +154,15 @@ public final class SubnetUtils {
 	}// getByCIDRNortation
 
 	/**
-	 * Creates subnet summary information, given a dotted decimal address and a
-	 * dotted decimal mask.
+	 * Creates subnet summary information, given a dotted decimal address and a dotted decimal mask.
 	 *
 	 * @param address An IP address, e.g. "192.168.0.1"
 	 * @param mask A dotted decimal netmask e.g. "255.255.0.0"
 	 * @return a IP4Subnet object created from the IP address.
-	 * @throws UnknownHostException {@link InetAddress#getByName(String host)}
+	 * @throws UnknownHostException see {@link InetAddress#getByName(String host)}
 	 * @throws IllegalArgumentException
 	 *             if the address or mask is invalid,
-	 *             i.e. the address does not match n.n.n.n where n=1-3 decimal
-	 *             digits, or
+	 *             i.e. the address does not match n.n.n.n where n=1-3 decimal digits, or
 	 *             the mask does not match n.n.n.n which n=[0, 128, 192, 224, 240, 248, 252, 254, 255]
 	 *             and after the 0-field, it is all zeros.
 	 */
@@ -245,7 +241,7 @@ public final class SubnetUtils {
 					hl -= 2;
 				} else {
 					hl = 0;
-				} // if-else
+				}// if-else
 
 				hosts = Long.toString(hl);
 				break;

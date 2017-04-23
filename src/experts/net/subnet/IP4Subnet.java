@@ -74,60 +74,43 @@ public final class IP4Subnet extends SubnetInfo {
 	 * {@link IP4Subnet#getAddressCount()}
 	 * includes the network and broadcast addresses.
 	 *
-	 * @return true if the host count includes the network and broadcast
-	 *         addresses
+	 * @return true if the host count includes the network and broadcast addresses
 	 */
 	@Override
-	public boolean isInclusiveHostCount() {
-		return inclusiveHostCount;
-	}// isInclusiveHostCount
+	public boolean isInclusiveHostCount() { return inclusiveHostCount; }
 
 	/**
 	 * Set to <code>true</code> if you want the return value of
 	 * {@link IP4Subnet#getAddressCount()}
 	 * to include the network and broadcast addresses.
 	 *
-	 * @param inclusiveHostCount true if network and broadcast addresses are to
-	 *            be included
+	 * @param inclusiveHostCount true if network and broadcast addresses are included
 	 */
 	@Override
-	public void setInclusiveHostCount(boolean inclusiveHostCount) {
-		this.inclusiveHostCount = inclusiveHostCount;
-	}// setInclusiveHostCount
+	public void setInclusiveHostCount(boolean inclusiveHostCount) { this.inclusiveHostCount = inclusiveHostCount; }
 
-	// long versions of the values (as unsigned int) which are more suitable for
-	// range checking
-	private long networkLong() {
-		return network & UNSIGNED_INT_MASK;
-	}// networkLong
+	// long versions of the values (as unsigned int) which are more suitable for range checking
+	private long networkLong() { return network & UNSIGNED_INT_MASK; }
 
-	private long broadcastLong() {
-		return broadcast & UNSIGNED_INT_MASK;
-	}// broadcastLong
+	private long broadcastLong() { return broadcast & UNSIGNED_INT_MASK; }
 
 	/*
 	 * Creates the minimum address in the network to which the address belongs.
 	 *
 	 * inclusiveHostCount
 	 * - true the network address
-	 * - false the first address of the available as host addresses or 0 if no
-	 * corresponding address.
+	 * - false the first address of the available as host addresses or 0 if no corresponding address.
 	 */
-	private int low() {
-		return inclusiveHostCount ? network : (broadcastLong() - networkLong()) > 1 ? network + 1 : 0;
-	}// low
+	private int low() { return inclusiveHostCount ? network : (broadcastLong() - networkLong()) > 1 ? network + 1 : 0; }
 
 	/*
 	 * Creates the minimum address in the network to which the address belongs.
 	 *
 	 * inclusiveHostCount
 	 * - true the network address
-	 * - false the last address of the available as host addresses or 0 if no
-	 * corresponding address.
+	 * - false the last address of the available as host addresses or 0 if no corresponding address.
 	 */
-	private int high() {
-		return inclusiveHostCount ? broadcast : (broadcastLong() - networkLong()) > 1 ? broadcast - 1 : 0;
-	}// high
+	private int high() { return inclusiveHostCount ? broadcast : (broadcastLong() - networkLong()) > 1 ? broadcast - 1 : 0; }
 
 	/*
 	 * Converts a raw address in network byte order to a packed integer format
@@ -149,7 +132,7 @@ public final class IP4Subnet extends SubnetInfo {
 	 *
 	 * @param address a dot-delimited IPv4 address, e.g. "192.168.0.1"
 	 * @return true if in range, false otherwise
-	 * @throws UnknownHostException {@link InetAddress#getByName(String host)}
+	 * @throws UnknownHostException see {@link java.net.InetAddress#getByName(String host)}
 	 */
 	@Override
 	public boolean isInRange(String address) throws UnknownHostException {
@@ -179,29 +162,19 @@ public final class IP4Subnet extends SubnetInfo {
 	}// isInRange
 
 	@Override
-	public String getAddress() {
-		return SubnetUtils.format(address, '.');
-	}// getAddressString
+	public String getAddress() { return SubnetUtils.format(address, '.'); }
 
 	@Override
-	public int getCIDR() {
-		return cidr;
-	}// getCIDRValue
+	public int getCIDR() { return cidr; }
 
 	@Override
-	public String getNetmask() {
-		return SubnetUtils.format(netmask, '.');
-	}// getNetmaskString
+	public String getNetmask() { return SubnetUtils.format(netmask, '.'); }
 
 	@Override
-	public String getNetworkAddress() {
-		return SubnetUtils.format(network, '.');
-	}// getNetworkAddressString
+	public String getNetworkAddress() { return SubnetUtils.format(network, '.'); }
 
 	@Override
-	public String getBroadcastAddress() {
-		return SubnetUtils.format(broadcast, '.');
-	}// getBroadcastAddressString
+	public String getBroadcastAddress() { return SubnetUtils.format(broadcast, '.'); }
 
 	/**
 	 * Returns a CIDR notation, in which the address is followed by a slash
@@ -211,9 +184,7 @@ public final class IP4Subnet extends SubnetInfo {
 	 * @return the CIDR notation of the address, e.g. "192.168.0.1/24"
 	 */
 	@Override
-	public String getCIDRNotation() {
-		return SubnetUtils.format(address, '.') + "/" + cidr;
-	}// getCIDRNotation
+	public String getCIDRNotation() { return SubnetUtils.format(address, '.') + "/" + cidr; }
 
 	/**
 	 * Return the low address as a dotted IP address.
@@ -223,9 +194,7 @@ public final class IP4Subnet extends SubnetInfo {
 	 *         valid address
 	 */
 	@Override
-	public String getLowAddress() {
-		return SubnetUtils.format(low(), '.');
-	}// getLowAddress
+	public String getLowAddress() { return SubnetUtils.format(low(), '.'); }
 
 	/**
 	 * Return the high address as a dotted IP address.
@@ -234,9 +203,7 @@ public final class IP4Subnet extends SubnetInfo {
 	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
 	 */
 	@Override
-	public String getHighAddress() {
-		return SubnetUtils.format(high(), '.');
-	}// getHighAddress
+	public String getHighAddress() { return SubnetUtils.format(high(), '.'); }
 
 	/**
 	 * Returns the count of available addresses.
@@ -249,14 +216,13 @@ public final class IP4Subnet extends SubnetInfo {
 		long count = (long) Math.pow(2, 32 - cidr);
 
 		if (!inclusiveHostCount) {
-			// Length of the network prefix is larger than 31, subtract 2 from
-			// the number of available hosts
+			// Length of the network prefix is larger than 31, subtract 2 from the number of available hosts
 			if (cidr < 31) {
 				count -= 2;
 			} else {
 				count = 0;
-			} // if-else
-		} // if
+			}// if-else
+		}// if
 
 		return count;
 	}// getAddressCountLong
@@ -271,7 +237,13 @@ public final class IP4Subnet extends SubnetInfo {
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
-		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append("]").append(" Netmask: [").append(getNetmask()).append("]\n").append("Network:\t[").append(getNetworkAddress()).append("]\n").append("Broadcast:\t[").append(getBroadcastAddress()).append("]\n").append("First Address:\t[").append(getLowAddress()).append("]\n").append("Last Address:\t[").append(getHighAddress()).append("]\n").append("# Addresses:\t[").append(getAddressCountLong()).append("]\n");
+		buf.append("CIDR-Notation:\t[" + getCIDRNotation() + "]")
+		   .append(" Netmask: [" + getNetmask() + "]\n")
+		   .append("Network:\t[" + getNetworkAddress() + "]\n")
+		   .append("Broadcast:\t[" + getBroadcastAddress() + "]\n")
+		   .append("First Address:\t[" + getLowAddress() + "]\n")
+		   .append("Last Address:\t[" + getHighAddress() + "]\n")
+		   .append("# Addresses:\t[" + getAddressCountLong() + "]\n");
 
 		return buf.toString();
 	}// toString

@@ -50,9 +50,7 @@ public abstract class IP6 {
 	 *
 	 * @return list of the Global ID
 	 */
-	public List<Short> getGlobalID() {
-		return globalID;
-	}// getGlobalID
+	public List<Short> getGlobalID() { return globalID; }
 
 	/**
 	 * Sets the Global ID of IPv6 address.
@@ -66,9 +64,7 @@ public abstract class IP6 {
 	 *
 	 * @return list of the Subnet ID
 	 */
-	public List<Short> getSubnetID() {
-		return subnetID;
-	}// getSubnetID
+	public List<Short> getSubnetID() { return subnetID; }
 
 	/**
 	 * Sets the Subnet ID of IPv6 address.
@@ -82,9 +78,7 @@ public abstract class IP6 {
 	 *
 	 * @return list of the Interface ID
 	 */
-	public List<Short> getInterfaceID() {
-		return interfaceID;
-	}// getInterfaceID
+	public List<Short> getInterfaceID() { return interfaceID; }
 
 	/**
 	 * Sets the Interface ID of IPv6 address.

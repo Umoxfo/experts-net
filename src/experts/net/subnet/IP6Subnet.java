@@ -17,11 +17,11 @@
  */
 package experts.net.subnet;
 
+import experts.net.ip6.IP6Utils;
+
 import java.math.BigInteger;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-
-import experts.net.ip6.IP6Utils;
 
 /**
  * Convenience container for IPv6 subnet summary information.
@@ -55,7 +55,7 @@ public final class IP6Subnet extends SubnetInfo {
 		int index = cidr / 16;
 		for (int i = 0; i <= index; i++) {
 			lowAddr[i] = ip6Address[i];
-		} // for
+		}// for
 
 		// Set the out of the network prefix bits.
 		lowAddr[index] &= (0xffff >> (cidr % 16)) ^ 0xffff;
@@ -74,15 +74,16 @@ public final class IP6Subnet extends SubnetInfo {
 		int index = cidr / 16;
 		for (int i = 0; i <= index; i++) {
 			highAddr[i] = ip6Address[i];
-		} // for
+		}// for
+
+		// Set the out of the network prefix bits
+		highAddr[index] |= 0xffff >> (cidr % 16);
 
 		// Fill the following fields with 1-bits
 		for (int i = index + 1; i < 8; i++) {
 			highAddr[i] = (short) 0xffff;
-		} // for
+		}// for
 
-		// Set the out of the network prefix bits
-		highAddr[index] |= 0xffff >> (cidr % 16);
 
 		return highAddr;
 	}// high
@@ -96,7 +97,7 @@ public final class IP6Subnet extends SubnetInfo {
 		for (int i = 0, j = 0; i < 8; i++) {
 			ret[i] = (short) ((address[j] << 8) + (address[j + 1] & 0xff));
 			j += 2;
-		} // for
+		}// for
 
 		return ret;
 	}// toShortArray
@@ -109,7 +110,7 @@ public final class IP6Subnet extends SubnetInfo {
 
 		for (short e : address) {
 			al.add(e);
-		} // for
+		}// for
 
 		return IP6Utils.buildIP6String(al);
 	}// format
@@ -121,7 +122,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * @param address a colon-delimited address, e.g.
 	 *            "2001:db8:0:0:0:ff00:42:8329"
 	 * @return true if in range, false otherwise
-	 * @throws UnknownHostException {@link InetAddress#getByName(String host)}
+	 * @throws UnknownHostException see {@link java.net.InetAddress#getByName(String host)}
 	 */
 	@Override
 	public boolean isInRange(String address) throws UnknownHostException {
@@ -129,7 +130,7 @@ public final class IP6Subnet extends SubnetInfo {
 
 		if (addrArry.length != 16) {
 			throw new IllegalArgumentException(address + " is not IPv6 address.");
-		} // if
+		}// if
 
 		return isInRange(toShortArray(addrArry));
 	}// isInRange(String address)
@@ -149,15 +150,13 @@ public final class IP6Subnet extends SubnetInfo {
 
 		// Have the same network prefix groups
 		for (int i = 0; i < prefixSize; i++) {
-			// (address[i] ^ lowAddress[i]) != (address[i] ^ highAddress[i]) &&
-			// (lowAddress[i] ^ highAddress[i]) != 0
+			// (address[i] ^ lowAddress[i]) != (address[i] ^ highAddress[i]) && (lowAddress[i] ^ highAddress[i]) != 0
 			if ((address[i] ^ lowAddress[i]) != (lowAddress[i] ^ highAddress[i])) {
 				return false;
-			} // if
-		} // for
+			}// if
+		}// for
 
-		// The host identifier is in range between the lowest and the hightest
-		// addresses
+		// The host identifier is in range between the lowest and the hightest addresses
 		int addr = address[prefixSize] & 0xffff;
 		int lowAddr = lowAddress[prefixSize] & 0xffff;
 		int highAddr = highAddress[prefixSize] & 0xffff;
@@ -173,9 +172,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * @return a string of the IP address
 	 */
 	@Override
-	public String getAddress() {
-		return format(ip6Address);
-	}// getAddress
+	public String getAddress() { return format(ip6Address); }
 
 	/**
 	 * Gets the CIDR suffixes, the count of consecutive 1-bit in the subnet
@@ -185,9 +182,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * @return the CIDR suffixes of the address in an integer.
 	 */
 	@Override
-	public int getCIDR() {
-		return cidr;
-	}// getCIDR
+	public int getCIDR() { return cidr; }
 
 	/**
 	 * Returns an IPv6-CIDR notation, in which the address is followed by a
@@ -198,9 +193,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 *         "2001:db8::ff00:42:8329/48"
 	 */
 	@Override
-	public String getCIDRNotation() {
-		return format(ip6Address) + "/" + cidr;
-	}// getCIDRNotation
+	public String getCIDRNotation() { return format(ip6Address) + "/" + cidr; }
 
 	/**
 	 * Returns the low address as a colon-separated IP address.
@@ -209,9 +202,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 *         may be "::" if there is no valid address
 	 */
 	@Override
-	public String getLowAddress() {
-		return format(low());
-	}// getLowAddress
+	public String getLowAddress() { return format(low()); }
 
 	/**
 	 * Returns the high address as a colon-separated IP address.
@@ -220,9 +211,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 *         may be "::" if there is no valid address
 	 */
 	@Override
-	public String getHighAddress() {
-		return format(high());
-	}// getHighAddress
+	public String getHighAddress() { return format(high()); }
 
 	/**
 	 * Returns the count of available addresses.
@@ -230,9 +219,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * @return the count of addresses in a string, may be zero
 	 */
 	@Override
-	public String getAddressCount() {
-		return new BigInteger("2").pow(128 - cidr).toString();
-	}// getAddressCount
+	public String getAddressCount() { return new BigInteger("2").pow(128 - cidr).toString(); }
 
 	/**
 	 * Returns subnet summary information of the address,
@@ -244,7 +231,10 @@ public final class IP6Subnet extends SubnetInfo {
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
-		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append("]").append("First Address:\t[").append(getLowAddress()).append("]\n").append("Last Address:\t[").append(getHighAddress()).append("]\n").append("# Addresses:\t[").append(getAddressCount()).append("]\n");
+		buf.append("CIDR-Notation:\t[" + getCIDRNotation() + "]")
+		   .append("First Address:\t[" + getLowAddress() + "]\n")
+		   .append("Last Address:\t[" + getHighAddress() + "]\n")
+		   .append("# Addresses:\t[" + getAddressCount() + "]\n");
 
 		return buf.toString();
 	}// toString

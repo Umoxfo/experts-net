@@ -36,8 +36,7 @@ public final class IP6Utils {
 	/**
 	 * Converts String array to List (Short).
 	 *
-	 * @param strArry
-	 *            String array
+	 * @param strArry String array
 	 * @return List (Short)
 	 * @since 2.0.4
 	 */
@@ -60,9 +59,7 @@ public final class IP6Utils {
 		 *
 		 * // Check values
 		 * if (j > 0xffff) {
-		 * throw new
-		 * IllegalArgumentException("Each group which is separated by colons must be within 16 bits."
-		 * );
+		 * throw new IllegalArgumentException("Each group which is separated by colons must be within 16 bits.");
 		 * }//if
 		 *
 		 * // Convert to the short list
@@ -84,8 +81,7 @@ public final class IP6Utils {
 		int maxCnt = 0;
 
 		/*
-		 * The longest run of consecutive 16-bit 0 fields MUST be shortened
-		 * based on RFC5952.
+		 * The longest run of consecutive 16-bit 0 fields MUST be shortened based on RFC5952.
 		 */
 		// Find the longest zero fields
 		int index = list.indexOf(ZERO);
@@ -94,38 +90,32 @@ public final class IP6Utils {
 			int j = index + (list.subList(index + 1, lastIndex).indexOf(ZERO) + 1);
 			while ((j <= lastIndex) && (list.get(j) == ZERO)) {
 				j++;
-			} // while
+			}//while
 
 			int cnt = j - index;
 			if (maxCnt < cnt) {
 				fromIndex = index;
 				toIndex = j;
 				maxCnt = cnt;
-			} // if
+			}//if
 
 			index = j + 1;
-		} // while
+		}//while
 
-		// Convert to a list of the 4-digit hexadecimal each string
-		ArrayList<String> buf = new ArrayList<>(list.stream().map(i -> Integer.toHexString(i & 0xffff)).collect(Collectors.toList()));
-
-		// Remove all leading zeroes
+		// Remove the longest part of zeros
 		if (1 < maxCnt) {
-			buf.subList(fromIndex, toIndex).clear();
-			buf.add(fromIndex, "");
-		} // if
+			list.subList(fromIndex, toIndex).clear();
+			list.add(fromIndex, null);
+		}//if
 
 		// Separated the array list with a colon ":"
 		return String.join(":", buf);
 
 		/*
-		 * // Convert to the 4-digit hexadecimal string that is separated with
-		 * ":"
-		 * String address = list.stream().map(i -> Integer.toHexString(i &
-		 * 0xffff)).collect(Collectors.joining(":"));
+		 * // Convert to the 4-digit hexadecimal string that is separated with ":"
+		 * String address = list.stream().map(i -> Integer.toHexString(i & 0xffff)).collect(Collectors.joining(":"));
 		 * 
-		 * // The longest run of consecutive 0 fields MUST be shortened based on
-		 * RFC 5952.
+		 * // The longest run of consecutive 0 fields MUST be shortened based on RFC 5952.
 		 * String regex = "";
 		 * int maxLength = 0;
 		 * 
@@ -144,5 +134,5 @@ public final class IP6Utils {
 		 * // Remove all leading zeroes
 		 * return address.replace(regex, ":");
 		 */
-	}// formatIP6String
+	}//buildIP6String
 }

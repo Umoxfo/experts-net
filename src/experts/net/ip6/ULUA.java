@@ -17,19 +17,19 @@
  */
 package experts.net.ip6;
 
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.net.ntp.NTPUDPClient;
+import org.apache.commons.net.ntp.NtpV3Packet;
+import org.apache.commons.net.ntp.TimeInfo;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.net.ntp.NTPUDPClient;
-import org.apache.commons.net.ntp.NtpV3Packet;
-import org.apache.commons.net.ntp.TimeInfo;
 
 /**
  * Unique Local IPv6 Unicast Addresses (RFC 4193)
@@ -38,16 +38,16 @@ import org.apache.commons.net.ntp.TimeInfo;
  * @version 2.0.6-dev
  */
 public final class ULUA extends IP6 {
-	private final int GLOBAL_ID_LENGTH = 3;
-	private final String GLOBAL_ID_PREFIX_FORMAT = "fd";
-	private final byte GLOBAL_ID_PREFIX = (byte) 0xfd;
+	private static final int GLOBAL_ID_LENGTH = 3;
+	private static final String GLOBAL_ID_PREFIX_FORMAT = "fd";
+	private static final byte GLOBAL_ID_PREFIX = (byte) 0xfd;
 
-	private final short DEFAULT_SUBNT_ID = 0x0000;
+	private static final short DEFAULT_SUBNT_ID = 0x0000;
 
-	private final int INTERFACE_ID_LENGTH = 8;
-	private final short ADDITIONAL_VALUES = (short) 0xfffe;
+	private static final int INTERFACE_ID_LENGTH = 8;
+	private static final short ADDITIONAL_VALUES = (short) 0xfffe;
 
-	private final String NTP_SERVER_ADDRESS = "pool.ntp.org";
+	private static final String NTP_SERVER_ADDRESS = "pool.ntp.org";
 
 	/**
 	 * Constructor that takes address of the machine.
@@ -59,9 +59,9 @@ public final class ULUA extends IP6 {
 	 * @throws UnknownHostException If the host could not be found.
 	 * @throws IOException If an error occurs while retrieving the time.
 	 */
-	public ULUA(byte[] address) throws SocketException, UnknownHostException, IOException {
+	public ULUA(byte[] address) throws IOException {
 		createInterfaceIDByEUI64(address);
-		subnetID = Arrays.asList(DEFAULT_SUBNT_ID);
+		subnetID = Collections.singletonList(DEFAULT_SUBNT_ID);
 		generateGlobalID(getNTPTime(NTP_SERVER_ADDRESS));
 	}// ULUA
 
@@ -78,12 +78,12 @@ public final class ULUA extends IP6 {
 		// Check length
 		if (tmp.length > GLOBAL_ID_LENGTH) {
 			throw new IllegalArgumentException("The length of the prefix and Global ID of ULUA must be 48 bits.");
-		} // if
+		}//if
 
 		// Check prefix
 		if (!tmp[0].startsWith(GLOBAL_ID_PREFIX_FORMAT)) {
 			throw new IllegalArgumentException("ULUA must be 0xfd00::/8.");
-		} // if
+		}//if
 
 		/*
 		 * Check prefix by short value
@@ -103,8 +103,8 @@ public final class ULUA extends IP6 {
 	 */
 	@Override
 	public void setSubnetID(String sID) {
-		subnetID = Arrays.asList((short) Integer.parseInt(sID, 16));
-	}// setSubnetID
+		subnetID = Collections.singletonList((short) Integer.parseInt(sID, 16));
+	}//setSubnetID
 
 	/**
 	 * Sets a interface ID that is the hexadecimal maximum 16 digits.
@@ -119,7 +119,7 @@ public final class ULUA extends IP6 {
 		// Check length
 		if (tmp.length > INTERFACE_ID_LENGTH) {
 			throw new IllegalArgumentException("The Interface ID length of ULUA must be 64 bits.");
-		} // if
+		}//if
 
 		interfaceID = IP6Utils.toShortList(tmp);
 	}// setInterfaceID
@@ -134,7 +134,7 @@ public final class ULUA extends IP6 {
 		buf.rewind();
 		for (int i = 0; i < lim; i++) {
 			tmp.add(buf.getShort());
-		} // for
+		}//for
 
 		return tmp;
 	}// toList
@@ -149,7 +149,7 @@ public final class ULUA extends IP6 {
 	 * @throws UnknownHostException If the host could not be found.
 	 * @throws IOException If an error occurs while retrieving the time.
 	 */
-	public static long getNTPTime(String address) throws SocketException, UnknownHostException, IOException {
+	public static long getNTPTime(String address) throws IOException {
 		NTPUDPClient client = new NTPUDPClient();
 		client.setVersion(NtpV3Packet.VERSION_4);
 

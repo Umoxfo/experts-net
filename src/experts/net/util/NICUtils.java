@@ -17,12 +17,12 @@
  */
 package experts.net.util;
 
+import org.apache.commons.codec.binary.Hex;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-
-import org.apache.commons.codec.binary.Hex;
 
 /**
  * This class represents a hardware address, also MAC address, assigned to the interface.
@@ -42,7 +42,7 @@ public final class NICUtils {
 		// Separate two hexadecimal digits by hyphens
 		for (int i = 2; i < 17; i += 3) {
 			sb.insert(i, '-');
-		} // for
+		}// for
 
 		return sb.toString();
 	}// format
@@ -55,7 +55,7 @@ public final class NICUtils {
 	 * @return a byte array containing the address, or {@code null}
 	 *         if the address doesn't exist, is not accessible or
 	 *         a security manager is set and the caller does not have
-	 *         the permission {@link NetPermission}("getNetworkInformation")
+	 *         the permission {@link java.net.NetPermission}("getNetworkInformation")
 	 * @throws SocketException If an I/O error occurs.
 	 * @throws UnknownHostException If no IP address for the {@code host} could be found,
 	 *             or a scope_id was specified for a global IPv6 address.
@@ -78,7 +78,7 @@ public final class NICUtils {
 	 * @return the address in the MAC address format, or {@code null}
 	 *         if the address doesn't exist, is not accessible or
 	 *         a security manager is set and the caller does not have
-	 *         the permission {@link NetPermission}("getNetworkInformation")
+	 *         the permission {@link java.net.NetPermission}("getNetworkInformation")
 	 * @throws SocketException If an I/O error occurs.
 	 * @throws UnknownHostException If no IP address for the {@code host} could be found,
 	 *             or a scope_id was specified for a global IPv6 address.

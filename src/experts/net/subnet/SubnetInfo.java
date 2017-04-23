@@ -32,9 +32,7 @@ public class SubnetInfo {
 	/*
 	 * Checks wither an address is IPv4 or IPv6
 	 */
-	byte[] checkAddress(String address) throws UnknownHostException {
-		return InetAddress.getByName(address).getAddress();
-	}// checkAddress
+	byte[] checkAddress(String address) throws UnknownHostException { return InetAddress.getByName(address).getAddress(); }
 
 	/**
 	 * Returns <code>true</code> if the return value of {@link #getAddressCount()}
@@ -42,9 +40,7 @@ public class SubnetInfo {
 	 *
 	 * @return true if the host count includes the network and broadcast addresses
 	 */
-	public boolean isInclusiveHostCount() {
-		return false;
-	}
+	public boolean isInclusiveHostCount() { return false; }
 
 	/**
 	 * Sets to <code>true</code> if you want the return value of
@@ -53,8 +49,7 @@ public class SubnetInfo {
 	 *
 	 * @param inclusiveHostCount true if network and broadcast addresses are to be included
 	 */
-	public void setInclusiveHostCount(boolean inclusiveHostCount) {
-	}
+	public void setInclusiveHostCount(boolean inclusiveHostCount) {}
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
@@ -64,11 +59,9 @@ public class SubnetInfo {
 	 * @param address a dot-delimited IPv4 address, e.g. "192.168.0.1", or
 	 *            a colon-hexadecimal IPv6 address, e.g. "2001:db8::ff00:42:8329"
 	 * @return True if in range, false otherwise
-	 * @throws UnknownHostException {@link InetAddress#getByName(String host)}
+	 * @throws UnknownHostException see {@link InetAddress#getByName(String host)}
 	 */
-	public boolean isInRange(String address) throws UnknownHostException {
-		return false;
-	}
+	public boolean isInRange(String address) throws UnknownHostException { return false; }
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
@@ -78,9 +71,7 @@ public class SubnetInfo {
 	 * @param address the address to check
 	 * @return true if it is in range
 	 */
-	public boolean isInRange(int address) {
-		return false;
-	}
+	public boolean isInRange(int address) { return false; }
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in the
@@ -90,9 +81,7 @@ public class SubnetInfo {
 	 * @param address the address to check
 	 * @return true if it is in range
 	 */
-	public boolean isInRange(short[] address) {
-		return false;
-	}
+	public boolean isInRange(short[] address) { return false; }
 
 	/**
 	 * Gets the IP address.
@@ -101,9 +90,7 @@ public class SubnetInfo {
 	 *
 	 * @return a string of the IP address
 	 */
-	public String getAddress() {
-		return null;
-	}
+	public String getAddress() { return null; }
 
 	/**
 	 * Gets the CIDR suffixes, the count of consecutive 1 bits in the subnet mask.
@@ -111,36 +98,28 @@ public class SubnetInfo {
 	 *
 	 * @return the CIDR suffixes of the address in an integer.
 	 */
-	public int getCIDR() {
-		return 0;
-	}
+	public int getCIDR() { return 0; }
 
 	/**
 	 * Returns a netmask in the address. (ONLY USE IPv4)
 	 *
 	 * @return a string of netmask in a dot-decimal format.
 	 */
-	public String getNetmask() {
-		return null;
-	}
+	public String getNetmask() { return null; }
 
 	/**
 	 * Gets a network address in the address. (ONLY USE IPv4)
 	 *
 	 * @return a string of a network address in a dot-decimal format.
 	 */
-	public String getNetworkAddress() {
-		return null;
-	}
+	public String getNetworkAddress() { return null; }
 
 	/**
 	 * Gets a broadcast address in the address. (ONLY USE IPv4)
 	 *
 	 * @return a string of a broadcast address in a dot-decimal format.
 	 */
-	public String getBroadcastAddress() {
-		return null;
-	}
+	public String getBroadcastAddress() { return null; }
 
 	/**
 	 * Gets a CIDR notation, in which the address is followed by a slash and
@@ -150,9 +129,7 @@ public class SubnetInfo {
 	 *
 	 * @return the CIDR notation of the address
 	 */
-	public String getCIDRNotation() {
-		return null;
-	}
+	public String getCIDRNotation() { return null; }
 
 	/**
 	 * Returns the low address as a dotted or colon-separated IP address.
@@ -163,9 +140,7 @@ public class SubnetInfo {
 	 *         hexadecimal format,
 	 *         may be "0.0.0.0" or "::" if there is no valid address
 	 */
-	public String getLowAddress() {
-		return null;
-	}
+	public String getLowAddress() { return null; }
 
 	/**
 	 * Returns the high address as a dotted or colon-separated IP address.
@@ -175,9 +150,7 @@ public class SubnetInfo {
 	 * @return the IP address in dotted format or in a colon 16-bit delimited
 	 *         hexadecimal format, may be "0.0.0.0" or "::" if there is no valid address
 	 */
-	public String getHighAddress() {
-		return null;
-	}
+	public String getHighAddress() { return null; }
 
 	/**
 	 * Returns the count of available addresses.
@@ -186,9 +159,7 @@ public class SubnetInfo {
 	 *
 	 * @return the count of addresses in a string, may be zero
 	 */
-	public String getAddressCount() {
-		return null;
-	}
+	public String getAddressCount() { return null; }
 
 	/**
 	 * Returns the count of available addresses.
@@ -197,7 +168,5 @@ public class SubnetInfo {
 	 *
 	 * @return the count of addresses, may be zero
 	 */
-	public long getAddressCountLong() {
-		return 0;
-	}
+	public long getAddressCountLong() { return 0; }
 }
