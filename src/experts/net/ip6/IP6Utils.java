@@ -17,7 +17,6 @@
  */
 package experts.net.ip6;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -108,8 +107,17 @@ public final class IP6Utils {
 			list.add(fromIndex, null);
 		}//if
 
-		// Separated the array list with a colon ":"
-		return String.join(":", buf);
+		// Convert to a hexadecimal string being separated with colons for each 4-digit
+		String ip6Str = list.stream().map(i -> {
+			String str = "";
+			if (i != null) {
+				str = Integer.toHexString(i & 0xffff);
+			}//if
+
+			return str;
+		}).collect(Collectors.joining(":"));
+
+		return ip6Str;
 
 		/*
 		 * // Convert to the 4-digit hexadecimal string that is separated with ":"
