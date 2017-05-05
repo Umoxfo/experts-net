@@ -27,9 +27,6 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Unique Local IPv6 Unicast Addresses (RFC 4193)
@@ -61,7 +58,7 @@ public final class ULUA extends IP6 {
 	 */
 	public ULUA(byte[] address) throws IOException {
 		createInterfaceIDByEUI64(address);
-		subnetID = Collections.singletonList(DEFAULT_SUBNT_ID);
+		subnetID = new Short[]{DEFAULT_SUBNT_ID};
 		generateGlobalID(getNTPTime(NTP_SERVER_ADDRESS));
 	}// ULUA
 
@@ -92,7 +89,7 @@ public final class ULUA extends IP6 {
 		 * (byte) (tmp.get(0) & 0xff00) != GLOBAL_ID_PREFIX ? throw new
 		 * IllegalArgumentException("ULUA must be 0xfd00::/8.");
 		 */
-		globalID = IP6Utils.toShortList(tmp);
+		globalID = IP6Utils.toShortArray(tmp);
 	}// setGlobalID
 
 	/**
@@ -102,9 +99,7 @@ public final class ULUA extends IP6 {
 	 * @see experts.net.ip6.IP6#setSubnetID(java.lang.String)
 	 */
 	@Override
-	public void setSubnetID(String sID) {
-		subnetID = Collections.singletonList((short) Integer.parseInt(sID, 16));
-	}//setSubnetID
+	public void setSubnetID(String sID) { subnetID = new Short[]{(short) Integer.parseInt(sID, 16)}; }
 
 	/**
 	 * Sets a interface ID that is the hexadecimal maximum 16 digits.
@@ -121,22 +116,22 @@ public final class ULUA extends IP6 {
 			throw new IllegalArgumentException("The Interface ID length of ULUA must be 64 bits.");
 		}//if
 
-		interfaceID = IP6Utils.toShortList(tmp);
+		interfaceID = IP6Utils.toShortArray(tmp);
 	}// setInterfaceID
 
 	/*
-	 * Converts ByteBuffer to a list of the Short type.
+	 * Converts ByteBuffer to an array of the Short type.
 	 */
-	private static List<Short> toList(ByteBuffer buf) {
-		int lim = buf.limit() / 2;
-		List<Short> tmp = new ArrayList<>(lim);
+	private static Short[] toArray(ByteBuffer buf) {
+			int size = buf.limit() / 2;
+			Short[] shorts = new Short[size];
 
-		buf.rewind();
-		for (int i = 0; i < lim; i++) {
-			tmp.add(buf.getShort());
-		}//for
+			buf.rewind();
+			for (int i = 0; i < size; i++) {
+				shorts[i] = buf.getShort();
+			}// for
 
-		return tmp;
+		return shorts;
 	}// toList
 
 	/**
@@ -173,21 +168,22 @@ public final class ULUA extends IP6 {
 		ByteBuffer buf = ByteBuffer.allocate(16);
 
 		buf.putLong(timeStamp);
-		interfaceID.forEach(buf::putShort);
+		for (short e : interfaceID) {
+			buf.putShort(e);
+		}//for
 
 		byte[] digest = DigestUtils.sha1(buf.array());
 
 		buf.clear().limit(6);
 		buf.put(GLOBAL_ID_PREFIX).put(digest, 15, 5);
 
-		globalID = toList(buf);
+		globalID = toArray(buf);
 	}// generateGlobalID
 
 	/**
 	 * Creates Interface ID by the Modified EUI-64 format (RFC 4291)
 	 *
-	 * @param macAddr MAC (NIC) address of the network interface for setting the
-	 *            generated address
+	 * @param macAddr MAC (NIC) address of the network interface for setting the generated address
 	 */
 	public void createInterfaceIDByEUI64(byte[] macAddr) {
 		ByteBuffer buf = ByteBuffer.allocate(INTERFACE_ID_LENGTH);
@@ -196,6 +192,6 @@ public final class ULUA extends IP6 {
 
 		buf.put(0, (byte) (buf.get(0) ^ 0x02));
 
-		interfaceID = toList(buf);
+		interfaceID = toArray(buf);
 	}// createInterfaceIDByEUI64
 }

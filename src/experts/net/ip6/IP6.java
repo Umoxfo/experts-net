@@ -18,7 +18,7 @@
 package experts.net.ip6;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 
 /**
  * Convenience container for IPv6 address summary information.
@@ -29,28 +29,26 @@ import java.util.List;
  */
 public abstract class IP6 {
 	/**
-	 * 48 bits for Unique Local IPv6 Unicast Addresses (ULUA) or 64 bits or less
-	 * for Global Unicast Address (GUA).
+	 * 48 bits for Unique Local IPv6 Unicast Addresses (ULUA) or 64 bits or less for Global Unicast Address (GUA).
 	 */
-	protected List<Short> globalID;
+	protected Short[] globalID;
 
 	/**
-	 * 16 bits for ULUA or 64 - n bits (these n bits equal GUA of the Global ID
-	 * bits length) for GUA.
+	 * 16 bits for ULUA or 64 - n bits (these n bits equal GUA of the Global ID bits length) for GUA.
 	 */
-	protected List<Short> subnetID;
+	protected Short[] subnetID;
 
 	/**
 	 * 64 bits for ULUA and GUA.
 	 */
-	protected List<Short> interfaceID;
+	protected Short[] interfaceID;
 
 	/**
 	 * Returns the Global ID represented by short type list.
 	 *
 	 * @return list of the Global ID
 	 */
-	public List<Short> getGlobalID() { return globalID; }
+	public Short[] getGlobalID() { return globalID; }
 
 	/**
 	 * Sets the Global ID of IPv6 address.
@@ -64,7 +62,7 @@ public abstract class IP6 {
 	 *
 	 * @return list of the Subnet ID
 	 */
-	public List<Short> getSubnetID() { return subnetID; }
+	public Short[] getSubnetID() { return subnetID; }
 
 	/**
 	 * Sets the Subnet ID of IPv6 address.
@@ -78,7 +76,7 @@ public abstract class IP6 {
 	 *
 	 * @return list of the Interface ID
 	 */
-	public List<Short> getInterfaceID() { return interfaceID; }
+	public Short[] getInterfaceID() { return interfaceID; }
 
 	/**
 	 * Sets the Interface ID of IPv6 address.
@@ -97,15 +95,15 @@ public abstract class IP6 {
 		ArrayList<Short> ipv6 = new ArrayList<>(8);
 
 		// Set Global ID
-		ipv6.addAll(globalID);
+		ipv6.addAll(Arrays.asList(globalID));
 
 		// Set Subnet ID
-		ipv6.addAll(subnetID);
+		ipv6.addAll(Arrays.asList(subnetID));
 
 		// Set Interface ID
-		ipv6.addAll(interfaceID);
+		ipv6.addAll(Arrays.asList(interfaceID));
 
-		// Replace consecutive sections of zeros to a double colon (::).
-		return IP6Utils.buildIP6String(ipv6);
+		// Replace consecutive sections of zeros to a double colon (::)
+		return IP6Utils.format(ipv6);
 	}// toString
 }

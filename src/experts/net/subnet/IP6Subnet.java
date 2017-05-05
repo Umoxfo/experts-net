@@ -84,7 +84,6 @@ public final class IP6Subnet extends SubnetInfo {
 			highAddr[i] = (short) 0xffff;
 		}// for
 
-
 		return highAddr;
 	}// high
 
@@ -112,12 +111,12 @@ public final class IP6Subnet extends SubnetInfo {
 			al.add(e);
 		}// for
 
-		return IP6Utils.buildIP6String(al);
+		return IP6Utils.format(al);
 	}// format
 
 	/**
-	 * Returns true if the parameter <code>address</code> is in the
-	 * range of usable endpoint addresses for this subnet.
+	 * Returns true if the parameter <code>address</code> is in
+	 * the range of usable endpoint addresses for this subnet.
 	 *
 	 * @param address a colon-delimited address, e.g.
 	 *            "2001:db8:0:0:0:ff00:42:8329"
@@ -136,8 +135,8 @@ public final class IP6Subnet extends SubnetInfo {
 	}// isInRange(String address)
 
 	/**
-	 * Returns true if the parameter <code>address</code> is in the
-	 * range of usable endpoint addresses for this subnet.
+	 * Returns true if the parameter <code>address</code> is in
+	 * the range of usable endpoint addresses for this subnet.
 	 *
 	 * @param address an IPv6 address in binary
 	 * @return true if in range, false otherwise
@@ -166,8 +165,7 @@ public final class IP6Subnet extends SubnetInfo {
 
 	/**
 	 * Gets the <code>address</code>, that is a colon 16-bit delimited
-	 * hexadecimal format
-	 * for IPv6 addresses, e.g. "2001:db8::ff00:42:8329".
+	 * hexadecimal format for IPv6 addresses, e.g. "2001:db8::ff00:42:8329".
 	 *
 	 * @return a string of the IP address
 	 */
@@ -185,8 +183,7 @@ public final class IP6Subnet extends SubnetInfo {
 	public int getCIDR() { return cidr; }
 
 	/**
-	 * Returns an IPv6-CIDR notation, in which the address is followed by a
-	 * slash character (/) and
+	 * Returns an IPv6-CIDR notation, in which the address is followed by a slash character and
 	 * the count of counting the 1-bit population in the subnet mask.
 	 *
 	 * @return the CIDR notation of the address, e.g.

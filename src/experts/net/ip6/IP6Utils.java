@@ -17,8 +17,11 @@
  */
 package experts.net.ip6;
 
+import java.io.IOException;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -30,25 +33,24 @@ import java.util.stream.Stream;
  */
 public final class IP6Utils {
 	private static final short ZERO = 0;
-	// private static final String ZERO_FIELDS = "(0\\:){2,}";
 
 	/**
-	 * Converts String array to List (Short).
+	 * Converts String array to Short list.
 	 *
 	 * @param strArry String array
-	 * @return List (Short)
+	 * @return Short list
 	 * @since 2.0.4
 	 */
-	public static List<Short> toShortList(String[] strArry) {
+	static Short[] toShortArray(String[] strArry) {
 		Stream<String> arryStream = Arrays.stream(strArry);
 
 		// Check values
 		if (arryStream.map(i -> Integer.parseInt(i, 16)).anyMatch(i -> i > 0xffff)) {
 			throw new IllegalArgumentException("Each group which is separated by colons must be within 16 bits.");
-		} // if
+		}// if
 
 		// Convert to the short list
-		return arryStream.map(i -> (short) Integer.parseInt(i, 16)).collect(Collectors.toList());
+		return arryStream.map(i -> (short) Integer.parseInt(i, 16)).collect(Collectors.toList()).toArray(new Short[0]);
 
 		/*
 		 * List<Short> buf = new ArrayList<>(strArry.length);
@@ -74,7 +76,7 @@ public final class IP6Utils {
 	 * @param list a list of IP address
 	 * @return an IPv6 address in the colon 16-bit delimited hexadecimal format
 	 */
-	public static String buildIP6String(List<Short> list) {
+	public static String format(ArrayList<Short> list) {
 		int fromIndex = 0;
 		int toIndex = 0;
 		int maxCnt = 0;
@@ -83,10 +85,12 @@ public final class IP6Utils {
 		 * The longest run of consecutive 16-bit 0 fields MUST be shortened based on RFC5952.
 		 */
 		// Find the longest zero fields
-		int index = list.indexOf(ZERO);
+		int index = 0;
 		int lastIndex = list.lastIndexOf(ZERO);
+
 		while (index < lastIndex) {
-			int j = index + (list.subList(index + 1, lastIndex).indexOf(ZERO) + 1);
+			index += list.subList(index, lastIndex).indexOf(ZERO);
+			int j = index + 1;
 			while ((j <= lastIndex) && (list.get(j) == ZERO)) {
 				j++;
 			}//while
@@ -118,29 +122,18 @@ public final class IP6Utils {
 		}).collect(Collectors.joining(":"));
 
 		return ip6Str;
+	}//format
 
-		/*
-		 * // Convert to the 4-digit hexadecimal string that is separated with ":"
-		 * String address = list.stream().map(i -> Integer.toHexString(i & 0xffff)).collect(Collectors.joining(":"));
-		 * 
-		 * // The longest run of consecutive 0 fields MUST be shortened based on RFC 5952.
-		 * String regex = "";
-		 * int maxLength = 0;
-		 * 
-		 * // Find the longest zero fields
-		 * Matcher match = Pattern.compile(ZERO_FIELDS).matcher(address);
-		 * while (match.find()) {
-		 * String reg = match.group();
-		 * int len = reg.length();
-		 * 
-		 * if (maxLength < len) {
-		 * regex = reg;
-		 * maxLength = len;
-		 * }//if
-		 * }//while
-		 * 
-		 * // Remove all leading zeroes
-		 * return address.replace(regex, ":");
-		 */
-	}//buildIP6String
+	/**
+	 * Returns the Unique Local IPv6 Unicast Address of the hardware address.
+	 *
+	 * @param nicAddress a hardware address of the machine that creates Unique Local IPv6 Unicast Addresses
+	 * @return the Unique Local IPv6 Unicast Address
+	 * @throws SocketException If the socket could not be opened which it might be not available any ports.
+	 * @throws UnknownHostException If the host could not be found.
+	 * @throws IOException If an error occurs while retrieving the time.
+	 */
+	public static String getUniqueLocalUnicastAddressByHardwareAddress(byte[] nicAddress) throws IOException {
+		return new ULUA(nicAddress).toString();
+	}//getUniqueLocalUnicastAddressByHardwareAddress
 }

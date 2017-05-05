@@ -84,7 +84,7 @@ public final class SubnetUtils {
 	}// toInteger
 
 	/*
-	 * Checks if a value x is in the range [begin,end].
+	 * Checks if a value x is in the range [begin, end].
 	 * Returns x if it is in range, throws an exception otherwise.
 	 */
 	static int checkRange(int value, int begin, int end) {
@@ -131,8 +131,7 @@ public final class SubnetUtils {
 	 * @return a SubnetInfo object, which is implication of {@link IP4Subnet} or
 	 *         {@link IP6Subnet}, created from the IP address.
 	 * @throws UnknownHostException see {@link InetAddress#getByName(String host)}
-	 * @throws SecurityException if a security manager exists and
-	 *             its checkConnect method doesn't allow the operation
+	 * @throws SecurityException if a security manager exists and its checkConnect method doesn't allow the operation
 	 */
 	public static SubnetInfo getByCIDRNortation(String cidrNotation) throws UnknownHostException {
 		if (cidrNotation.contains("/")) {
