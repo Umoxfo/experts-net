@@ -31,17 +31,17 @@ public abstract class IP6 {
 	/**
 	 * 48 bits for Unique Local IPv6 Unicast Addresses (ULUA) or 64 bits or less for Global Unicast Address (GUA).
 	 */
-	protected Short[] globalID;
+	Short[] globalID;
 
 	/**
 	 * 16 bits for ULUA or 64 - n bits (these n bits equal GUA of the Global ID bits length) for GUA.
 	 */
-	protected Short[] subnetID;
+	Short[] subnetID;
 
 	/**
 	 * 64 bits for ULUA and GUA.
 	 */
-	protected Short[] interfaceID;
+	Short[] interfaceID;
 
 	/**
 	 * Returns the Global ID represented by short type list.
