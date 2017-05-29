@@ -23,7 +23,6 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * A class that helps to generate IPv6 address.
@@ -42,33 +41,22 @@ public final class IP6Utils {
 	 * @since 2.0.4
 	 */
 	static Short[] toShortArray(String[] strArry) {
-		Stream<String> arryStream = Arrays.stream(strArry);
+		ArrayList<Short> buf = new ArrayList<>(strArry.length);
 
-		// Check values
-		if (arryStream.map(i -> Integer.parseInt(i, 16)).anyMatch(i -> i > 0xffff)) {
-			throw new IllegalArgumentException("Each group which is separated by colons must be within 16 bits.");
-		}// if
+		Arrays.stream(strArry).forEach(i -> {
+			int j = Integer.parseInt(i, 16);
 
-		// Convert to the short list
-		return arryStream.map(i -> (short) Integer.parseInt(i, 16)).collect(Collectors.toList()).toArray(new Short[0]);
+			// Check values
+			if (j > 0xffff) {
+				throw new IllegalArgumentException("Each group which is separated by colons must be within 16 bits.");
+			}//if
 
-		/*
-		 * List<Short> buf = new ArrayList<>(strArry.length);
-		 *
-		 * Arrays.stream(strArry).forEach(i -> {
-		 * int j = Integer.parseInt(i, 16);
-		 *
-		 * // Check values
-		 * if (j > 0xffff) {
-		 * throw new IllegalArgumentException("Each group which is separated by colons must be within 16 bits.");
-		 * }//if
-		 *
-		 * // Convert to the short list
-		 * buf.add((short) j);
-		 * });
-		 * return buf;
-		 */
-	}// toShortList
+			// Convert to the short list
+			buf.add((short) j);
+		});
+
+		return buf.toArray(new Short[0]);
+	}//toShortArray
 
 	/**
 	 * Consecutive sections of zeroes are replaced with a double colon (::).
@@ -112,7 +100,7 @@ public final class IP6Utils {
 		}//if
 
 		// Convert to a hexadecimal string being separated with colons for each 4-digit
-		String ip6Str = list.stream().map(i -> {
+		String ip6 = list.stream().map(i -> {
 			String str = "";
 			if (i != null) {
 				str = Integer.toHexString(i & 0xffff);
@@ -121,7 +109,7 @@ public final class IP6Utils {
 			return str;
 		}).collect(Collectors.joining(":"));
 
-		return ip6Str;
+		return ip6.endsWith(":") ? ip6.concat(":") : ip6;
 	}//format
 
 	/**
@@ -133,7 +121,7 @@ public final class IP6Utils {
 	 * @throws UnknownHostException If the host could not be found.
 	 * @throws IOException If an error occurs while retrieving the time.
 	 */
-	public static String getUniqueLocalUnicastAddressByHardwareAddress(byte[] nicAddress) throws IOException {
+	public static String getULUAByHardwareAddress(byte[] nicAddress) throws IOException {
 		return new ULUA(nicAddress).toString();
 	}//getUniqueLocalUnicastAddressByHardwareAddress
 }
