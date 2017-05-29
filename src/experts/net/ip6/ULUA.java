@@ -86,8 +86,7 @@ public final class ULUA extends IP6 {
 		 * Check prefix by short value
 		 * tmp is a short array
 		 *
-		 * (byte) (tmp.get(0) & 0xff00) != GLOBAL_ID_PREFIX ? throw new
-		 * IllegalArgumentException("ULUA must be 0xfd00::/8.");
+		 * (byte) (tmp.get(0) & 0xff00) != GLOBAL_ID_PREFIX ? throw new IllegalArgumentException("ULUA must be 0xfd00::/8.");
 		 */
 		globalID = IP6Utils.toShortArray(tmp);
 	}// setGlobalID
@@ -157,7 +156,7 @@ public final class ULUA extends IP6 {
 		time.computeDetails();
 
 		return time.getMessage().getTransmitTimeStamp().ntpValue();
-	}// obtainNTPTime
+	}//getNTPTime
 
 	/**
 	 * Generates a global ID according to RFC 4193 Section 3.2.2.

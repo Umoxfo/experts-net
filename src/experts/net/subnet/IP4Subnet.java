@@ -36,7 +36,7 @@ import java.net.UnknownHostException;
  */
 public final class IP4Subnet extends SubnetInfo {
 	/* Mask to convert unsigned int to a long (i.e. keep 32 bits) */
-	private static final long UNSIGNED_INT_MASK = 0x0FFFF_FFFFL;
+	private static final long UNSIGNED_INT_MASK = 0xFFFF_FFFFL;
 	private static final int NBITS = 32;
 
 	private final int address;
@@ -67,11 +67,10 @@ public final class IP4Subnet extends SubnetInfo {
 
 		/* Calculate broadcast address */
 		broadcast = network | ~netmask;
-	}// IP4Subnet
+	}//IP4Subnet
 
 	/**
-	 * Returns <code>true</code> if the return value of
-	 * {@link IP4Subnet#getAddressCount()}
+	 * Returns <code>true</code> if the return value of {@link #getAddressCount()}
 	 * includes the network and broadcast addresses.
 	 *
 	 * @return true if the host count includes the network and broadcast addresses
@@ -80,8 +79,7 @@ public final class IP4Subnet extends SubnetInfo {
 	public boolean isInclusiveHostCount() { return inclusiveHostCount; }
 
 	/**
-	 * Set to <code>true</code> if you want the return value of
-	 * {@link IP4Subnet#getAddressCount()}
+	 * Set to <code>true</code> if you want the return value of {@link #getAddressCount()}
 	 * to include the network and broadcast addresses.
 	 *
 	 * @param inclusiveHostCount true if network and broadcast addresses are included
@@ -120,15 +118,15 @@ public final class IP4Subnet extends SubnetInfo {
 		int addr = 0;
 		for (int i = 0; i < 4; i++) {
 			addr |= (address[i] & 0xff) << (8 * (3 - i));
-		} // for
+		}//for
 
 		return addr;
-	}// toInteger
+	}//toInteger
 
 	/**
-	 * Returns true if the parameter <code>address</code> is in the
-	 * range of usable endpoint addresses for this subnet. This excludes the
-	 * network and broadcast addresses.
+	 * Returns true if the parameter <code>address</code> is in
+	 * the range of usable endpoint addresses for this subnet.
+	 * This excludes the network and broadcast addresses.
 	 *
 	 * @param address a dot-delimited IPv4 address, e.g. "192.168.0.1"
 	 * @return true if in range, false otherwise
@@ -140,15 +138,15 @@ public final class IP4Subnet extends SubnetInfo {
 
 		if (addrArry.length != 4) {
 			throw new IllegalArgumentException(address + " is not IPv4 address.");
-		} // if
+		}//if
 
 		return isInRange(toInteger(addrArry));
-	}// isInRange
+	}//isInRange
 
 	/**
-	 * Returns true if the parameter <code>address</code> is in the
-	 * range of usable endpoint addresses for this subnet. This excludes the
-	 * network and broadcast addresses.
+	 * Returns true if the parameter <code>address</code> is in
+	 * the range of usable endpoint addresses for this subnet.
+	 * This excludes the network and broadcast addresses.
 	 *
 	 * @param address an IPv4 address in binary
 	 * @return true if in range, false otherwise
@@ -156,45 +154,42 @@ public final class IP4Subnet extends SubnetInfo {
 	@Override
 	public boolean isInRange(int address) {
 		long addLong = address & UNSIGNED_INT_MASK;
-		long netLong = networkLong();
-		long broadLong = broadcastLong();
-		return (addLong > netLong) && (addLong < broadLong);
-	}// isInRange
+
+		return (addLong > networkLong()) && (addLong < broadcastLong());
+	}//isInRange
 
 	@Override
-	public String getAddress() { return SubnetUtils.format(address, '.'); }
+	public String getAddress() { return SubnetUtils.format(address); }
 
 	@Override
 	public int getCIDR() { return cidr; }
 
 	@Override
-	public String getNetmask() { return SubnetUtils.format(netmask, '.'); }
+	public String getNetmask() { return SubnetUtils.format(netmask); }
 
 	@Override
-	public String getNetworkAddress() { return SubnetUtils.format(network, '.'); }
+	public String getNetworkAddress() { return SubnetUtils.format(network); }
 
 	@Override
-	public String getBroadcastAddress() { return SubnetUtils.format(broadcast, '.'); }
+	public String getBroadcastAddress() { return SubnetUtils.format(broadcast); }
 
 	/**
-	 * Returns a CIDR notation, in which the address is followed by a slash
-	 * character (/) and
-	 * the count of counting the 1-bit population in the subnet mask.
+	 * Returns a CIDR notation, in which the address is followed by
+	 * a slash character and the count of counting the 1-bit population in the subnet mask.
 	 *
 	 * @return the CIDR notation of the address, e.g. "192.168.0.1/24"
 	 */
 	@Override
-	public String getCIDRNotation() { return SubnetUtils.format(address, '.') + "/" + cidr; }
+	public String getCIDRNotation() { return SubnetUtils.format(address) + "/" + cidr; }
 
 	/**
 	 * Return the low address as a dotted IP address.
 	 * Will be zero for CIDR/31 and CIDR/32 if the inclusive flag is false.
 	 *
-	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no
-	 *         valid address
+	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
 	 */
 	@Override
-	public String getLowAddress() { return SubnetUtils.format(low(), '.'); }
+	public String getLowAddress() { return SubnetUtils.format(low()); }
 
 	/**
 	 * Return the high address as a dotted IP address.
@@ -203,7 +198,7 @@ public final class IP4Subnet extends SubnetInfo {
 	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
 	 */
 	@Override
-	public String getHighAddress() { return SubnetUtils.format(high(), '.'); }
+	public String getHighAddress() { return SubnetUtils.format(high()); }
 
 	/**
 	 * Returns the count of available addresses.
@@ -221,14 +216,14 @@ public final class IP4Subnet extends SubnetInfo {
 				count -= 2;
 			} else {
 				count = 0;
-			}// if-else
-		}// if
+			}//if-else
+		}//if
 
 		return count;
-	}// getAddressCountLong
+	}//getAddressCountLong
 
 	/**
-	 * Returns subnet summary information of the address,
+	 * Returns the subnet summary information of the address,
 	 * which includes an IP address by CIDR-Notation with the netmask,
 	 * network address, broadcast address, the first and last addresses of the network,
 	 * and the number of available addresses in the network which includes
@@ -237,14 +232,14 @@ public final class IP4Subnet extends SubnetInfo {
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
-		buf.append("CIDR-Notation:\t[" + getCIDRNotation() + "]")
-		   .append(" Netmask: [" + getNetmask() + "]\n")
-		   .append("Network:\t[" + getNetworkAddress() + "]\n")
-		   .append("Broadcast:\t[" + getBroadcastAddress() + "]\n")
-		   .append("First Address:\t[" + getLowAddress() + "]\n")
-		   .append("Last Address:\t[" + getHighAddress() + "]\n")
-		   .append("# Addresses:\t[" + getAddressCountLong() + "]\n");
+		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append("]")
+		   .append(" Netmask: [").append(getNetmask()).append("]\n")
+		   .append("Network:\t[").append(getNetworkAddress()).append("]\n")
+		   .append("Broadcast:\t[").append(getBroadcastAddress()).append("]\n")
+		   .append("First Address:\t[").append(getLowAddress()).append("]\n")
+		   .append("Last Address:\t[").append(getHighAddress()).append("]\n")
+		   .append("# Addresses:\t[").append(getAddressCountLong()).append("]");
 
 		return buf.toString();
-	}// toString
+	}//toString
 }
