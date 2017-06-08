@@ -1,39 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>io.github.umoxfo</groupId>
 	<artifactId>experts-net</artifactId>
 	<version>2.0.6-dev</version>
+	<name>Experts Net</name>
+	<url>https://github.com/Umoxfo/experts-net</url>
+	<inceptionYear>2014</inceptionYear>
+
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>
 			<groupId>commons-net</groupId>
 			<artifactId>commons-net</artifactId>
+			<version>3.6</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
+			<version>1.10</version>
 		</dependency>
 	</dependencies>
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>commons-net</groupId>
-				<artifactId>commons-net</artifactId>
-				<version>3.6</version>
-			</dependency>
-			<dependency>
-				<groupId>commons-codec</groupId>
-				<artifactId>commons-codec</artifactId>
-				<version>1.10</version>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
+
+	<prerequisites>
+		<maven>3.0</maven>
+	</prerequisites>
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -112,12 +108,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<name>Experts Net</name>
-	<url>https://github.com/Umoxfo/experts-net</url>
-	<inceptionYear>2014</inceptionYear>
-
-	<prerequisites>
-		<maven>3.0</maven>
-	</prerequisites>
 </project>
