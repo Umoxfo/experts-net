@@ -141,20 +141,18 @@ public final class IP6Subnet extends SubnetInfo {
 	@Override
 	public boolean isInRange(short[] address) {
 		int prefixSize = cidr / 16;
-		short[] lowAddress = low();
-		short[] highAddress = high();
 
 		// Have the same network prefix
 		for (int i = 0; i < prefixSize; i++) {
-			if (address[i] != lowAddress[i]) {
+			if (address[i] != ip6Address[i]) {
 				return false;
 			}//if
 		}//for
 
 		// The host identifier is in range between the lowest and the hightest addresses
 		int addr = address[prefixSize] & 0xffff;
-		int lowAddr = lowAddress[prefixSize] & 0xffff;
-		int highAddr = highAddress[prefixSize] & 0xffff;
+		int lowAddr = low()[prefixSize] & 0xffff;
+		int highAddr = high()[prefixSize] & 0xffff;
 
 		return (addr >= lowAddr) && (addr <= highAddr);
 	}//isInRange(short[] address)
