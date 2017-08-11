@@ -146,8 +146,7 @@ public final class IP6Subnet extends SubnetInfo {
 
 		// Have the same network prefix
 		for (int i = 0; i < prefixSize; i++) {
-			// (address[i] ^ lowAddress[i]) != (address[i] ^ highAddress[i]) && (lowAddress[i] ^ highAddress[i]) != 0
-			if ((address[i] ^ lowAddress[i]) != 0) {
+			if (address[i] != lowAddress[i]) {
 				return false;
 			}//if
 		}//for
