@@ -24,6 +24,8 @@
  */
 package experts.net.subnet;
 
+import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
@@ -134,13 +136,13 @@ public final class IP4Subnet extends SubnetInfo {
 	 */
 	@Override
 	public boolean isInRange(String address) throws UnknownHostException {
-		byte[] addrArry = checkAddress(address);
+		InetAddress ia = InetAddress.getByName(address);
 
-		if (addrArry.length != 4) {
+		if (ia instanceof Inet4Address) {
 			throw new IllegalArgumentException(address + " is not IPv4 address.");
 		}//if
 
-		return isInRange(toInteger(addrArry));
+		return isInRange(toInteger(ia.getAddress()));
 	}//isInRange
 
 	/**

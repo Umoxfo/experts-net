@@ -29,11 +29,6 @@ import java.net.UnknownHostException;
  * @since 2.0.6
  */
 public class SubnetInfo {
-	/*
-	 * Checks wither an address is IPv4 or IPv6
-	 */
-	byte[] checkAddress(String address) throws UnknownHostException { return InetAddress.getByName(address).getAddress(); }
-
 	/**
 	 * Returns <code>true</code> if the return value of {@link #getAddressCount()}
 	 * includes the network and broadcast addresses. (ONLY USE in IPv4)

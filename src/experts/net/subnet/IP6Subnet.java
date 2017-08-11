@@ -20,6 +20,8 @@ package experts.net.subnet;
 import experts.net.ip6.IP6Utils;
 
 import java.math.BigInteger;
+import java.net.Inet6Address;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
@@ -120,13 +122,13 @@ public final class IP6Subnet extends SubnetInfo {
 	 */
 	@Override
 	public boolean isInRange(String address) throws UnknownHostException {
-		byte[] addrArry = checkAddress(address);
+		InetAddress ia = InetAddress.getByName(address);
 
-		if (addrArry.length != 16) {
+		if (ia instanceof Inet6Address) {
 			throw new IllegalArgumentException(address + " is not IPv6 address.");
 		}//if
 
-		return isInRange(toShortArray(addrArry));
+		return isInRange(toShortArray(ia.getAddress()));
 	}//isInRange(String address)
 
 	/**
