@@ -34,7 +34,7 @@ import java.nio.ByteBuffer;
  * @author Makoto Sakaguchi
  * @version 2.0.6-dev
  */
-public final class ULUA extends io.github.umoxfo.experts.net.ip6.IP6 {
+public final class ULUA extends IP6 {
 	private static final int GLOBAL_ID_LENGTH = 3;
 	private static final String GLOBAL_ID_PREFIX_FORMAT = "fd";
 	private static final byte GLOBAL_ID_PREFIX = (byte) 0xfd;
@@ -60,7 +60,7 @@ public final class ULUA extends io.github.umoxfo.experts.net.ip6.IP6 {
 		createInterfaceIDByEUI64(address);
 		subnetID = new Short[]{DEFAULT_SUBNT_ID};
 		generateGlobalID(getNTPTime(NTP_SERVER_ADDRESS));
-	}// ULUA
+	}//ULUA
 
 	/**
 	 * Sets a global ID that is the hexadecimal maximum 12 digits.
@@ -89,7 +89,7 @@ public final class ULUA extends io.github.umoxfo.experts.net.ip6.IP6 {
 		 * (byte) (tmp.get(0) & 0xff00) != GLOBAL_ID_PREFIX ? throw new IllegalArgumentException("ULUA must be 0xfd00::/8.");
 		 */
 		globalID = IP6Utils.toShortArray(tmp);
-	}// setGlobalID
+	}//setGlobalID
 
 	/**
 	 * Sets a subnet ID that is the hexadecimal maximum four digits.
@@ -116,22 +116,22 @@ public final class ULUA extends io.github.umoxfo.experts.net.ip6.IP6 {
 		}//if
 
 		interfaceID = IP6Utils.toShortArray(tmp);
-	}// setInterfaceID
+	}//setInterfaceID
 
 	/*
 	 * Converts ByteBuffer to an array of the Short type.
 	 */
 	private static Short[] toArray(ByteBuffer buf) {
-			int size = buf.limit() / 2;
-			Short[] shorts = new Short[size];
+		int size = buf.limit() / 2;
+		Short[] shorts = new Short[size];
 
-			buf.rewind();
-			for (int i = 0; i < size; i++) {
-				shorts[i] = buf.getShort();
-			}// for
+		buf.rewind();
+		for (int i = 0; i < size; i++) {
+			shorts[i] = buf.getShort();
+		}//for
 
 		return shorts;
-	}// toList
+	}//toList
 
 	/**
 	 * Returns NTP time stamp value
@@ -177,7 +177,7 @@ public final class ULUA extends io.github.umoxfo.experts.net.ip6.IP6 {
 		buf.put(GLOBAL_ID_PREFIX).put(digest, 15, 5);
 
 		globalID = toArray(buf);
-	}// generateGlobalID
+	}//generateGlobalID
 
 	/**
 	 * Creates Interface ID by the Modified EUI-64 format (RFC 4291)
@@ -192,5 +192,5 @@ public final class ULUA extends io.github.umoxfo.experts.net.ip6.IP6 {
 		buf.put(0, (byte) (buf.get(0) ^ 0x02));
 
 		interfaceID = toArray(buf);
-	}// createInterfaceIDByEUI64
+	}//createInterfaceIDByEUI64
 }
