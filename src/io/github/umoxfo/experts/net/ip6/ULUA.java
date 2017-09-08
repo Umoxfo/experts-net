@@ -1,21 +1,21 @@
 /*
- * Experts Net
- * Copyright (c) 2014-2017 Makoto Sakaguchi.
+ * Copyright (c) 2017. Makoto Sakaguchi
+ * This file is part of Network.
  *
- * This program is free software: you can redistribute it and/or modify
+ * Network is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * Network is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
-package experts.net.ip6;
+package io.github.umoxfo.experts.net.ip6;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.net.ntp.NTPUDPClient;
@@ -34,7 +34,7 @@ import java.nio.ByteBuffer;
  * @author Makoto Sakaguchi
  * @version 2.0.6-dev
  */
-public final class ULUA extends IP6 {
+public final class ULUA extends io.github.umoxfo.experts.net.ip6.IP6 {
 	private static final int GLOBAL_ID_LENGTH = 3;
 	private static final String GLOBAL_ID_PREFIX_FORMAT = "fd";
 	private static final byte GLOBAL_ID_PREFIX = (byte) 0xfd;
@@ -66,7 +66,7 @@ public final class ULUA extends IP6 {
 	 * Sets a global ID that is the hexadecimal maximum 12 digits.
 	 *
 	 * @param gID a global ID of the ULUA, the prefix (0xfd00::/8) and Global ID
-	 * @see experts.net.ip6.IP6#setGlobalID(java.lang.String)
+	 * @see io.github.umoxfo.experts.net.ip6.IP6#setGlobalID(java.lang.String)
 	 */
 	@Override
 	public void setGlobalID(String gID) {
@@ -95,7 +95,7 @@ public final class ULUA extends IP6 {
 	 * Sets a subnet ID that is the hexadecimal maximum four digits.
 	 *
 	 * @param sID a Subnet ID of the ULUA
-	 * @see experts.net.ip6.IP6#setSubnetID(java.lang.String)
+	 * @see io.github.umoxfo.experts.net.ip6.IP6#setSubnetID(java.lang.String)
 	 */
 	@Override
 	public void setSubnetID(String sID) { subnetID = new Short[]{(short) Integer.parseInt(sID, 16)}; }
@@ -104,7 +104,7 @@ public final class ULUA extends IP6 {
 	 * Sets a interface ID that is the hexadecimal maximum 16 digits.
 	 *
 	 * @param iID an Interface ID of the ULUA
-	 * @see experts.net.ip6.IP6#interfaceID
+	 * @see io.github.umoxfo.experts.net.ip6.IP6#interfaceID
 	 */
 	@Override
 	public void setInterfaceID(String iID) {

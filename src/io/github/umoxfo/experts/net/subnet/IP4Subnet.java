@@ -1,28 +1,21 @@
 /*
- * Experts Net
- * Copyright (c) 2017 Makoto Sakaguchi.
+ * Copyright (c) 2017. Makoto Sakaguchi
+ * This file is part of Network.
  *
- * This program is free software: you can redistribute it and/or modify
+ * Network is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
- * any later version.
+ * (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
+ * Network is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- * NOTE:
- * This part of the program includes the code of "Apache Commons Net,"
- * which developed at The Apache Software Foundation (http://www.apache.org/)
- * and be distributed in the Apache License 2.0
- * (http://www.apache.org/licenses/LICENSE-2.0),
- * by Makoto Sakaguchi form March 11, 2017 to March 14, 2017.
+ * along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
  */
-package experts.net.subnet;
+package io.github.umoxfo.experts.net.subnet;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
