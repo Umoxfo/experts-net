@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
@@ -40,22 +39,21 @@ public final class IP6Utils {
 	 * @return Short list
 	 * @since 2.0.4
 	 */
-	static Short[] toShortArray(String[] strArry) {
-		ArrayList<Short> buf = new ArrayList<>(strArry.length);
+	static short[] toShortArray(String[] strArry) {
+		short[] buf = new short[strArry.length];
 
-		Arrays.stream(strArry).forEach(i -> {
-			int j = Integer.parseInt(i, 16);
+		for (int i = 0, strArryLength = strArry.length; i < strArryLength; i++) {
+			int n = Integer.parseInt(strArry[i], 16);
 
 			// Check values
-			if (j > 0xffff) {
+			if (n > 0xffff) {
 				throw new IllegalArgumentException("Each group which is separated by colons must be within 16 bits.");
 			}//if
 
-			// Convert to the short list
-			buf.add((short) j);
-		});
+			buf[i] = (short) n;
+		}//for
 
-		return buf.toArray(new Short[0]);
+		return buf;
 	}//toShortArray
 
 	/**

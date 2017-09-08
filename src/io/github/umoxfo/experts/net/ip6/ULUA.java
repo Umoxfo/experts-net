@@ -42,7 +42,7 @@ public final class ULUA extends IP6 {
 
 	private static final short DEFAULT_SUBNT_ID = 0x0000;
 
-	private static final int INTERFACE_ID_LENGTH = 8;
+	private static final int INTERFACE_ID_LENGTH = 4;
 	private static final short ADDITIONAL_VALUES = (short) 0xfffe;
 
 	private static final String NTP_SERVER_ADDRESS = "pool.ntp.org";
@@ -59,7 +59,7 @@ public final class ULUA extends IP6 {
 	 */
 	public ULUA(byte[] address) throws IOException {
 		createInterfaceIDByEUI64(address);
-		subnetID = new Short[]{DEFAULT_SUBNT_ID};
+		subnetID = new short[]{DEFAULT_SUBNT_ID};
 		generateGlobalID(getNTPTime(NTP_SERVER_ADDRESS));
 	}//ULUA
 
@@ -99,7 +99,7 @@ public final class ULUA extends IP6 {
 	 * @see io.github.umoxfo.experts.net.ip6.IP6#setSubnetID(java.lang.String)
 	 */
 	@Override
-	public void setSubnetID(String sID) { subnetID = new Short[]{(short) Integer.parseInt(sID, 16)}; }
+	public void setSubnetID(String sID) { subnetID = new short[]{(short) Integer.parseInt(sID, 16)}; }
 
 	/**
 	 * Sets a interface ID that is the hexadecimal maximum 16 digits.
@@ -122,9 +122,9 @@ public final class ULUA extends IP6 {
 	/*
 	 * Converts ByteBuffer to an array of the Short type.
 	 */
-	private static Short[] toArray(ByteBuffer buf) {
+	private static short[] toArray(ByteBuffer buf) {
 		int size = buf.limit() / 2;
-		Short[] shorts = new Short[size];
+		short[] shorts = new short[size];
 
 		buf.rewind();
 		for (int i = 0; i < size; i++) {
@@ -189,7 +189,7 @@ public final class ULUA extends IP6 {
 	 * @param macAddr MAC (NIC) address of the network interface for setting the generated address
 	 */
 	public void createInterfaceIDByEUI64(byte[] macAddr) {
-		ByteBuffer buf = ByteBuffer.allocate(INTERFACE_ID_LENGTH);
+		ByteBuffer buf = ByteBuffer.allocate(8);
 
 		buf.put(macAddr, 0, 3).putShort(ADDITIONAL_VALUES).put(macAddr, 3, 3);
 
