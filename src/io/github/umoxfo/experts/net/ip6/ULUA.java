@@ -17,7 +17,6 @@
  */
 package io.github.umoxfo.experts.net.ip6;
 
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.NtpV3Packet;
 import org.apache.commons.net.ntp.TimeInfo;
@@ -27,6 +26,8 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 /**
  * Unique Local IPv6 Unicast Addresses (RFC 4193)
@@ -171,7 +172,10 @@ public final class ULUA extends IP6 {
 			buf.putShort(e);
 		}//for
 
-		byte[] digest = DigestUtils.sha1(buf.array());
+		byte[] digest = null;
+		try {
+			digest = MessageDigest.getInstance("SHA-1").digest(buf.array());
+		} catch (NoSuchAlgorithmException e) {}
 
 		buf.clear().limit(6);
 		buf.put(GLOBAL_ID_PREFIX).put(digest, 15, 5);
