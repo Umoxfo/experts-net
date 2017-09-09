@@ -71,25 +71,23 @@ public final class IP6Utils {
 		 * The longest run of consecutive 16-bit 0 fields MUST be shortened based on RFC5952.
 		 */
 		// Find the longest zero fields
-		int index = 0;
-		int lastIndex = list.lastIndexOf(ZERO);
+		final int lastIndex = list.lastIndexOf(ZERO);
 
-		while (index < lastIndex) {
-			index += list.subList(index, lastIndex).indexOf(ZERO);
-			int j = index + 1;
-			while ((j <= lastIndex) && (list.get(j) == ZERO)) {
-				j++;
-			}//while
+		for (int i = 0; i < lastIndex; i++) {
+			if (list.get(i) == ZERO) {
+				int j = i + 1;
+				while ((j <= lastIndex) && (list.get(j) == ZERO)) j++;
 
-			int cnt = j - index;
-			if (maxCnt < cnt) {
-				fromIndex = index;
-				toIndex = j;
-				maxCnt = cnt;
+				int cnt = j - i;
+				if (maxCnt < cnt) {
+					fromIndex = i;
+					toIndex = j;
+					maxCnt = cnt;
+				}//if
+
+				i = j;
 			}//if
-
-			index = j + 1;
-		}//while
+		}//for
 
 		// Remove the longest part of zeros
 		if (1 < maxCnt) {
