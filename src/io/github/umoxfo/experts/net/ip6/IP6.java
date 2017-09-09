@@ -106,9 +106,9 @@ public abstract class IP6 {
 		}//for
 
 		/*
-		ipv6.addAll(Arrays.asList(gID));
+		ipv6.addAll(Arrays.asList(globalID));
 		ipv6.addAll(Arrays.asList(subnetID));
-		ipv6.addAll(Arrays.asList(iID));
+		ipv6.addAll(Arrays.asList(interfaceID));
 		*/
 
 		// Replace consecutive sections of zeros to a double colon (::)
