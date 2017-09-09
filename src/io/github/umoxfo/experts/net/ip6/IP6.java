@@ -112,6 +112,6 @@ public abstract class IP6 {
 		*/
 
 		// Replace consecutive sections of zeros to a double colon (::)
-		return IP6Utils.format(ipv6);
+		return IP6Utils.toTextFormat(ipv6);
 	}//toString
 }

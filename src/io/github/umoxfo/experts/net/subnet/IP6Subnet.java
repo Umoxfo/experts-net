@@ -109,7 +109,7 @@ public final class IP6Subnet extends SubnetInfo {
 			al.add(e);
 		}//for
 
-		return IP6Utils.format(al);
+		return IP6Utils.toTextFormat(al);
 	}//format
 
 	/**

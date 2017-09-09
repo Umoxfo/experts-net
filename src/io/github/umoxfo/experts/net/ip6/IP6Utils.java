@@ -62,7 +62,7 @@ public final class IP6Utils {
 	 * @param list a list of IP address
 	 * @return an IPv6 address in the colon 16-bit delimited hexadecimal format
 	 */
-	public static String format(ArrayList<Short> list) {
+	public static String toTextFormat(ArrayList<Short> list) {
 		int fromIndex = 0;
 		int toIndex = 0;
 		int maxCnt = 0;
