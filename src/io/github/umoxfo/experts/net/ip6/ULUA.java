@@ -48,12 +48,10 @@ public final class ULUA extends IP6 {
 	private static final String NTP_SERVER_ADDRESS = "pool.ntp.org";
 
 	/**
-	 * Constructor that takes address of the machine.
+	 * Constructor that takes a hardware address in a byte array.
 	 *
-	 * @param address MAC address of the machine that creates Unique Local IPv6
-	 *            Unicast Addresses
-	 * @throws SocketException If the socket could not be opened which it might
-	 *             be not available any ports.
+	 * @param address MAC address of the machine that creates an Local IPv6 unicast address
+	 * @throws SocketException If the socket could not be opened which it might be not available any ports.
 	 * @throws UnknownHostException If the host could not be found.
 	 * @throws IOException If an error occurs while retrieving the time.
 	 */
@@ -67,7 +65,7 @@ public final class ULUA extends IP6 {
 	 * Sets a global ID that is the hexadecimal maximum 12 digits.
 	 *
 	 * @param gID a global ID of the ULUA, the prefix (0xfd00::/8) and Global ID
-	 * @see io.github.umoxfo.experts.net.ip6.IP6#setGlobalID(java.lang.String)
+	 * @see IP6#setGlobalID(java.lang.String)
 	 */
 	@Override
 	public void setGlobalID(String gID) {
@@ -96,7 +94,7 @@ public final class ULUA extends IP6 {
 	 * Sets a subnet ID that is the hexadecimal maximum four digits.
 	 *
 	 * @param sID a Subnet ID of the ULUA
-	 * @see io.github.umoxfo.experts.net.ip6.IP6#setSubnetID(java.lang.String)
+	 * @see IP6#setSubnetID(java.lang.String)
 	 */
 	@Override
 	public void setSubnetID(String sID) { subnetID = new short[]{(short) Integer.parseInt(sID, 16)}; }
@@ -105,7 +103,7 @@ public final class ULUA extends IP6 {
 	 * Sets a interface ID that is the hexadecimal maximum 16 digits.
 	 *
 	 * @param iID an Interface ID of the ULUA
-	 * @see io.github.umoxfo.experts.net.ip6.IP6#interfaceID
+	 * @see IP6#interfaceID
 	 */
 	@Override
 	public void setInterfaceID(String iID) {
@@ -132,7 +130,7 @@ public final class ULUA extends IP6 {
 		}//for
 
 		return shorts;
-	}//toList
+	}//toArray
 
 	/**
 	 * Returns NTP time stamp value
