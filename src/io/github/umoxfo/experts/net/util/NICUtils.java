@@ -37,7 +37,7 @@ public final class NICUtils {
 	 * e.g. "00-1B-63-84-45-E6".
 	 */
 	private static String format(byte[] macAddr) {
-		StringBuilder sb = new StringBuilder().append(Hex.encodeHex(macAddr, false));
+		StringBuilder sb = new StringBuilder(17).append(Hex.encodeHex(macAddr, false));
 
 		// Separate two hexadecimal digits by hyphens
 		for (int i = 2; i < 17; i += 3) {
@@ -61,11 +61,8 @@ public final class NICUtils {
 	 *             or a scope_id was specified for a global IPv6 address.
 	 */
 	public static byte[] getMACAddress(String address) throws SocketException, UnknownHostException {
-		// Stored in a NIC network interface corresponding to the IP address or the host name
-		NetworkInterface nic = NetworkInterface.getByInetAddress(InetAddress.getByName(address));
-
-		// Returns byte[] the hardware address
-		return nic.getHardwareAddress();
+		// Hardware address of the network interface corresponding to IP address or a host name
+		return NetworkInterface.getByInetAddress(InetAddress.getByName(address)).getHardwareAddress();
 	}//getMACAddress
 
 	/**
