@@ -57,6 +57,8 @@ public final class IP6Utils {
 	}//toShortArray
 
 	/**
+	 * Convert IPv6 binary address into a canonical format in RFC5952.
+	 *
 	 * Consecutive sections of zeroes are replaced with a double colon (::).
 	 *
 	 * @param list a list of IP address
