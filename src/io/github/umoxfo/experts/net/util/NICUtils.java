@@ -42,10 +42,10 @@ public final class NICUtils {
 		// Separate two hexadecimal digits by hyphens
 		for (int i = 2; i < 17; i += 3) {
 			sb.insert(i, '-');
-		}// for
+		}//for
 
 		return sb.toString();
-	}// format
+	}//format
 
 	/**
 	 * Returns the hardware address (usually MAC address) of the interface
@@ -66,7 +66,7 @@ public final class NICUtils {
 
 		// Returns byte[] the hardware address
 		return nic.getHardwareAddress();
-	}// getMACAddress
+	}//getMACAddress
 
 	/**
 	 * Returns the hardware address (usually MAC address) of the interface
@@ -85,5 +85,5 @@ public final class NICUtils {
 	 */
 	public static String getMACAddressString(String address) throws SocketException, UnknownHostException {
 		return format(getMACAddress(address));
-	}// getMACAddressString
+	}//getMACAddressString
 }
