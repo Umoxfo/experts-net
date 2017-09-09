@@ -91,16 +91,16 @@ public final class IP6Subnet extends SubnetInfo {
 	private static short[] toShortArray(byte[] address) {
 		short[] ret = new short[8];
 
-		for (int i = 0, j = 0; i < 8; i++) {
-			ret[i] = (short) ((address[j] << 8) + (address[j + 1] & 0xff));
-			j += 2;
+		for (int i = 0; i < 8; i++) {
+			int j = i << 1;
+			ret[i] = (short) ((address[j] << 8) | (address[j + 1] & 0xff));
 		}//for
 
 		return ret;
 	}//toShortArray
 
 	/*
-	 * Converts a packed integer address into dotted decimal format
+	 * Converts a packed short address into dotted decimal format
 	 */
 	private static String format(short[] address) {
 		ArrayList<Short> al = new ArrayList<>(8);
