@@ -69,7 +69,7 @@ public final class SubnetUtils {
 		int addr = 0;
 		for (int i = 0; i < 4; i++) {
 			int n = checkRange(Integer.parseInt(addrArry[i]), 255);
-			addr |= n << (8 * (3 - i));
+			addr = (addr << 8) | n;
 		}//for
 
 		return addr;

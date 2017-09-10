@@ -112,7 +112,7 @@ public final class IP4Subnet extends SubnetInfo {
 		/* Check range of each element and convert to integer */
 		int addr = 0;
 		for (int i = 0; i < 4; i++) {
-			addr |= (address[i] & 0xff) << (8 * (3 - i));
+			addr = (addr << 8) | (address[i] & 0xff);
 		}//for
 
 		return addr;
