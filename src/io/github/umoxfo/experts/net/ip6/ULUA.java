@@ -66,7 +66,7 @@ public final class ULUA extends IP6 {
 	public ULUA(byte[] address) throws IOException {
 		createInterfaceIDByEUI64(address);
 		subnetID = new short[]{DEFAULT_SUBNT_ID};
-		generateGlobalID(getNTPTime(NTP_SERVER_ADDRESS));
+		generateGlobalID(getNTPTime(NTP_SERVER_ADDRESS), interfaceID);
 	}//ULUA(byte[] address)
 
 	/**
@@ -167,8 +167,10 @@ public final class ULUA extends IP6 {
 	 * Generates a Global ID according to RFC 4193 Section 3.2.2.
 	 *
 	 * @param timeStamp a time stamp in 64-bit NTP format
+	 * @param systemID the system-specific identifier
+	 *                 (e.g. an EUI-64 identifier and system serial number)
 	 */
-	public void generateGlobalID(long timeStamp) {
+	public void generateGlobalID(long timeStamp, short[] systemID) {
 		ByteBuffer buf = ByteBuffer.allocate(16);
 
 		buf.putLong(timeStamp);
