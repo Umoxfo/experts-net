@@ -49,6 +49,12 @@ public final class ULUA extends IP6 {
 
 	private static final String NTP_SERVER_ADDRESS = "pool.ntp.org";
 
+	public ULUA() {
+		globalID = new short[GLOBAL_ID_LENGTH];
+		subnetID = new short[]{DEFAULT_SUBNT_ID};
+		interfaceID = new short[INTERFACE_ID_LENGTH];
+	}//ULUA
+
 	/**
 	 * Constructor that takes a hardware address in a byte array.
 	 *
@@ -61,7 +67,7 @@ public final class ULUA extends IP6 {
 		createInterfaceIDByEUI64(address);
 		subnetID = new short[]{DEFAULT_SUBNT_ID};
 		generateGlobalID(getNTPTime(NTP_SERVER_ADDRESS));
-	}//ULUA
+	}//ULUA(byte[] address)
 
 	/**
 	 * Sets a Global ID field of the Local IPv6 unicast address that follows
