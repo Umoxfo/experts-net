@@ -30,7 +30,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Unique Local IPv6 Unicast Addresses (RFC 4193)
+ * This class represents an Unique Local IPv6 unicast addresses.
+ * Defined by <a href="https://tools.ietf.org/rfc/rfc4193.txt"><i>RFC&nbsp;4193:
+ * Unique Local IPv6 Unicast Addresses</i></a>
  *
  * @author Makoto Sakaguchi
  * @version 2.0.6-dev
@@ -50,7 +52,7 @@ public final class ULUA extends IP6 {
 	/**
 	 * Constructor that takes a hardware address in a byte array.
 	 *
-	 * @param address MAC address of the machine that creates an Local IPv6 unicast address
+	 * @param address MAC address of the machine that creates a Local IPv6 unicast address
 	 * @throws SocketException If the socket could not be opened which it might be not available any ports.
 	 * @throws UnknownHostException If the host could not be found.
 	 * @throws IOException If an error occurs while retrieving the time.
@@ -62,14 +64,15 @@ public final class ULUA extends IP6 {
 	}//ULUA
 
 	/**
-	 * Sets a global ID that is the hexadecimal maximum 12 digits.
+	 * Sets a Global ID field of the Local IPv6 unicast address that follows
+	 * the <code>FD00::/8</code> prefix and 40-bit global identifier format.
 	 *
-	 * @param gID a global ID of the ULUA, the prefix (0xfd00::/8) and Global ID
-	 * @see IP6#setGlobalID(java.lang.String)
+	 * @param gID a colon-separated string for each four hexadecimal digits and up to 15 digits include colons
+	 * @see IP6#setGlobalID(String)
 	 */
 	@Override
 	public void setGlobalID(String gID) {
-		String[] tmp = gID.toLowerCase().split(":");
+		String[] tmp = gID.split(":");
 
 		// Check length
 		if (tmp.length > GLOBAL_ID_LENGTH) {
@@ -77,13 +80,13 @@ public final class ULUA extends IP6 {
 		}//if
 
 		// Check prefix
-		if (!tmp[0].startsWith(GLOBAL_ID_PREFIX_FORMAT)) {
+		if (!tmp[0].toLowerCase().startsWith(GLOBAL_ID_PREFIX_FORMAT)) {
 			throw new IllegalArgumentException("ULUA must be 0xfd00::/8.");
 		}//if
 
 		/*
 		 * Check prefix by short value
-		 * tmp is a short array
+		 * Note: "tmp" is a short array
 		 *
 		 * (byte) (tmp.get(0) & 0xff00) != GLOBAL_ID_PREFIX ? throw new IllegalArgumentException("ULUA must be 0xfd00::/8.");
 		 */
@@ -91,19 +94,16 @@ public final class ULUA extends IP6 {
 	}//setGlobalID
 
 	/**
-	 * Sets a subnet ID that is the hexadecimal maximum four digits.
+	 * Sets a Subnet ID of the Local IPv6 unicast address that is 16-bit.
 	 *
-	 * @param sID a Subnet ID of the ULUA
-	 * @see IP6#setSubnetID(java.lang.String)
+	 * @param sID a four-digit hexadecimal string
+	 * @see IP6#setSubnetID(String)
 	 */
 	@Override
 	public void setSubnetID(String sID) { subnetID = new short[]{(short) Integer.parseInt(sID, 16)}; }
 
 	/**
-	 * Sets a interface ID that is the hexadecimal maximum 16 digits.
-	 *
-	 * @param iID an Interface ID of the ULUA
-	 * @see IP6#interfaceID
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void setInterfaceID(String iID) {
@@ -158,7 +158,7 @@ public final class ULUA extends IP6 {
 	}//getNTPTime
 
 	/**
-	 * Generates a global ID according to RFC 4193 Section 3.2.2.
+	 * Generates a Global ID according to RFC 4193 Section 3.2.2.
 	 *
 	 * @param timeStamp a time stamp in 64-bit NTP format
 	 */
@@ -182,9 +182,9 @@ public final class ULUA extends IP6 {
 	}//generateGlobalID
 
 	/**
-	 * Creates Interface ID by the Modified EUI-64 format (RFC 4291)
+	 * Creates an Interface ID by the Modified EUI-64 format (RFC 4291)
 	 *
-	 * @param macAddr MAC (NIC) address of the network interface for setting the generated address
+	 * @param macAddr a byte array containing the hardware address
 	 */
 	public void createInterfaceIDByEUI64(byte[] macAddr) {
 		ByteBuffer buf = ByteBuffer.allocate(8);

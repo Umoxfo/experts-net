@@ -27,62 +27,66 @@ import java.util.ArrayList;
  * @since 2.0.6
  */
 public abstract class IP6 {
-	/**
+	/*
 	 * 48 bits for Unique Local IPv6 Unicast Addresses (ULUA) or 64 bits or less for Global Unicast Address (GUA).
 	 */
 	short[] globalID;
 
-	/**
+	/*
 	 * 16 bits for ULUA or 64 - n bits (these n bits equal GUA of the Global ID bits length) for GUA.
 	 */
 	short[] subnetID;
 
-	/**
+	/*
 	 * 64 bits for ULUA and GUA.
 	 */
 	short[] interfaceID;
 
 	/**
-	 * Returns the Global ID represented by short type list.
+	 * Sets a Global ID that used to create a globally unique prefix.
+	 * See <a href="https://tools.ietf.org/html/rfc4193#section-3.2">Section 3.2,
+	 * RFC 4193</a> for additional information.
 	 *
-	 * @return list of the Global ID
-	 */
-	public short[] getGlobalID() { return globalID; }
-
-	/**
-	 * Sets the Global ID of IPv6 address.
-	 *
-	 * @param globalID a global ID of an IP address
+	 * @param globalID the IPv6 address text representation
 	 */
 	public abstract void setGlobalID(String globalID);
 
 	/**
-	 * Returns the Subnet ID.
+	 * Returns the Global ID in binary.
 	 *
-	 * @return list of the Subnet ID
+	 * @return the Global ID in binary as a short array
 	 */
-	public short[] getSubnetID() { return subnetID; }
+	public short[] getGlobalID() { return globalID; }
 
 	/**
-	 * Sets the Subnet ID of IPv6 address.
+	 * Sets a Subnet ID that is an identifier of a subnet within the site.
 	 *
-	 * @param subnetID a subnet ID of an IP address
+	 * @param subnetID the text representation of IPv6 address
 	 */
 	public abstract void setSubnetID(String subnetID);
 
 	/**
-	 * Returns the Interface ID represented by short type list.
+	 * Returns the Subnet ID in binary.
 	 *
-	 * @return list of the Interface ID
+	 * @return the Subnet ID in binary as a short array
 	 */
-	public short[] getInterfaceID() { return interfaceID; }
+	public short[] getSubnetID() { return subnetID; }
 
 	/**
-	 * Sets the Interface ID of IPv6 address.
+	 * Sets an Interface ID that is used to identify interfaces on a link.
 	 *
-	 * @param interfaceID an interface ID of an IP address
+	 * @param interfaceID the text representation of IPv6 address,
+	 *                    a colon-separated string for each four hexadecimal digits, and
+	 *                    up to 19 digits include colons
 	 */
 	public abstract void setInterfaceID(String interfaceID);
+
+	/**
+	 * Returns the Interface ID in binary.
+	 *
+	 * @return the Interface ID in binary as a short array
+	 */
+	public short[] getInterfaceID() { return interfaceID; }
 
 	/**
 	 * Build the IPv6 address.

@@ -32,17 +32,17 @@ import java.util.stream.Collectors;
 public final class IP6Utils {
 	private static final short ZERO = 0;
 
-	/**
+	/*
 	 * Converts String array to Short list.
 	 *
 	 * @param strArry String array
-	 * @return Short list
+	 * @return short array
 	 * @since 2.0.4
 	 */
 	static short[] toShortArray(String[] strArry) {
 		short[] buf = new short[strArry.length];
 
-		for (int i = 0, strArryLength = strArry.length; i < strArryLength; i++) {
+		for (int i = 0, ln = strArry.length; i < ln; i++) {
 			int n = Integer.parseInt(strArry[i], 16);
 
 			// Check values
