@@ -128,16 +128,16 @@ public final class ULUA extends IP6 {
 	/*
 	 * Converts ByteBuffer to an array of the Short type.
 	 */
-	private static short[] toArray(ByteBuffer buf) {
-		int size = buf.limit() / 2;
-		short[] shorts = new short[size];
+	private static short[] toArray(byte[] id) {
+		int ln = id.length / 2;
+		short[] ret = new short[ln];
 
-		buf.rewind();
-		for (int i = 0; i < size; i++) {
-			shorts[i] = buf.getShort();
+		for (int i = 0; i < ln; i++) {
+			int j = i << 1;
+			ret[i] = (short) ((id[j] << 8) | (id[j + 1] & 0xff));
 		}//for
 
-		return shorts;
+		return ret;
 	}//toArray
 
 	/**
@@ -185,10 +185,10 @@ public final class ULUA extends IP6 {
 			digest = MessageDigest.getInstance("SHA-1").digest(buf.array());
 		} catch (NoSuchAlgorithmException e) {}
 
-		buf.clear().limit(6);
-		buf.put(GLOBAL_ID_PREFIX).put(digest, 15, 5);
+		byte[] tmp = {GLOBAL_ID_PREFIX, 0, 0, 0, 0, 0};
+		System.arraycopy(digest,15, tmp, 1, 5);
 
-		globalID = toArray(buf);
+		globalID = toArray(tmp);
 	}//generateGlobalID
 
 	/**
@@ -202,6 +202,6 @@ public final class ULUA extends IP6 {
 		buf.put(macAddr, 0, 3).putShort(ADDITIONAL_VALUES).put(macAddr, 3, 3);
 		eui64[0] ^= 0x02;
 
-		interfaceID = toArray(buf);
+		interfaceID = toArray(eui64);
 	}//createInterfaceIDByEUI64
 }
