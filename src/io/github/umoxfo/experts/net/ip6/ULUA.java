@@ -17,6 +17,7 @@
  */
 package io.github.umoxfo.experts.net.ip6;
 
+import io.github.umoxfo.experts.net.util.NICUtils;
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.NtpV3Packet;
 import org.apache.commons.net.ntp.TimeInfo;
@@ -28,6 +29,8 @@ import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.util.Random;
 
 /**
  * This class represents an Unique Local IPv6 unicast addresses.
@@ -175,10 +178,27 @@ public final class ULUA extends IP6 {
 	public void generateGlobalID(long timeStamp, short[] systemID) {
 		ByteBuffer buf = ByteBuffer.allocate(16);
 
+		if (timeStamp == 0) { timeStamp = System.currentTimeMillis(); }
 		buf.putLong(timeStamp);
-		for (short e : interfaceID) {
-			buf.putShort(e);
-		}//for
+
+		if (systemID != null) {
+			for (int i = 0; i < 8; i++) {
+				buf.putShort(systemID[i]);
+			}//for
+		} else {
+			try {
+				createInterfaceIDByEUI64(NICUtils.getMACAddress());
+			} catch (SocketException e) {
+				/* If the hardware address is not obtained, used random numbers as the system-specific identifier. */
+				try {
+					SecureRandom.getInstanceStrong().nextBytes(systemSpecific);
+				} catch (NoSuchAlgorithmException e1) {
+					new Random(timeStamp).nextBytes(systemSpecific);
+				}//try-catch
+			}//try-catch
+
+			buf.put(systemSpecific);
+		}//if-else
 
 		byte[] digest = null;
 		try {
