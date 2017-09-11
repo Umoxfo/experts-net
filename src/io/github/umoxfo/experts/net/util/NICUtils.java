@@ -77,12 +77,12 @@ public final class NICUtils {
 	 *         the permission {@link java.net.NetPermission}("getNetworkInformation")
 	 * @throws SocketException If an I/O error occurs.
 	 * @throws UnknownHostException If no IP address for the {@code host} could be found,
-	 *             or a scope_id was specified for a global IPv6 address.
+	 *                              or a scope_id was specified for a global IPv6 address.
 	 */
 	public static byte[] getMACAddress(String address) throws SocketException, UnknownHostException {
 		// Hardware address of the network interface corresponding to IP address or a host name
 		return NetworkInterface.getByInetAddress(InetAddress.getByName(address)).getHardwareAddress();
-	}//getMACAddress
+	}//getMACAddress(String address)
 
 	/**
 	 * Returns the hardware address (usually MAC address) of the interface
