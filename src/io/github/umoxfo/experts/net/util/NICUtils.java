@@ -48,6 +48,25 @@ public final class NICUtils {
 	}//format
 
 	/**
+	 * Returns the hardware address (usually MAC address) of the host interface
+	 *
+	 * @return a byte array containing the address, or {@code null}
+	 *         if the address doesn't exist, is not accessible or
+	 *         a security manager is set and the caller does not have
+	 *         the permission {@link java.net.NetPermission}("getNetworkInformation")
+	 * @throws SocketException If an I/O error occurs.
+	 */
+	public static byte[] getMACAddress() throws SocketException {
+		byte[] nicAddress = null;
+
+		try {
+			nicAddress = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
+		} catch (UnknownHostException e) {}
+
+		return nicAddress;
+	}//getMACAddress
+
+	/**
 	 * Returns the hardware address (usually MAC address) of the interface
 	 * that has the specified IP address or host name, e.g. "10.0.0.1" or "example.com".
 	 *
