@@ -49,7 +49,7 @@ public final class ULUA extends IP6 {
 
 	private static final String NTP_SERVER_ADDRESS = "pool.ntp.org";
 
-	private byte[] eui64 = new byte[8];
+	private byte[] systemSpecific = new byte[8];
 
 	public ULUA() {
 		globalID = new short[GLOBAL_ID_LENGTH];
@@ -197,11 +197,11 @@ public final class ULUA extends IP6 {
 	 * @param macAddr a byte array containing the hardware address
 	 */
 	public void createInterfaceIDByEUI64(byte[] macAddr) {
-		ByteBuffer buf = ByteBuffer.wrap(eui64);
+		ByteBuffer buf = ByteBuffer.wrap(systemSpecific);
 
 		buf.put(macAddr, 0, 3).putShort(ADDITIONAL_VALUES).put(macAddr, 3, 3);
-		eui64[0] ^= 0x02;
+		systemSpecific[0] ^= 0x02;
 
-		interfaceID = toArray(eui64);
+		interfaceID = toArray(systemSpecific);
 	}//createInterfaceIDByEUI64
 }
