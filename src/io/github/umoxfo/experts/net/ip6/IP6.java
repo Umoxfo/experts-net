@@ -105,15 +105,9 @@ public abstract class IP6 {
 		System.arraycopy(interfaceID, 0, addr, (globalID.length + subnetID.length), interfaceID.length);
 
 		// Set into the Array List
-		for (short s : addr) {
-			ipv6.add(s);
+		for (int i = 0; i < 8; i++) {
+			ipv6.add(addr[i]);
 		}//for
-
-		/*
-		ipv6.addAll(Arrays.asList(globalID));
-		ipv6.addAll(Arrays.asList(subnetID));
-		ipv6.addAll(Arrays.asList(interfaceID));
-		*/
 
 		// Replace consecutive sections of zeros to a double colon (::)
 		return IP6Utils.toTextFormat(ipv6);

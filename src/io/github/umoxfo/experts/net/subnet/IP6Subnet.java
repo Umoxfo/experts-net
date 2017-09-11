@@ -105,8 +105,8 @@ public final class IP6Subnet extends SubnetInfo {
 	private static String format(short[] address) {
 		ArrayList<Short> al = new ArrayList<>(8);
 
-		for (short e : address) {
-			al.add(e);
+		for (int i = 0; i < 8; i++) {
+			al.add(address[i]);
 		}//for
 
 		return IP6Utils.toTextFormat(al);
