@@ -111,7 +111,15 @@ public final class ULUA extends IP6 {
 	 * @see IP6#setSubnetID(String)
 	 */
 	@Override
-	public void setSubnetID(String sID) { subnetID = new short[]{(short) Integer.parseInt(sID, 16)}; }
+	public void setSubnetID(String sID) {
+		int n = Integer.parseInt(sID, 16);
+
+		if (n > 0xffff) {
+			throw new IllegalArgumentException("Subnet ID must be 16 bits.");
+		}//if
+
+		subnetID = new short[]{(short) n};
+	}//setSubnetID
 
 	/**
 	 * {@inheritDoc}
