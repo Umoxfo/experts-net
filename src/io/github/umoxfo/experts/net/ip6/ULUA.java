@@ -138,7 +138,7 @@ public final class ULUA extends IP6 {
 	 * Converts ByteBuffer to an array of the Short type.
 	 */
 	private static short[] toArray(byte[] id) {
-		int ln = id.length / 2;
+		final int ln = id.length / 2;
 		short[] ret = new short[ln];
 
 		for (int i = 0; i < ln; i++) {
