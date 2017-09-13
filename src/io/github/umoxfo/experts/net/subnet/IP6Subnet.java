@@ -132,7 +132,7 @@ public final class IP6Subnet extends SubnetInfo {
 			if (address[i] != ip6Address[i]) return false;
 		}//for
 
-		// The host identifier is in range between the lowest and the hightest addresses
+		// The host identifier is in range between the lowest and the highest addresses
 		int addr = address[prefixSize] & 0xffff;
 		int lowAddr = low()[prefixSize] & 0xffff;
 		int highAddr = high()[prefixSize] & 0xffff;

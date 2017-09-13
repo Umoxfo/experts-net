@@ -114,7 +114,7 @@ public final class SubnetUtils {
 	 * @throws UnknownHostException see {@link InetAddress#getByName(String host)}
 	 * @throws SecurityException if a security manager exists and its checkConnect method doesn't allow the operation
 	 */
-	public static SubnetInfo getByCIDRNortation(String cidrNotation) throws UnknownHostException {
+	public static SubnetInfo getByCIDRNotation(String cidrNotation) throws UnknownHostException {
 		if (cidrNotation.contains("/")) {
 			String[] arry = Pattern.compile("/").split(cidrNotation);
 
@@ -129,7 +129,7 @@ public final class SubnetUtils {
 		} else {
 			throw new IllegalArgumentException("Could not parse [" + cidrNotation + "]");
 		}//if
-	}//getByCIDRNortation
+	}//getByCIDRNotation
 
 	/**
 	 * Creates subnet summary information, given a dotted decimal address and a dotted decimal mask.
