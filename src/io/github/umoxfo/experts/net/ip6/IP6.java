@@ -47,7 +47,7 @@ public abstract class IP6 {
 	 *
 	 * @param globalID the IPv6 address text representation
 	 */
-	public abstract void setGlobalID(String globalID);
+	public abstract void setGlobalID(short[] globalID);
 
 	/**
 	 * Returns the Global ID in binary.
@@ -61,7 +61,7 @@ public abstract class IP6 {
 	 *
 	 * @param subnetID the text representation of IPv6 address
 	 */
-	public abstract void setSubnetID(String subnetID);
+	public abstract void setSubnetID(short[] subnetID);
 
 	/**
 	 * Returns the Subnet ID in binary.
@@ -77,7 +77,7 @@ public abstract class IP6 {
 	 *                    a colon-separated string for each four hexadecimal digits, and
 	 *                    up to 19 digits include colons
 	 */
-	public abstract void setInterfaceID(String interfaceID);
+	public abstract void setInterfaceID(short[] interfaceID);
 
 	/**
 	 * Returns the Interface ID in binary.
