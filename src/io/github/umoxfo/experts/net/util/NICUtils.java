@@ -57,13 +57,15 @@ public final class NICUtils {
 	 * @throws SocketException If an I/O error occurs.
 	 */
 	public static byte[] getMACAddress() throws SocketException {
-		byte[] nicAddress = null;
+		byte[] macAddress = null;
 
-		try {
-			nicAddress = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
-		} catch (UnknownHostException e) {}
+		Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces();
+		while (nis.hasMoreElements()) {
+			NetworkInterface ni = nis.nextElement();
+			if (ni.isUp() && !ni.isLoopback()) macAddress = NICUtils.checkValidity(ni.getHardwareAddress());
+		}//while
 
-		return nicAddress;
+		return macAddress;
 	}//getMACAddress
 
 	/**
