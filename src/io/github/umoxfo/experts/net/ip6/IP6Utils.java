@@ -104,9 +104,7 @@ public final class IP6Utils {
 		// Convert to a hexadecimal string being separated with colons for each 4-digit
 		String ip6 = al.stream().map(i -> {
 			String str = "";
-			if (i != null) {
-				str = Integer.toHexString(i & 0xffff);
-			}//if
+			if (i != null) str = Integer.toHexString(i & 0xffff);
 
 			return str;
 		}).collect(Collectors.joining(":"));

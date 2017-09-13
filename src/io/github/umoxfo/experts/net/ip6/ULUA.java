@@ -114,9 +114,7 @@ public final class ULUA extends IP6 {
 	public void setSubnetID(String sID) {
 		int n = Integer.parseInt(sID, 16);
 
-		if (n > 0xffff) {
-			throw new IllegalArgumentException("Subnet ID must be 16 bits.");
-		}//if
+		if (n > 0xffff) throw new IllegalArgumentException("Subnet ID must be 16 bits.");
 
 		subnetID = new short[]{(short) n};
 	}//setSubnetID
@@ -186,13 +184,12 @@ public final class ULUA extends IP6 {
 	public void generateGlobalID(long timeStamp, short[] systemID) {
 		ByteBuffer buf = ByteBuffer.allocate(16);
 
-		if (timeStamp == 0) { timeStamp = System.currentTimeMillis(); }
+		if (timeStamp == 0) timeStamp = System.currentTimeMillis();
 		buf.putLong(timeStamp);
 
 		if (systemID != null) {
-			for (int i = 0; i < 8; i++) {
-				buf.putShort(systemID[i]);
-			}//for
+			for (int i = 0; i < 8; i++) buf.putShort(systemID[i]);
+			//IntStream.range(0, 8).map(i -> systemID[i] & 0xffff).forEach(i -> buf.putShort((short) i));
 		} else {
 			try {
 				createInterfaceIDByEUI64(NICUtils.getMACAddress());

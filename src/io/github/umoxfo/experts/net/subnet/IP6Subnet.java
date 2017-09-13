@@ -77,9 +77,8 @@ public final class IP6Subnet extends SubnetInfo {
 		highAddr[index] |= 0xffff >> (cidr % 16);
 
 		// Fill the following fields with 1-bits
-		for (int i = index + 1; i < 8; i++) {
-			highAddr[i] = (short) 0xffff;
-		}//for
+		for (int i = index + 1; i < 8; i++) highAddr[i] = (short) 0xffff;
+		//IntStream.range(index + 1, 8).forEach(i -> highAddr[i] = (short) 0xffff);
 
 		return highAddr;
 	}//high
@@ -130,9 +129,7 @@ public final class IP6Subnet extends SubnetInfo {
 
 		// Have the same network prefix
 		for (int i = 0; i < prefixSize; i++) {
-			if (address[i] != ip6Address[i]) {
-				return false;
-			}//if
+			if (address[i] != ip6Address[i]) return false;
 		}//for
 
 		// The host identifier is in range between the lowest and the hightest addresses
