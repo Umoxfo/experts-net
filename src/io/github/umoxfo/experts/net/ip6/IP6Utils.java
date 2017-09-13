@@ -34,10 +34,6 @@ public final class IP6Utils {
 
 	/*
 	 * Converts String array to Short list.
-	 *
-	 * @param strArry String array
-	 * @return short array
-	 * @since 2.0.4
 	 */
 	static short[] toShortArray(String[] strArry) {
 		short[] buf = new short[strArry.length];
