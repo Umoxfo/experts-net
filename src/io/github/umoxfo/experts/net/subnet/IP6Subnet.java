@@ -23,7 +23,6 @@ import java.math.BigInteger;
 import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 /**
  * Convenience container for IPv6 subnet summary information.
@@ -99,19 +98,6 @@ public final class IP6Subnet extends SubnetInfo {
 		return ret;
 	}//toShortArray
 
-	/*
-	 * Converts a packed short address into dotted decimal format
-	 */
-	private static String format(short[] address) {
-		ArrayList<Short> al = new ArrayList<>(8);
-
-		for (int i = 0; i < 8; i++) {
-			al.add(address[i]);
-		}//for
-
-		return IP6Utils.toTextFormat(al);
-	}//format
-
 	/**
 	 * Returns true if the parameter <code>address</code> is in
 	 * the range of usable endpoint addresses for this subnet.
@@ -164,7 +150,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * @return a string of the IP address
 	 */
 	@Override
-	public String getAddress() { return format(ip6Address); }
+	public String getAddress() { return IP6Utils.toTextFormat(ip6Address); }
 
 	/**
 	 * Returns the CIDR suffixes, the count of consecutive 1-bit in the subnet mask.
@@ -182,7 +168,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * @return the CIDR notation of the address, e.g. 2001:db8::ff00:42:8329/48
 	 */
 	@Override
-	public String getCIDRNotation() { return format(ip6Address) + "/" + cidr; }
+	public String getCIDRNotation() { return IP6Utils.toTextFormat(ip6Address) + "/" + cidr; }
 
 	/**
 	 * Returns the low address as a colon-separated IP address.
@@ -191,7 +177,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 *         may be "::" if there is no valid address
 	 */
 	@Override
-	public String getLowAddress() { return format(low()); }
+	public String getLowAddress() { return IP6Utils.toTextFormat(low()); }
 
 	/**
 	 * Returns the high address as a colon-separated IP address.
@@ -200,7 +186,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 *         may be "::" if there is no valid address
 	 */
 	@Override
-	public String getHighAddress() { return format(high()); }
+	public String getHighAddress() { return IP6Utils.toTextFormat(high()); }
 
 	/**
 	 * Returns the count of available addresses.

@@ -61,24 +61,28 @@ public final class IP6Utils {
 	 *
 	 * Consecutive sections of zeroes are replaced with a double colon (::).
 	 *
-	 * @param list a list of IP address
+	 * @param addr a binary IPv6 address
 	 * @return an IPv6 address in the colon 16-bit delimited hexadecimal format
 	 */
-	public static String toTextFormat(ArrayList<Short> list) {
-		int fromIndex = 0;
-		int toIndex = 0;
-		int maxCnt = 0;
+	public static String toTextFormat(short[] addr) {
+		// Set into the Array List
+		ArrayList<Short> al =  new ArrayList<>(8);
+		for (int i = 0; i < 8; i++) al.add(addr[i]);
+		//ArrayList<Short> al = IntStream.range(0, 8).mapToObj(i -> addr[i]).collect(Collectors.toCollection(ArrayList::new));
 
 		/*
 		 * The longest run of consecutive 16-bit 0 fields MUST be shortened based on RFC5952.
 		 */
 		// Find the longest zero fields
-		final int lastIndex = list.lastIndexOf(ZERO);
+		final int lastIndex = al.lastIndexOf(ZERO);
 
+		int fromIndex = 0;
+		int toIndex = 0;
+		int maxCnt = 0;
 		for (int i = 0; i < lastIndex; i++) {
-			if (list.get(i) == ZERO) {
+			if (al.get(i) == ZERO) {
 				int j = i + 1;
-				while ((j <= lastIndex) && (list.get(j) == ZERO)) j++;
+				while ((j <= lastIndex) && (al.get(j) == ZERO)) j++;
 
 				int cnt = j - i;
 				if (maxCnt < cnt) {
@@ -93,12 +97,12 @@ public final class IP6Utils {
 
 		// Remove the longest part of zeros
 		if (1 < maxCnt) {
-			list.subList(fromIndex, toIndex).clear();
-			list.add(fromIndex, null);
+			al.subList(fromIndex, toIndex).clear();
+			al.add(fromIndex, null);
 		}//if
 
 		// Convert to a hexadecimal string being separated with colons for each 4-digit
-		String ip6 = list.stream().map(i -> {
+		String ip6 = al.stream().map(i -> {
 			String str = "";
 			if (i != null) {
 				str = Integer.toHexString(i & 0xffff);

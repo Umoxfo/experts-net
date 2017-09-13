@@ -17,8 +17,6 @@
  */
 package io.github.umoxfo.experts.net.ip6;
 
-import java.util.ArrayList;
-
 /**
  * Convenience container for IPv6 address summary information.
  *
@@ -95,8 +93,6 @@ public abstract class IP6 {
 	 */
 	@Override
 	public String toString() {
-		ArrayList<Short> ipv6 = new ArrayList<>(8);
-
 		// Collect into a single array
 		short[] addr = new short[8];
 
@@ -104,12 +100,7 @@ public abstract class IP6 {
 		System.arraycopy(subnetID, 0, addr, globalID.length, subnetID.length);
 		System.arraycopy(interfaceID, 0, addr, (globalID.length + subnetID.length), interfaceID.length);
 
-		// Set into the Array List
-		for (int i = 0; i < 8; i++) {
-			ipv6.add(addr[i]);
-		}//for
-
 		// Replace consecutive sections of zeros to a double colon (::)
-		return IP6Utils.toTextFormat(ipv6);
+		return IP6Utils.toTextFormat(addr);
 	}//toString
 }
