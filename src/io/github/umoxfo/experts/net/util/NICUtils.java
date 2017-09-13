@@ -23,6 +23,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 
 /**
  * This class represents a hardware address, also MAC address, assigned to the interface.
@@ -31,6 +32,27 @@ import java.net.UnknownHostException;
  * @version 2.0.6-dev
  */
 public final class NICUtils {
+	private static final byte[][] VIRTUAL_MACHINE_MAC_ADDRESSES = {
+		/* VMWare */
+		{0x00, 0x05, 0x69},
+		{0x00, 0x1C, 0x14},
+		{0x00, 0x0C, 0x29},
+		{0x00, 0x50, 0x56},
+
+		/* VirtualBox */
+		{0x08, 0x00, 0x27},
+		{0x0A, 0x00, 0x27},
+
+		/* Virtual-PC*/
+		{0x00, 0x03, (byte)0xFF},
+
+		/* Hyper-V */
+		{0x00, 0x15, 0x5D},
+
+		/* TAP-Windows */
+		{0x00, (byte)0xFF, 0x69}
+	};
+
 	/*
 	 * Converts a byte array contains a hardware address to the printing MAC-48 addresses;
 	 * which is six groups of two hexadecimal digits, separated by hyphens in transmission order,
@@ -44,8 +66,23 @@ public final class NICUtils {
 			sb.insert(i, '-');
 		}//for
 
+/*		for (int i = 0; i < 6; i++) {
+			sb.append(String.format("%02X%s", macAddr[i], (i < 5) ? "-" : ""));
+		}*/
+
 		return sb.toString();
 	}//format
+
+	/*
+	 * Returns true if the hardware address is not from a virtual machine.
+	 */
+	public static byte[] checkValidity(byte[] mac) {
+		for (byte[] vm: VIRTUAL_MACHINE_MAC_ADDRESSES) {
+			if (vm[0] == mac[0] && vm[1] == mac[1] && vm[2] == mac[2]) return null;
+		}//for
+
+		return mac;
+	}//checkValidity
 
 	/**
 	 * Returns the hardware address (usually MAC address) of the host interface
