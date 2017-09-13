@@ -73,9 +73,7 @@ public abstract class IP6 {
 	/**
 	 * Sets an Interface ID that is used to identify interfaces on a link.
 	 *
-	 * @param interfaceID the text representation of IPv6 address,
-	 *                    a colon-separated string for each four hexadecimal digits, and
-	 *                    up to 19 digits include colons
+	 * @param interfaceID must be up to 64 bits
 	 */
 	public abstract void setInterfaceID(short[] interfaceID);
 
