@@ -37,8 +37,8 @@ public final class IP6Subnet extends SubnetInfo {
 	private final int cidr;
 
 	/*
-	 * Constructor that takes a raw IPv6 address and CIDR, e.g.
-	 * "2001:db8:0:0:0:ff00:42:8329/48"
+	 * Constructor that takes a raw IPv6 address and CIDR,
+	 * e.g. "2001:db8:0:0:0:ff00:42:8329/48"
 	 */
 	IP6Subnet(byte[] address, int cidr) {
 		ip6Address = toShortArray(address);
