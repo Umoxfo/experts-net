@@ -33,7 +33,7 @@ import java.net.UnknownHostException;
  * @since 2.0.6
  */
 public final class IP6Subnet extends SubnetInfo {
-	private final short[] ip6Address;
+	private final byte[] ip6Address;
 	private final int cidr;
 
 	/*
@@ -41,7 +41,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * e.g. "2001:db8:0:0:0:ff00:42:8329/48"
 	 */
 	IP6Subnet(byte[] address, int cidr) {
-		ip6Address = toShortArray(address);
+		ip6Address = address;
 		this.cidr = cidr;
 	}//IP6Subnet
 
@@ -49,15 +49,15 @@ public final class IP6Subnet extends SubnetInfo {
 	 * Creates the minimum address in the network
 	 * to which the address belongs, it has all-zero in the host fields.
 	 */
-	private short[] low() {
-		short[] lowAddr = new short[8];
+	private byte[] low() {
+		byte[] lowAddr = new byte[16];
 
 		// Copy of the network prefix in the address
-		int index = cidr / 16;
+		int index = cidr / 8;
 		System.arraycopy(ip6Address, 0, lowAddr, 0, index + 1);
 
 		// Set the out of the network prefix bits.
-		lowAddr[index] &= 0xffff << (16 - (cidr % 16));
+		lowAddr[index] &= 0xff << (8 - (cidr % 8));
 
 		return lowAddr;
 	}//low
@@ -66,18 +66,18 @@ public final class IP6Subnet extends SubnetInfo {
 	 * Creates the maximum address in the network
 	 * to which the address belongs, it has all-ones in the host fields.
 	 */
-	private short[] high() {
-		short[] highAddr = new short[8];
+	private byte[] high() {
+		byte[] highAddr = new byte[16];
 
 		// Copy of the network prefix in the address
-		int index = cidr / 16;
+		int index = cidr / 8;
 		System.arraycopy(ip6Address, 0, highAddr, 0, index + 1);
 
 		// Set the network prefix bits
-		highAddr[index] |= 0xffff >> (cidr % 16);
+		highAddr[index] |= 0xff >> (cidr % 8);
 
 		// Fill the following fields with 1-bits
-		for (int i = index + 1; i < 8; i++) highAddr[i] = (short) 0xffff;
+		for (int i = index + 1; i < 16; i++) highAddr[i] = (byte) 0xff;
 		//IntStream.range(index + 1, 8).forEach(i -> highAddr[i] = (short) 0xffff);
 
 		return highAddr;
@@ -100,8 +100,8 @@ public final class IP6Subnet extends SubnetInfo {
 			throw new IllegalArgumentException(address + " is not IPv6 address.");
 		}//if
 
-		return isInRange(toShortArray(ia.getAddress()));
-	}//isInRange(String address)
+		return isInRange(ia.getAddress());
+	}//isInRange(String)
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in
@@ -111,8 +111,9 @@ public final class IP6Subnet extends SubnetInfo {
 	 * @return true if in range, false otherwise
 	 */
 	@Override
-	public boolean isInRange(short[] address) {
-		int prefixSize = cidr / 16;
+	public boolean isInRange(byte[] address) {
+		int prefixSize = cidr / 8;
+		int extraBits = cidr % 8;
 
 		// Have the same network prefix
 		for (int i = 0; i < prefixSize; i++) {
@@ -120,9 +121,9 @@ public final class IP6Subnet extends SubnetInfo {
 		}//for
 
 		// The host identifier is in range between the lowest and the highest addresses
-		int addr = address[prefixSize] & 0xffff;
-		int lowAddr = low()[prefixSize] & 0xffff;
-		int highAddr = high()[prefixSize] & 0xffff;
+		int addr = address[prefixSize] & 0xff;
+		int lowAddr = (ip6Address[prefixSize] & (0xff << (8 - extraBits))) & 0xff;
+		int highAddr = (ip6Address[prefixSize] | (0xff >> extraBits)) & 0xff;
 
 		return (addr >= lowAddr) && (addr <= highAddr);
 	}//isInRange(short[] address)
