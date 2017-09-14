@@ -37,8 +37,7 @@ public final class IP6Subnet extends SubnetInfo {
 	private final int cidr;
 
 	/*
-	 * Constructor that takes a raw IPv6 address and CIDR,
-	 * e.g. "2001:db8:0:0:0:ff00:42:8329/48"
+	 * Constructor that takes the IPv6 address in network byte order and CIDR
 	 */
 	IP6Subnet(byte[] address, int cidr) {
 		ip6Address = address;
@@ -83,14 +82,13 @@ public final class IP6Subnet extends SubnetInfo {
 		return highAddr;
 	}//high
 
-
 	/**
-	 * Returns true if the parameter <code>address</code> is in
+	 * Returns {@code true} if the parameter {@code address} is in
 	 * the range of usable endpoint addresses for this subnet.
 	 *
-	 * @param address a colon-delimited address, e.g. 2001:db8:0:0:0:ff00:42:8329
-	 * @return true if in range, false otherwise
-	 * @throws UnknownHostException see {@link java.net.InetAddress#getByName(String host)}
+	 * @param address the colon-delimited address, e.g. {@code 2001:db8:0:0:0:ff00:42:8329}
+	 * @return {@code true} if in range, {@code false} otherwise
+	 * @throws UnknownHostException see {@link InetAddress#getByName(String)}
 	 */
 	@Override
 	public boolean isInRange(String address) throws UnknownHostException {
@@ -104,11 +102,7 @@ public final class IP6Subnet extends SubnetInfo {
 	}//isInRange(String)
 
 	/**
-	 * Returns true if the parameter <code>address</code> is in
-	 * the range of usable endpoint addresses for this subnet.
-	 *
-	 * @param address an IPv6 address in binary
-	 * @return true if in range, false otherwise
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean isInRange(byte[] address) {
@@ -126,13 +120,13 @@ public final class IP6Subnet extends SubnetInfo {
 		int highAddr = (ip6Address[prefixSize] | (0xff >> extraBits)) & 0xff;
 
 		return (addr >= lowAddr) && (addr <= highAddr);
-	}//isInRange(short[] address)
+	}//isInRange(byte[])
 
 	/**
-	 * Returns the <code>address</code>, that is a colon 16-bit delimited
-	 * hexadecimal format for IPv6 addresses, e.g. 2001:db8::ff00:42:8329.
+	 * Returns the {@code address}, that is a colon 16-bit delimited
+	 * hexadecimal format for IPv6 addresses, e.g. {@code 2001:db8::ff00:42:8329}.
 	 *
-	 * @return a string of the IP address
+	 * @return the IP address in a colon 16-bit delimited hexadecimal format
 	 */
 	@Override
 	public String getAddress() { return IP6Utils.toTextFormat(ip6Address); }
@@ -141,7 +135,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * Returns the CIDR suffixes, the count of consecutive 1-bit in the subnet mask.
 	 * The IPv6 address is between 0 and 128, but it is actually less than 64.
 	 *
-	 * @return the CIDR suffixes of the address in an integer.
+	 * @return the CIDR suffixes of the address
 	 */
 	@Override
 	public int getCIDR() { return cidr; }
@@ -150,7 +144,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * Returns an IPv6-CIDR notation, in which the address is followed by a slash character and
 	 * the count of counting the 1-bit population in the subnet mask.
 	 *
-	 * @return the CIDR notation of the address, e.g. 2001:db8::ff00:42:8329/48
+	 * @return the CIDR notation of the address, e.g. {@code 2001:db8::ff00:42:8329/48}
 	 */
 	@Override
 	public String getCIDRNotation() { return IP6Utils.toTextFormat(ip6Address) + "/" + cidr; }
@@ -159,7 +153,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * Returns the low address as a colon-separated IP address.
 	 *
 	 * @return the IP address in a colon 16-bit delimited hexadecimal format,
-	 *         may be "::" if there is no valid address
+	 *         may be {@code ::} if there is no valid address
 	 */
 	@Override
 	public String getLowAddress() { return IP6Utils.toTextFormat(low()); }
@@ -168,15 +162,15 @@ public final class IP6Subnet extends SubnetInfo {
 	 * Returns the high address as a colon-separated IP address.
 	 *
 	 * @return the IP address in a colon 16-bit delimited hexadecimal format,
-	 *         may be "::" if there is no valid address
+	 *         may be {@code ::} if there is no valid address
 	 */
 	@Override
 	public String getHighAddress() { return IP6Utils.toTextFormat(high()); }
 
 	/**
-	 * Returns the count of available addresses.
+	 * Returns the number of available addresses.
 	 *
-	 * @return the count of addresses in a string, may be zero
+	 * @return the number of addresses in a string, may be zero
 	 */
 	@Override
 	public String getAddressCount() { return BigInteger.valueOf(2).pow(128 - cidr).toString(); }

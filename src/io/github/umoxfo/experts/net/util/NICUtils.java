@@ -74,7 +74,7 @@ public final class NICUtils {
 	}//format
 
 	/*
-	 * Returns true if the hardware address is not from a virtual machine.
+	 * Returns {@code false} if the hardware address is not from a virtual machine.
 	 */
 	private static byte[] checkValidity(byte[] mac) {
 		for (byte[] vm: VIRTUAL_MACHINE_MAC_ADDRESSES) {

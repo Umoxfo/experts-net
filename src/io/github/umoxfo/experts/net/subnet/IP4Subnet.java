@@ -65,19 +65,19 @@ public final class IP4Subnet extends SubnetInfo {
 	}//IP4Subnet
 
 	/**
-	 * Returns <code>true</code> if the return value of {@link #getAddressCount()}
+	 * Returns {@code true} if the return value of {@link #getAddressCount()}
 	 * includes the network and broadcast addresses.
 	 *
-	 * @return true if the host count includes the network and broadcast addresses
+	 * @return {@code true} if the host count includes the network and broadcast addresses
 	 */
 	@Override
 	public boolean isInclusiveHostCount() { return inclusiveHostCount; }
 
 	/**
-	 * Set to <code>true</code> if you want the return value of {@link #getAddressCount()}
+	 * Set to {@code true} if you want the return value of {@link #getAddressCount()}
 	 * to include the network and broadcast addresses.
 	 *
-	 * @param inclusiveHostCount true if network and broadcast addresses are included
+	 * @param inclusiveHostCount {@code true} if network and broadcast addresses are included
 	 */
 	@Override
 	public void setInclusiveHostCount(boolean inclusiveHostCount) { this.inclusiveHostCount = inclusiveHostCount; }
@@ -119,13 +119,13 @@ public final class IP4Subnet extends SubnetInfo {
 	}//toInteger
 
 	/**
-	 * Returns true if the parameter <code>address</code> is in
+	 * Returns {@code true} if the parameter {@code address} is in
 	 * the range of usable endpoint addresses for this subnet.
 	 * This excludes the network and broadcast addresses.
 	 *
-	 * @param address a dot-delimited IPv4 address, e.g. "192.168.0.1"
-	 * @return true if in range, false otherwise
-	 * @throws UnknownHostException see {@link java.net.InetAddress#getByName(String host)}
+	 * @param address a dot-delimited IPv4 address, e.g. {@code 192.168.0.1}
+	 * @return {@code true} if in range, {@code false} otherwise
+	 * @throws UnknownHostException see {@link InetAddress#getByName(String)}
 	 */
 	@Override
 	public boolean isInRange(String address) throws UnknownHostException {
@@ -136,22 +136,22 @@ public final class IP4Subnet extends SubnetInfo {
 		}//if
 
 		return isInRange(toInteger(ia.getAddress()));
-	}//isInRange
+	}//isInRange(String)
 
 	/**
-	 * Returns true if the parameter <code>address</code> is in
+	 * Returns {@code true} if the parameter {@code address} is in
 	 * the range of usable endpoint addresses for this subnet.
 	 * This excludes the network and broadcast addresses.
 	 *
 	 * @param address an IPv4 address in binary
-	 * @return true if in range, false otherwise
+	 * @return {@code true} if in range, {@code false} otherwise
 	 */
 	@Override
 	public boolean isInRange(int address) {
 		long addLong = address & UNSIGNED_INT_MASK;
 
 		return (addLong > networkLong()) && (addLong < broadcastLong());
-	}//isInRange
+	}//isInRange(int)
 
 	@Override
 	public String getAddress() { return SubnetUtils.format(address); }
@@ -172,34 +172,34 @@ public final class IP4Subnet extends SubnetInfo {
 	 * Returns a CIDR notation, in which the address is followed by
 	 * a slash character and the count of counting the 1-bit population in the subnet mask.
 	 *
-	 * @return the CIDR notation of the address, e.g. "192.168.0.1/24"
+	 * @return the CIDR notation of the address, e.g. {@code 192.168.0.1/24}
 	 */
 	@Override
 	public String getCIDRNotation() { return SubnetUtils.format(address) + "/" + cidr; }
 
 	/**
 	 * Return the low address as a dotted IP address.
-	 * Will be zero for CIDR/31 and CIDR/32 if the inclusive flag is false.
+	 * Will be zero for CIDR/31 and CIDR/32 if the inclusive flag is {@code false}.
 	 *
-	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
+	 * @return the IP address in dotted format, may be {@code 0.0.0.0} if there is no valid address
 	 */
 	@Override
 	public String getLowAddress() { return SubnetUtils.format(low()); }
 
 	/**
 	 * Return the high address as a dotted IP address.
-	 * Will be zero for CIDR/31 and CIDR/32 if the inclusive flag is false.
+	 * Will be zero for CIDR/31 and CIDR/32 if the inclusive flag is {@code false}.
 	 *
-	 * @return the IP address in dotted format, may be "0.0.0.0" if there is no valid address
+	 * @return the IP address in dotted format, may be {@code 0.0.0.0} if there is no valid address
 	 */
 	@Override
 	public String getHighAddress() { return SubnetUtils.format(high()); }
 
 	/**
-	 * Returns the count of available addresses.
-	 * Will be zero for CIDR/31 and CIDR/32 if the inclusive flag is false.
+	 * Returns the number of available addresses.
+	 * Will be zero for CIDR/31 and CIDR/32 if the inclusive flag is {@code false}.
 	 *
-	 * @return the count of addresses, may be zero.
+	 * @return the number of addresses, may be zero.
 	 */
 	@Override
 	public long getAddressCountLong() {
@@ -215,14 +215,14 @@ public final class IP4Subnet extends SubnetInfo {
 		}//if
 
 		return count;
-	}//getAddressCountLong
+	}//getAddressCount
 
 	/**
 	 * Returns the subnet summary information of the address,
 	 * which includes an IP address by CIDR-Notation with the netmask,
 	 * network address, broadcast address, the first and last addresses of the network,
 	 * and the number of available addresses in the network which includes
-	 * the network and broadcast addresses if the inclusive flag is true.
+	 * the network and broadcast addresses if the inclusive flag is {@code true}.
 	 */
 	@Override
 	public String toString() {

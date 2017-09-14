@@ -62,8 +62,11 @@ public final class IP6Utils {
 
 		return toTextFormat(ret);
 	}//toTextFormat(byte[])
+
 	/**
-	 * Convert IPv6 binary address into a canonical format in RFC5952.
+	 * Convert the IPv6 address into a canonical format based on
+	 * <a href="https://www.rfc-editor.org/rfc/rfc5952.txt"><i>RFC 5952:
+	 * A Recommendation for IPv6 Address Text Representation</i></a>.
 	 *
 	 * Consecutive sections of zeroes are replaced with a double colon (::).
 	 *
@@ -116,7 +119,7 @@ public final class IP6Utils {
 		}).collect(Collectors.joining(":"));
 
 		return ip6.endsWith(":") ? ip6.concat(":") : ip6;
-	}//format
+	}//toTextFormat(short[])
 
 	/**
 	 * Returns the Unique Local IPv6 Unicast Address of the hardware address.

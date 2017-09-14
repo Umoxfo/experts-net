@@ -30,97 +30,100 @@ import java.net.UnknownHostException;
  */
 public class SubnetInfo {
 	/**
-	 * Returns <code>true</code> if the return value of {@link #getAddressCount()}
+	 * Returns {@code true} if the return value of {@link #getAddressCount()}
 	 * includes the network and broadcast addresses. (ONLY USE in IPv4)
 	 *
-	 * @return true if the host count includes the network and broadcast addresses
+	 * @return {@code true} if the host count includes the network and broadcast addresses
 	 */
 	public boolean isInclusiveHostCount() { return false; }
 
 	/**
-	 * Sets to <code>true</code> if you want the return value of
-	 * {@link #getAddressCount()}
+	 * Sets to {@code true} if you want the return value of {@link #getAddressCount()}
 	 * to include the network and broadcast addresses. (ONLY USE in IPv4)
 	 *
-	 * @param inclusiveHostCount true if network and broadcast addresses are to be included
+	 * @param inclusiveHostCount {@code true} if network and broadcast addresses are to be included
 	 */
 	public void setInclusiveHostCount(boolean inclusiveHostCount) {}
 
 	/**
-	 * Returns true if the parameter <code>address</code> is in the
+	 * Returns {@code true} if the parameter {@code address} is in the
 	 * range of usable endpoint addresses for this subnet. This excludes the
 	 * network and broadcast addresses if the address is IPv4 address.
 	 *
-	 * @param address a dot-delimited IPv4 address, e.g. "192.168.0.1", or
-	 *            a colon-hexadecimal IPv6 address, e.g. "2001:db8::ff00:42:8329"
-	 * @return True if in range, false otherwise
-	 * @throws UnknownHostException see {@link InetAddress#getByName(String host)}
+	 * @param address a dot-delimited IPv4 address, e.g. {@code 192.168.0.1} or
+	 *            a colon-hexadecimal IPv6 address, e.g. {@code 2001:db8::ff00:42:8329}
+	 * @return {@code true} if in range, {@code false} otherwise
+	 * @throws UnknownHostException see {@link InetAddress#getByName(String)}
 	 */
 	public boolean isInRange(String address) throws UnknownHostException { return false; }
 
 	/**
-	 * Returns true if the parameter <code>address</code> is in the
+	 * Returns {@code true} if the parameter {@code address} is in the
 	 * range of usable endpoint addresses for this subnet. This excludes the
 	 * network and broadcast addresses if the address is IPv4 address.
 	 *
-	 * @param address the address to check
-	 * @return true if it is in range
+	 * @param address the IP address in an integer
+	 * @return {@code true} if it is in range
 	 */
 	public boolean isInRange(int address) { return false; }
 
 	/**
-	 * Returns true if the parameter <code>address</code> is in the
+	 * Returns {@code true} if the parameter {@code address} is in the
 	 * range of usable endpoint addresses for this subnet. This excludes the
 	 * network and broadcast addresses if the address is IPv4 address.
 	 *
-	 * @param address the address to check
-	 * @return true if it is in range
+	 * @param address the IP address in network byte order
+	 * @return {@code true} if it is in range
 	 */
-	public boolean isInRange(short[] address) { return false; }
+	public boolean isInRange(byte[] address) { return false; }
 
 	/**
-	 * Gets the IP address.
-	 * IPv4 format: a dot-decimal format, e.g. "192.168.0.1"
-	 * IPv6 format: a colon-hexadecimal format, e.g. "2001:db8::ff00:42:8329"
+	 * Returns the IP address.
+	 ^ <ul style="list-style-type: none">
+	 *     <li>IPv4 format: a dot-decimal format, e.g. {@code 192.168.0.1}</li>
+	 *     <li>IPv6 format: a colon-hexadecimal format, e.g. {@code 2001:db8::ff00:42:8329}</li>
+	 * </ul>
 	 *
-	 * @return a string of the IP address
+	 * @return the IP address in a string format
 	 */
 	public String getAddress() { return null; }
 
 	/**
-	 * Gets the CIDR suffixes, the count of consecutive 1 bits in the subnet mask.
+	 * Returns the CIDR suffixes, the count of consecutive 1 bits in the subnet mask.
 	 * The range in IPv4 is 0-32, and in IPv6 is 0-128, actually 64 or less.
 	 *
-	 * @return the CIDR suffixes of the address in an integer.
+	 * @return the CIDR suffixes of the address in an integer
 	 */
 	public int getCIDR() { return 0; }
 
 	/**
-	 * Returns a netmask in the address. (ONLY USE IPv4)
+	 * Returns the netmask in the address. (ONLY USE IPv4)
 	 *
-	 * @return a string of netmask in a dot-decimal format.
+	 * @return the netmask in a dot-decimal format
 	 */
 	public String getNetmask() { return null; }
 
 	/**
-	 * Gets a network address in the address. (ONLY USE IPv4)
+	 * Returns the network address in the address. (ONLY USE IPv4)
 	 *
-	 * @return a string of a network address in a dot-decimal format.
+	 * @return the network address in a dot-decimal format
 	 */
 	public String getNetworkAddress() { return null; }
 
 	/**
-	 * Gets a broadcast address in the address. (ONLY USE IPv4)
+	 * Returns the broadcast address in the address. (ONLY USE IPv4)
 	 *
-	 * @return a string of a broadcast address in a dot-decimal format.
+	 * @return the broadcast address in a dot-decimal format
 	 */
 	public String getBroadcastAddress() { return null; }
 
 	/**
-	 * Gets a CIDR notation, in which the address is followed by a slash and
+	 * Returns the CIDR notation, in which the address is followed by a slash and
 	 * the count of counting the 1-bit population in the subnet mask.
-	 * IPv4 CIDR notation: e.g. "192.168.0.1/24"
-	 * IPv6 CIDR notation: e.g. "2001:db8::ff00:42:8329/48"
+	 * <ul style="list-style-type: none">
+	 *     <li>IPv4 CIDR notation: e.g. {@code 192.168.0.1/24}</li>
+	 *     <li>IPv6 CIDR notation: e.g. {@code 2001:db8::ff00:42:8329/48}</li>
+	 * </ul>
 	 *
 	 * @return the CIDR notation of the address
 	 */
@@ -129,37 +132,36 @@ public class SubnetInfo {
 	/**
 	 * Returns the low address as a dotted or colon-separated IP address.
 	 * Will be zero for CIDR/31 and CIDR/32 if the address is IPv4 address and
-	 * the inclusive flag is false.
+	 * the inclusive flag is {@code false}.
 	 *
-	 * @return the IP address in dotted format or in a colon 16-bit delimited
-	 *         hexadecimal format,
-	 *         may be "0.0.0.0" or "::" if there is no valid address
+	 * @return the IP address in dotted format or in a colon 16-bit delimited hexadecimal format,
+	 *         may be {@code 0.0.0.0} or {@code ::} if there is no valid address
 	 */
 	public String getLowAddress() { return null; }
 
 	/**
 	 * Returns the high address as a dotted or colon-separated IP address.
 	 * Will be zero for CIDR/31 and CIDR/32 if the address is IPv4 address and
-	 * the inclusive flag is false.
+	 * the inclusive flag is {@code false}.
 	 *
 	 * @return the IP address in dotted format or in a colon 16-bit delimited
-	 *         hexadecimal format, may be "0.0.0.0" or "::" if there is no valid address
+	 *         hexadecimal format, may be {@code 0.0.0.0} or {@code ::} if there is no valid address
 	 */
 	public String getHighAddress() { return null; }
 
 	/**
-	 * Returns the count of available addresses.
+	 * Returns the number of available addresses.
 	 * Will be zero for CIDR/31 and CIDR/32 if the address is IPv4 address and
-	 * the inclusive flag is false.
+	 * the inclusive flag is {@code false}.
 	 *
 	 * @return the count of addresses in a string, may be zero
 	 */
 	public String getAddressCount() { return null; }
 
 	/**
-	 * Returns the count of available addresses.
+	 * Returns the number of available addresses.
 	 * Will be zero for CIDR/31 and CIDR/32 if the address is IPv4 address and
-	 * the inclusive flag is false.
+	 * the inclusive flag is {@code false}.
 	 *
 	 * @return the count of addresses, may be zero
 	 */

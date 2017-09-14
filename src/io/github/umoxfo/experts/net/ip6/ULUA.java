@@ -99,9 +99,8 @@ public final class ULUA extends IP6 {
 	 * the <code>FD00::/8</code> prefix and 40-bit global identifier format.
 	 *
 	 * @param gID a colon-separated string for each four hexadecimal digits and up to 15 digits include colons
-	 * @see IP6#setGlobalID(String)
+	 * @see IP6#setGlobalID(short[])
 	 */
-	@Override
 	public void setGlobalID(String gID) {
 		String[] tmp = gID.split(":");
 
@@ -115,14 +114,8 @@ public final class ULUA extends IP6 {
 			throw new IllegalArgumentException("ULUA must be 0xfd00::/8.");
 		}//if
 
-		/*
-		 * Check prefix by short value
-		 * Note: "tmp" is a short array
-		 *
-		 * (byte) (tmp.get(0) & 0xff00) != GLOBAL_ID_PREFIX ? throw new IllegalArgumentException("ULUA must be 0xfd00::/8.");
-		 */
 		globalID = IP6Utils.toShortArray(tmp);
-	}//setGlobalID
+	}//setGlobalID(String)
 
 	/**
 	 * Sets a Subnet ID that is an identifier of a subnet within the site.
@@ -141,16 +134,15 @@ public final class ULUA extends IP6 {
 	 * Sets a Subnet ID of the Local IPv6 unicast address that is 16-bit.
 	 *
 	 * @param sID a four-digit hexadecimal string
-	 * @see IP6#setSubnetID(String)
+	 * @see IP6#setSubnetID(short[])
 	 */
-	@Override
 	public void setSubnetID(String sID) {
 		int n = Integer.parseInt(sID, 16);
 
 		if (n > 0xffff) throw new IllegalArgumentException("Subnet ID must be 16 bits.");
 
 		subnetID = new short[]{(short) n};
-	}//setSubnetID
+	}//setSubnetID(String)
 
 	/**
 	 * {@inheritDoc}
@@ -164,6 +156,12 @@ public final class ULUA extends IP6 {
 		interfaceID = iID;
 	}//setInterfaceID(short[])
 
+	/**
+	 * Sets an Interface ID that is used to identify interfaces on a link.
+	 *
+	 * @param iID the text representation of IPv6 address,
+	 *            a colon-separated string for each four hexadecimal digits, and up to 19 digits include colons
+	 */
 	public void setInterfaceID(String iID) {
 		String[] tmp = iID.split(":");
 
@@ -173,10 +171,10 @@ public final class ULUA extends IP6 {
 		}//if
 
 		interfaceID = IP6Utils.toShortArray(tmp);
-	}//setInterfaceID
+	}//setInterfaceID(String)
 
 	/*
-	 * Converts ByteBuffer to an array of the Short type.
+	 * Converts the byte array to an short array.
 	 */
 	private static short[] toArray(byte[] id) {
 		final int ln = id.length / 2;
@@ -191,12 +189,11 @@ public final class ULUA extends IP6 {
 	}//toArray
 
 	/**
-	 * Returns NTP time stamp value
+	 * Returns the time stamp in the 64-bit NTP format from a NTP server.
 	 *
 	 * @param address a NTP server address
 	 * @return the current time of day in 64-bit NTP format
-	 * @throws SocketException If the socket could not be opened which it might
-	 *             be not available any ports.
+	 * @throws SocketException If the socket could not be opened which it might be not available any ports.
 	 * @throws UnknownHostException If the host could not be found.
 	 * @throws IOException If an error occurs while retrieving the time.
 	 */
@@ -214,11 +211,13 @@ public final class ULUA extends IP6 {
 	}//getNTPTime
 
 	/**
-	 * Generates a Global ID according to RFC 4193 Section 3.2.2.
+	 * Generates a Global ID according to <a
+	 * href="https://www.rfc-editor.org/rfc/rfc5952.txt">Section 3.2.2 of
+	 * <i>RFC 4193: Unique Local IPv6 Unicast Addresses</i></a>.
 	 *
-	 * @param timeStamp a time stamp in 64-bit NTP format
-	 * @param systemID the system-specific identifier
-	 *                 (e.g. an EUI-64 identifier and system serial number)
+	 * @param timeStamp the current time of day in 64-bit NTP format
+	 * @param systemID the system-specific identifier, e.g. an EUI-64 identifier and system serial number
+	 * @return the generated Global ID
 	 */
 	public short[] generateGlobalID(long timeStamp, short[] systemID) {
 		ByteBuffer buf = ByteBuffer.allocate(16);
@@ -256,9 +255,13 @@ public final class ULUA extends IP6 {
 	}//generateGlobalID
 
 	/**
-	 * Creates an Interface ID by the Modified EUI-64 format (RFC 4291)
+	 * Creates an IEEE EUI-64 identifier from an IEEE 48-bit MAC identifier.
+	 * See <a href="https://www.rfc-editor.org/rfc/rfc4291.txt"><i>Appendix A:
+	 * Creating Modified EUI-64 Format Interface Identifiers</i></a>
+	 * of <i>RFC 4291: IPv6 Addressing Architecture</i>.
 	 *
 	 * @param macAddr a byte array containing the hardware address
+	 * @return the Interface ID by the EUI-64 format
 	 */
 	public short[] createInterfaceIDByEUI64(byte[] macAddr) {
 		ByteBuffer buf = ByteBuffer.wrap(systemSpecific);
