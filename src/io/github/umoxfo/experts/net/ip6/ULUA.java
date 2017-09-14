@@ -69,9 +69,9 @@ public final class ULUA extends IP6 {
 	 * @throws IOException If an error occurs while retrieving the time.
 	 */
 	public ULUA(byte[] address) throws IOException {
-		createInterfaceIDByEUI64(address);
+		interfaceID = createInterfaceIDByEUI64(address);
 		subnetID = new short[]{DEFAULT_SUBNT_ID};
-		generateGlobalID(getNTPTime(NTP_SERVER_ADDRESS), interfaceID);
+		globalID = generateGlobalID(getNTPTime(NTP_SERVER_ADDRESS), interfaceID);
 	}//ULUA(byte[] address)
 
 	/**
@@ -181,7 +181,7 @@ public final class ULUA extends IP6 {
 	 * @param systemID the system-specific identifier
 	 *                 (e.g. an EUI-64 identifier and system serial number)
 	 */
-	public void generateGlobalID(long timeStamp, short[] systemID) {
+	public short[] generateGlobalID(long timeStamp, short[] systemID) {
 		ByteBuffer buf = ByteBuffer.allocate(16);
 
 		if (timeStamp == 0) timeStamp = System.currentTimeMillis();
@@ -213,7 +213,7 @@ public final class ULUA extends IP6 {
 		byte[] tmp = {GLOBAL_ID_PREFIX, 0, 0, 0, 0, 0};
 		System.arraycopy(digest,15, tmp, 1, 5);
 
-		globalID = toArray(tmp);
+		return toArray(tmp);
 	}//generateGlobalID
 
 	/**
@@ -221,12 +221,12 @@ public final class ULUA extends IP6 {
 	 *
 	 * @param macAddr a byte array containing the hardware address
 	 */
-	public void createInterfaceIDByEUI64(byte[] macAddr) {
+	public short[] createInterfaceIDByEUI64(byte[] macAddr) {
 		ByteBuffer buf = ByteBuffer.wrap(systemSpecific);
 
 		buf.put(macAddr, 0, 3).putShort(ADDITIONAL_VALUES).put(macAddr, 3, 3);
 		systemSpecific[0] ^= 0x02;
 
-		interfaceID = toArray(systemSpecific);
+		return toArray(systemSpecific);
 	}//createInterfaceIDByEUI64
 }
