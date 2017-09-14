@@ -57,13 +57,13 @@ public final class IP6Utils {
 	 *
 	 * Consecutive sections of zeroes are replaced with a double colon (::).
 	 *
-	 * @param addr a binary IPv6 address
+	 * @param address a binary IPv6 address
 	 * @return an IPv6 address in the colon 16-bit delimited hexadecimal format
 	 */
-	public static String toTextFormat(short[] addr) {
+	public static String toTextFormat(short[] address) {
 		// Set into the Array List
 		ArrayList<Short> al =  new ArrayList<>(8);
-		for (int i = 0; i < 8; i++) al.add(addr[i]);
+		for (int i = 0; i < 8; i++) al.add(address[i]);
 		//ArrayList<Short> al = IntStream.range(0, 8).mapToObj(i -> addr[i]).collect(Collectors.toCollection(ArrayList::new));
 
 		/*
