@@ -28,12 +28,11 @@ import java.util.regex.Pattern;
  * <p>
  * For IPv4 address subnet, especially Classless Inter-Domain Routing (CIDR),
  * refer to <a href="https://tools.ietf.org/html/rfc4632">RFC4632</a>.
- * </p>
+ *
  * <p>
  * For IPv6 address subnet, refer to
  * <a href="https://tools.ietf.org/html/rfc4291#section-2.3">
  * Section 2.3 of RFC 4291</a>.
- * </p>
  *
  * @author Apache Commons Net
  * @author Makoto Sakaguchi
