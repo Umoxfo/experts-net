@@ -170,9 +170,7 @@ public final class ULUA extends IP6 {
 		TimeInfo time = client.getTime(InetAddress.getByName(address));
 		client.close();
 
-		time.computeDetails();
-
-		return time.getMessage().getTransmitTimeStamp().ntpValue();
+		return time.getMessage().getReceiveTimeStamp().ntpValue();
 	}//getNTPTime
 
 	/**
