@@ -21,6 +21,7 @@ import io.github.umoxfo.experts.net.util.NICUtils;
 import org.apache.commons.net.ntp.NTPUDPClient;
 import org.apache.commons.net.ntp.NtpV3Packet;
 import org.apache.commons.net.ntp.TimeInfo;
+import org.apache.commons.net.ntp.TimeStamp;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -184,7 +185,7 @@ public final class ULUA extends IP6 {
 	public short[] generateGlobalID(long timeStamp, short[] systemID) {
 		ByteBuffer buf = ByteBuffer.allocate(16);
 
-		if (timeStamp == 0) timeStamp = System.currentTimeMillis();
+		if (timeStamp == 0) timeStamp = TimeStamp.getCurrentTime().ntpValue();
 		buf.putLong(timeStamp);
 
 		if (systemID != null) {
