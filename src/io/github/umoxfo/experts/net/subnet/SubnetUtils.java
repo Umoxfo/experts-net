@@ -93,13 +93,10 @@ public final class SubnetUtils {
 	static String format(int address) {
 		StringBuilder buf = new StringBuilder();
 
-		for (int i = 0; i < 4; i++) {
-			buf.append((address >>> (8 * (3 - i))) & 0xff);
-
-			if (i != 3) {
-				buf.append('.');
-			}//if
-		}//for
+		buf.append((address >>> 24) & 0xff).append('.')
+		   .append((address >>> 16) & 0xff).append('.')
+		   .append((address >>> 8) & 0xff).append('.')
+		   .append(address & 0xff);
 
 		return buf.toString();
 	}//format
