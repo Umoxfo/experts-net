@@ -52,6 +52,16 @@ public final class IP6Utils {
 		return buf;
 	}//toShortArray
 
+	public static String toTextFormat(byte[] address) {
+		short[] ret = new short[8];
+
+		for (int i = 0; i < 8; i++) {
+			int j = i << 1;
+			ret[i] = (short) ((address[j] << 8) | (address[j + 1] & 0xff));
+		}//for
+
+		return toTextFormat(ret);
+	}//toTextFormat(byte[])
 	/**
 	 * Convert IPv6 binary address into a canonical format in RFC5952.
 	 *

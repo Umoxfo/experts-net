@@ -83,19 +83,6 @@ public final class IP6Subnet extends SubnetInfo {
 		return highAddr;
 	}//high
 
-	/*
-	 * Copies an address in the byte array to a short array.
-	 */
-	private static short[] toShortArray(byte[] address) {
-		short[] ret = new short[8];
-
-		for (int i = 0; i < 8; i++) {
-			int j = i << 1;
-			ret[i] = (short) ((address[j] << 8) | (address[j + 1] & 0xff));
-		}//for
-
-		return ret;
-	}//toShortArray
 
 	/**
 	 * Returns true if the parameter <code>address</code> is in
