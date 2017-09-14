@@ -79,6 +79,25 @@ public final class ULUA extends IP6 {
 	 * Sets a Global ID field of the Local IPv6 unicast address that follows
 	 * the <code>FD00::/8</code> prefix and 40-bit global identifier format.
 	 *
+	 * @param gID four hexadecimal digits and up to 15 digits include colons
+	 * @see IP6#setGlobalID(short[])
+	 */
+	public void setGlobalID(short[] gID) {
+		// Check length
+		if (gID.length > GLOBAL_ID_LENGTH) {
+			throw new IllegalArgumentException("The length of the prefix and Global ID of ULUA must be 48 bits.");
+		}//if
+
+		// Check prefix
+		if ((gID[0] >>> 8) != GLOBAL_ID_PREFIX) throw new IllegalArgumentException("ULUA must be 0xfd00::/8.");
+
+		globalID = gID;
+	}//setGlobalID(short[])
+
+	/**
+	 * Sets a Global ID field of the Local IPv6 unicast address that follows
+	 * the <code>FD00::/8</code> prefix and 40-bit global identifier format.
+	 *
 	 * @param gID a colon-separated string for each four hexadecimal digits and up to 15 digits include colons
 	 * @see IP6#setGlobalID(String)
 	 */
@@ -106,6 +125,19 @@ public final class ULUA extends IP6 {
 	}//setGlobalID
 
 	/**
+	 * Sets a Subnet ID that is an identifier of a subnet within the site.
+	 *
+	 * @param sID four hexadecimal digits
+	 * @see IP6#setSubnetID(short[])
+	 */
+	@Override
+	public void setSubnetID(short[] sID) {
+		if (sID.length != 1) throw new AssertionError("Subnet ID must be 16 bits.");
+
+		subnetID = sID;
+	}//setSubnetID(short[])
+
+	/**
 	 * Sets a Subnet ID of the Local IPv6 unicast address that is 16-bit.
 	 *
 	 * @param sID a four-digit hexadecimal string
@@ -124,6 +156,14 @@ public final class ULUA extends IP6 {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void setInterfaceID(short[] iID) {
+		if (iID.length != INTERFACE_ID_LENGTH) {
+			throw new IllegalArgumentException("The length ot the Interface ID must be 64 bits.");
+		}//if
+
+		interfaceID = iID;
+	}//setInterfaceID(short[])
+
 	public void setInterfaceID(String iID) {
 		String[] tmp = iID.split(":");
 
