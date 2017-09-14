@@ -221,7 +221,7 @@ public final class SubnetUtils {
 				break;
 			case IPv6:
 				// The maximum subnet bits in IPv6
-				hosts = new BigInteger("2").pow(IP.IPv6.bits - checkRange(prefix, IP.IPv6.bits)).toString();
+				hosts = BigInteger.valueOf(2).pow(IP.IPv6.bits - checkRange(prefix, IP.IPv6.bits)).toString();
 				break;
 		}//switch
 

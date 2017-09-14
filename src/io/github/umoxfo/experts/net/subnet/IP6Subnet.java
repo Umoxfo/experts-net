@@ -179,7 +179,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * @return the count of addresses in a string, may be zero
 	 */
 	@Override
-	public String getAddressCount() { return new BigInteger("2").pow(128 - cidr).toString(); }
+	public String getAddressCount() { return BigInteger.valueOf(2).pow(128 - cidr).toString(); }
 
 	/**
 	 * Returns subnet summary information of the address,
