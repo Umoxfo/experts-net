@@ -219,7 +219,7 @@ public final class ULUA extends IP6 {
 	 * @param systemID the system-specific identifier, e.g. an EUI-64 identifier and system serial number
 	 * @return the generated Global ID
 	 */
-	public short[] generateGlobalID(long timeStamp, short[] systemID) {
+	public short[] generateGlobalID(long timeStamp, short[] systemID) throws NullPointerException {
 		ByteBuffer buf = ByteBuffer.allocate(16);
 
 		if (timeStamp == 0) timeStamp = TimeStamp.getCurrentTime().ntpValue();
@@ -231,7 +231,7 @@ public final class ULUA extends IP6 {
 		} else {
 			try {
 				createInterfaceIDByEUI64(NICUtils.getMACAddress());
-			} catch (SocketException e) {
+			} catch (NullPointerException | SocketException e) {
 				/* If the hardware address is not obtained, used random numbers as the system-specific identifier. */
 				try {
 					SecureRandom.getInstanceStrong().nextBytes(systemSpecific);
