@@ -17,8 +17,6 @@
  */
 package io.github.umoxfo.experts.net.util;
 
-import org.apache.commons.codec.binary.Hex;
-
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -52,6 +50,7 @@ public final class NICUtils {
 		/* TAP-Windows */
 		{0x00, (byte)0xFF, 0x69}
 	};
+	private static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 	/*
 	 * Converts a byte array contains a hardware address to the printing MAC-48 addresses;
@@ -59,16 +58,13 @@ public final class NICUtils {
 	 * e.g. "00-1B-63-84-45-E6".
 	 */
 	private static String format(byte[] macAddr) {
-		StringBuilder sb = new StringBuilder(17).append(Hex.encodeHex(macAddr, false));
+		StringBuilder sb = new StringBuilder(17);
 
-		// Separate two hexadecimal digits by hyphens
-		for (int i = 2; i < 17; i += 3) {
-			sb.insert(i, '-');
+		for (int i = 0; i < 6; i++) {
+			sb.append(DIGITS[(macAddr[i] & 0xf0) >>> 4]).append(DIGITS[macAddr[i] & 0x0f]);
+
+			if (i != 5) sb.append('-');
 		}//for
-
-/*		for (int i = 0; i < 6; i++) {
-			sb.append(String.format("%02X%s", macAddr[i], (i < 5) ? "-" : ""));
-		}*/
 
 		return sb.toString();
 	}//format
