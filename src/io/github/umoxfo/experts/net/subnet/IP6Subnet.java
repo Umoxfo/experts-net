@@ -56,7 +56,7 @@ public final class IP6Subnet extends SubnetInfo {
 		System.arraycopy(ip6Address, 0, lowAddr, 0, index + 1);
 
 		// Set the out of the network prefix bits.
-		lowAddr[index] &= 0xff << (8 - (cidr % 8));
+		lowAddr[index] &= ~(0xff >> (cidr % 8));
 
 		return lowAddr;
 	}//low
@@ -116,7 +116,7 @@ public final class IP6Subnet extends SubnetInfo {
 
 		// The host identifier is in range between the lowest and the highest addresses
 		int addr = address[prefixSize] & 0xff;
-		int lowAddr = (ip6Address[prefixSize] & (0xff << (8 - extraBits))) & 0xff;
+		int lowAddr = (ip6Address[prefixSize] & ~(0xff >> extraBits)) & 0xff;
 		int highAddr = (ip6Address[prefixSize] | (0xff >> extraBits)) & 0xff;
 
 		return (addr >= lowAddr) && (addr <= highAddr);
