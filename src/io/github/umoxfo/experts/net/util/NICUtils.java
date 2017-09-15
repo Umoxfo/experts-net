@@ -55,7 +55,7 @@ public final class NICUtils {
 	/*
 	 * Converts a byte array contains a hardware address to the printing MAC-48 addresses;
 	 * which is six groups of two hexadecimal digits, separated by hyphens in transmission order,
-	 * e.g. "00-1B-63-84-45-E6".
+	 * e.g. 00-1B-63-84-45-E6.
 	 */
 	private static String format(byte[] macAddr) {
 		StringBuilder sb = new StringBuilder(17);
@@ -70,7 +70,7 @@ public final class NICUtils {
 	}//format
 
 	/*
-	 * Returns {@code false} if the hardware address is not from a virtual machine.
+	 * Returns false if the hardware address is not from a virtual machine.
 	 */
 	private static byte[] checkValidity(byte[] mac) {
 		for (byte[] vm: VIRTUAL_MACHINE_MAC_ADDRESSES) {
@@ -103,7 +103,7 @@ public final class NICUtils {
 
 	/**
 	 * Returns the hardware address (usually MAC address) of the interface
-	 * that has the specified IP address or host name, e.g. "10.0.0.1" or "example.com".
+	 * that has the specified IP address or host name, e.g. {@code 10.0.0.1} or {@code example.com}.
 	 *
 	 * @param address the IP address or the host name
 	 * @return a byte array containing the address, or {@code null}
@@ -121,9 +121,9 @@ public final class NICUtils {
 
 	/**
 	 * Returns the hardware address (usually MAC address) of the interface
-	 * that has the specified IP address or host name, e.g. "10.0.0.1" or "example.com"
+	 * that has the specified IP address or host name, e.g. {@code 10.0.0.1} or {@code example.com}
 	 * in the standard (IEEE 802) format for printing MAC-48 addresses in human-friendly form,
-	 * e.g. "01-23-45-67-89-AB".
+	 * e.g. {@code 01-23-45-67-89-AB}.
 	 *
 	 * @param address a host name or a textual representation of its IP address
 	 * @return the address in the MAC address format, or {@code null}
