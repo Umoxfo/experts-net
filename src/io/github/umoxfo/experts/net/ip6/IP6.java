@@ -25,74 +25,72 @@ package io.github.umoxfo.experts.net.ip6;
  * @since 2.0.6
  */
 public abstract class IP6 {
+	static final int INTERFACE_ID_LENGTH = 8;
 	/*
-	 * 48 bits for Unique Local IPv6 Unicast Addresses (ULUA) or 64 bits or less for Global Unicast Address (GUA).
+	 * an identifier of a site (a cluster of subnets/links).
+	 * 48 bits for Unique Local IPv6 Unicast Addresses (ULUA),
+	 * the {@code FD00::/8} prefix and 40-bit global identifier format, or
+	 * 64 bits or less for Global Unicast Address (GUA).
 	 */
-	short[] globalID;
+	byte[] globalID;
 
 	/*
+	 * an identifier of a subnet within the site.
 	 * 16 bits for ULUA or 64 - n bits (these n bits equal GUA of the Global ID bits length) for GUA.
+	 *
 	 */
-	short[] subnetID;
+	byte[] subnetID;
 
 	/*
-	 * 64 bits for ULUA and GUA.
+	 * an identifier of interfaces on a link.
+	 * 64 bits for Interface ID.
 	 */
-	short[] interfaceID;
-
-	/**
-	 * Sets a Global ID that used to create a globally unique prefix.
-	 * See <a href="https://tools.ietf.org/html/rfc4193#section-3.2">Section 3.2,
-	 * RFC 4193</a> for additional information.
-	 *
-	 * @param globalID the IPv6 address text representation
-	 */
-	public abstract void setGlobalID(short[] globalID);
+	byte[] interfaceID;
 
 	/**
 	 * Returns the Global ID in binary.
+	 * See <a href="https://tools.ietf.org/html/rfc4193#section-3.2">Section 3.2 of
+	 * RFC 4193</a> for additional information.
 	 *
-	 * @return the Global ID in binary as a short array
+	 * @return the Global ID in a short array
 	 */
-	public short[] getGlobalID() { return globalID; }
-
-	/**
-	 * Sets a Subnet ID that is an identifier of a subnet within the site.
-	 *
-	 * @param subnetID the text representation of IPv6 address
-	 */
-	public abstract void setSubnetID(short[] subnetID);
+	public abstract byte[] getGlobalID();
 
 	/**
 	 * Returns the Subnet ID in binary.
 	 *
-	 * @return the Subnet ID in binary as a short array
+	 * @return the Subnet ID in a short array
 	 */
-	public short[] getSubnetID() { return subnetID; }
-
-	/**
-	 * Sets an Interface ID that is used to identify interfaces on a link.
-	 *
-	 * @param interfaceID must be up to 64 bits
-	 */
-	public abstract void setInterfaceID(short[] interfaceID);
+	public abstract byte[] getSubnetID();
 
 	/**
 	 * Returns the Interface ID in binary.
 	 *
-	 * @return the Interface ID in binary as a short array
+	 * @return the Interface ID in a short array
 	 */
-	public short[] getInterfaceID() { return interfaceID; }
+	public abstract byte[] getInterfaceID();
+
+	/*
+	 * Sets an Interface ID which is used to identify interfaces on a link.
+	 *
+	 * @param id must be up to 64 bits
+	 */
+	byte[] checkInterfaceID(byte[] id) {
+		if (id.length != INTERFACE_ID_LENGTH) throw new IllegalArgumentException("Interface ID must be 64 bits.");
+
+		return id;
+	}//checkInterfaceID
 
 	/**
-	 * Build the IPv6 address.
+	 * Convert IPv6 binary address into a canonical format
 	 *
 	 * @return the IPv6 address in the colon 16-bit delimited hexadecimal format
+	 * @see IP6Utils#toTextFormat(byte[])
 	 */
 	@Override
 	public String toString() {
 		// Collect into a single array
-		short[] addr = new short[8];
+		byte[] addr = new byte[16];
 
 		System.arraycopy(globalID, 0, addr, 0, globalID.length);
 		System.arraycopy(subnetID, 0, addr, globalID.length, subnetID.length);

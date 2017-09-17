@@ -20,6 +20,7 @@ package io.github.umoxfo.experts.net.ip6;
 import java.io.IOException;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -31,53 +32,43 @@ import java.util.stream.Collectors;
  */
 public final class IP6Utils {
 	private static final short ZERO = 0;
-
-	/*
-	 * Converts String array to Short list.
-	 */
-	static short[] toShortArray(String[] strArry) {
-		short[] buf = new short[strArry.length];
-
-		for (int i = 0, ln = strArry.length; i < ln; i++) {
-			int n = Integer.parseInt(strArry[i], 16);
-
-			// Check values
-			if (n > 0xffff) {
-				throw new IllegalArgumentException("Each group which is separated by colons must be within 16 bits.");
-			}//if
-
-			buf[i] = (short) n;
-		}//for
-
-		return buf;
-	}//toShortArray
-
-	public static String toTextFormat(byte[] address) {
-		short[] ret = new short[8];
-
-		for (int i = 0; i < 8; i++) {
-			int j = i << 1;
-			ret[i] = (short) ((address[j] << 8) | (address[j + 1] & 0xff));
-		}//for
-
-		return toTextFormat(ret);
-	}//toTextFormat(byte[])
+	static final short EUI64_ADDITIONAL_BITS = (short) 0xfffe;
 
 	/**
-	 * Convert the IPv6 address into a canonical format based on
-	 * <a href="https://www.rfc-editor.org/rfc/rfc5952.txt"><i>RFC 5952:
-	 * A Recommendation for IPv6 Address Text Representation</i></a>.
+	 * Creates an IEEE EUI-64 identifier from an IEEE 48-bit MAC identifier.
+	 * See <a href="https://tools.ietf.org/html/rfc4291#appendix-A">Appendix A:
+	 * <i>Creating Modified EUI-64 Format Interface Identifiers</i></a> of RFC 4291.
 	 *
-	 * Consecutive sections of zeroes are replaced with a double colon (::).
+	 * @param macAddr the byte array containing a hardware address
+	 * @return the Interface ID by the EUI-64 format
+	 */
+	public static byte[] createEUI64(byte[] macAddr) {
+		byte[] eui64 = new byte[8];
+		ByteBuffer buf = ByteBuffer.wrap(eui64);
+
+		buf.put(macAddr, 0, 3).putShort(EUI64_ADDITIONAL_BITS).put(macAddr, 3, 3);
+		eui64[0] ^= 0x02;
+
+		return eui64;
+	}//createEUI64
+
+	/**
+	 * Convert IPv6 binary address into a canonical format based on
+	 * <a href="https://www.rfc-editor.org/rfc/rfc5952.txt">RFC 5952:
+	 * <i>A Recommendation for IPv6 Address Text Representation</i></a>.
+	 *
+	 * <p>Consecutive sections of zeroes are replaced with a double colon (::).</p>
 	 *
 	 * @param address a binary IPv6 address
-	 * @return an IPv6 address in the colon 16-bit delimited hexadecimal format
+	 * @return a String representing an IPv6 address in the colon 16-bit delimited hexadecimal format
 	 */
-	public static String toTextFormat(short[] address) {
+	public static String toTextFormat(byte[] address) {
 		// Set into the Array List
 		ArrayList<Short> al =  new ArrayList<>(8);
-		for (int i = 0; i < 8; i++) al.add(address[i]);
-		//ArrayList<Short> al = IntStream.range(0, 8).mapToObj(i -> addr[i]).collect(Collectors.toCollection(ArrayList::new));
+		for (int i = 0; i < 8; i++) {
+			int j = i << 1;
+			al.add((short) ((address[j] << 8) | (address[j + 1] & 0xff)));
+		}//for
 
 		/*
 		 * The longest run of consecutive 16-bit 0 fields MUST be shortened based on RFC5952.
