@@ -61,7 +61,7 @@ public final class NICUtils {
 		StringBuilder sb = new StringBuilder(17);
 
 		for (int i = 0; i < 6; i++) {
-			sb.append(DIGITS[(macAddr[i] & 0xf0) >>> 4]).append(DIGITS[macAddr[i] & 0x0f]);
+			sb.append(DIGITS[(macAddr[i] >>> 4) & 0xf]).append(DIGITS[macAddr[i] & 0xf]);
 
 			if (i != 5) sb.append('-');
 		}//for
