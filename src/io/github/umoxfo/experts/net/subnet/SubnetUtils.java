@@ -107,7 +107,7 @@ public final class SubnetUtils {
 	 * @param cidrNotation an IPv4 or IPv6 address in CIDR notation
 	 * @return a SubnetInfo object, which is implication of {@link IP4Subnet} or
 	 *         {@link IP6Subnet}, created from the IP address.
-	 * @throws UnknownHostException see {@link InetAddress#getByName(String host)}
+	 * @throws UnknownHostException see {@link InetAddress#getByName(String)}
 	 * @throws SecurityException if a security manager exists and its checkConnect method doesn't allow the operation
 	 */
 	public static SubnetInfo getByCIDRNotation(String cidrNotation) throws UnknownHostException {
