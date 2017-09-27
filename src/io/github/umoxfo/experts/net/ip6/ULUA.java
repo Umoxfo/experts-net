@@ -191,7 +191,7 @@ public final class ULUA extends IP6 {
 		byte[] digest = null;
 		try {
 			digest = MessageDigest.getInstance("SHA-1").digest(buf.array());
-		} catch (NoSuchAlgorithmException e) {}
+		} catch (NoSuchAlgorithmException ignored) {}
 
 		byte[] tmp = {GLOBAL_ID_PREFIX, 0, 0, 0, 0, 0};
 		System.arraycopy(digest,15, tmp, 1, 5);
