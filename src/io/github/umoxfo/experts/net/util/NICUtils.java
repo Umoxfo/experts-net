@@ -21,7 +21,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 /**
  * This class represents a hardware address, also MAC address, assigned to the interface.
@@ -92,9 +92,9 @@ public final class NICUtils {
 	public static byte[] getMACAddress() throws SocketException {
 		byte[] macAddress = null;
 
-		Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces();
-		while (nis.hasMoreElements()) {
-			NetworkInterface ni = nis.nextElement();
+		Iterator<NetworkInterface> nis = NetworkInterface.networkInterfaces().iterator();
+		while (nis.hasNext()) {
+			NetworkInterface ni = nis.next();
 			if (ni.isUp() && !ni.isLoopback()) macAddress = NICUtils.checkValidity(ni.getHardwareAddress());
 		}//while
 
