@@ -24,30 +24,41 @@
 	<groupId>io.github.umoxfo.experts</groupId>
 	<artifactId>experts-net</artifactId>
 	<version>2.0.6-dev</version>
+	<packaging>jar</packaging>
+
 	<name>Experts Net</name>
+	<description>Experts Net library contains a collection of network utilities.</description>
 	<url>https://github.com/Umoxfo/experts-net</url>
 	<inceptionYear>2014</inceptionYear>
+	<licenses>
+		<license>
+			<name>The GNU General Public License, Version 3.0</name>
+			<url>https://www.gnu.org/licenses/gpl.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
-	<packaging>jar</packaging>
+	<prerequisites>
+		<maven>3.0</maven>
+	</prerequisites>
+
+	<scm>
+		<connection>scm:git:https://github.com/Umoxfo/experts-net.git</connection>
+		<developerConnection>scm:git:ssh://git@github.com:Umoxfo/experts-net.git</developerConnection>
+		<url>https://github.com/Umoxfo/experts-net</url>
+	</scm>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>commons-net</groupId>
 			<artifactId>commons-net</artifactId>
 			<version>3.6</version>
 		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.10</version>
-		</dependency>
 	</dependencies>
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-
-	<prerequisites>
-		<maven>3.0</maven>
-	</prerequisites>
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -58,25 +69,17 @@
 				<version>3.0.0-M1</version>
 				<executions>
 					<execution>
-						<id>enforce-versions</id>
+						<id>enforce-version</id>
 						<goals>
 							<goal>enforce</goal>
 						</goals>
 						<configuration>
 							<rules>
-								<bannedPlugins>
-									<!-- will only display a warning but does not fail the build. -->
-									<level>WARN</level>
-									<excludes>
-										<exclude>org.apache.maven.plugins:maven-verifier-plugin</exclude>
-									</excludes>
-									<message>Please consider using the maven-invoker-plugin (http://maven.apache.org/plugins/maven-invoker-plugin/)!</message>
-								</bannedPlugins>
 								<requireMavenVersion>
 									<version>3.0</version>
 								</requireMavenVersion>
 								<requireJavaVersion>
-									<version>1.8</version>
+									<version>9</version>
 								</requireJavaVersion>
 							</rules>
 						</configuration>
@@ -88,8 +91,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.7.0</version>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>9</source>
+					<target>9</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -130,11 +133,16 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.20.1</version>
 			</plugin>
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>versions-maven-plugin</artifactId>
-				<version>2.4</version>
-			</plugin>
 		</plugins>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>versions-maven-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project>
