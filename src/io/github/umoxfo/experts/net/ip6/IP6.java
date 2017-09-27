@@ -52,21 +52,21 @@ public abstract class IP6 {
 	 * See <a href="https://tools.ietf.org/html/rfc4193#section-3.2">Section 3.2 of
 	 * RFC 4193</a> for additional information.
 	 *
-	 * @return the Global ID in a short array
+	 * @return the Global ID in a byte array
 	 */
 	public abstract byte[] getGlobalID();
 
 	/**
 	 * Returns the Subnet ID in binary.
 	 *
-	 * @return the Subnet ID in a short array
+	 * @return the Subnet ID in a byte array
 	 */
 	public abstract byte[] getSubnetID();
 
 	/**
 	 * Returns the Interface ID in binary.
 	 *
-	 * @return the Interface ID in a short array
+	 * @return the Interface ID in a byte array
 	 */
 	public abstract byte[] getInterfaceID();
 
