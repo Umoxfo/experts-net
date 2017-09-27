@@ -44,9 +44,8 @@ public final class IP6Utils {
 	 */
 	public static byte[] createEUI64(byte[] macAddr) {
 		byte[] eui64 = new byte[8];
-		ByteBuffer buf = ByteBuffer.wrap(eui64);
 
-		buf.put(macAddr, 0, 3).putShort(EUI64_ADDITIONAL_BITS).put(macAddr, 3, 3);
+		ByteBuffer.wrap(eui64).put(macAddr, 0, 3).putShort(EUI64_ADDITIONAL_BITS).put(macAddr, 3, 3);
 		eui64[0] ^= 0x02;
 
 		return eui64;
