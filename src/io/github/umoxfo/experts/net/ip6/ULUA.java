@@ -122,7 +122,7 @@ public final class ULUA extends IP6 {
 		}//if
 
 		// Check prefix
-		if (gID[1] != GLOBAL_ID_PREFIX) throw new IllegalArgumentException("ULUA must be wiht 0xfd00::/8 prefix.");
+		if (gID[1] != GLOBAL_ID_PREFIX) throw new IllegalArgumentException("ULUA must be with 0xfd00::/8 prefix.");
 
 		return gID;
 	}//checkGlobalID
