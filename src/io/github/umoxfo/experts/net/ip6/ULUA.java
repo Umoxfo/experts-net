@@ -198,11 +198,4 @@ public final class ULUA extends IP6 {
 
 		return tmp;
 	}//generateGlobalID
-
-/*
-	@Override
-	public String toString() {
-		return toString(globalID, subnetID, interfaceID);
-	}
-*/
 }
