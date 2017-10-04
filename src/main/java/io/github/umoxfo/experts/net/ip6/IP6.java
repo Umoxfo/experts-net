@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Experts Net.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package io.github.umoxfo.experts.net.ip6;
 
@@ -26,6 +26,7 @@ package io.github.umoxfo.experts.net.ip6;
  */
 public abstract class IP6 {
 	static final int INTERFACE_ID_LENGTH = 8;
+
 	/*
 	 * an identifier of a site (a cluster of subnets/links).
 	 * 48 bits for Unique Local IPv6 Unicast Addresses (ULUA),
@@ -68,7 +69,7 @@ public abstract class IP6 {
 	 *
 	 * @return the Interface ID in a byte array
 	 */
-	public abstract byte[] getInterfaceID();
+	public byte[] getInterfaceID() { return interfaceID; }
 
 	/*
 	 * Sets an Interface ID which is used to identify interfaces on a link.

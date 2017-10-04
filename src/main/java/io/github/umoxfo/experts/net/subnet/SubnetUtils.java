@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Experts Net.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package io.github.umoxfo.experts.net.subnet;
 
@@ -213,7 +213,7 @@ public final class SubnetUtils {
 					hl = 0;
 				}//if-else
 
-				hosts = Long.toString(hl);
+				hosts = String.format("%,3d", hl);
 				break;
 			case IPv6:
 				// The maximum subnet bits in IPv6

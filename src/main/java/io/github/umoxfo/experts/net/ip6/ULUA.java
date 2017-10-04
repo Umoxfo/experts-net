@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Experts Net.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package io.github.umoxfo.experts.net.ip6;
 
@@ -26,12 +26,13 @@ import org.apache.commons.net.ntp.TimeStamp;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
+
+import static io.github.umoxfo.experts.net.ip6.IP6Utils.createEUI64;
 
 /**
  * This class represents an Unique Local IPv6 unicast addresses.
@@ -46,7 +47,6 @@ public final class ULUA extends IP6 {
 	private static final byte GLOBAL_ID_PREFIX = (byte) 0xfd;
 
 	private static final int SUBNET_ID_LENGTH = 2;
-	private static final byte[] DEFAULT_SUBNT_ID = {0x00, 0x00};
 
 	private static final String NTP_SERVER_ADDRESS = "pool.ntp.org";
 
@@ -70,20 +70,17 @@ public final class ULUA extends IP6 {
 		this.globalID = checkGlobalID(globalID);
 		this.subnetID = checkSubnetID(subnetID);
 		this.interfaceID = checkInterfaceID(interfaceID);
-	}//ULUA(short[], short[], short[])
+	}//ULUA(byte[], byte[], byte[])
 
 	/**
 	 * Constructor that takes a hardware address in a byte array.
 	 *
 	 * @param address the hardware address of the machine that creates a Local IPv6 unicast address
-	 * @throws SocketException If the socket could not be opened which it might be not available any ports.
-	 * @throws UnknownHostException If the host could not be found.
-	 * @throws IOException If an error occurs while retrieving the time.
 	 */
-	public ULUA(byte[] address) throws IOException {
-		interfaceID = IP6Utils.createEUI64(address);
-		subnetID = DEFAULT_SUBNT_ID.clone();
-		globalID = generateGlobalID(getNTPTime(NTP_SERVER_ADDRESS), interfaceID);
+	public ULUA(byte[] address) {
+		interfaceID = createEUI64(address);
+		subnetID = new byte[SUBNET_ID_LENGTH];
+		globalID = generateGlobalID(NTP_SERVER_ADDRESS, interfaceID);
 	}//ULUA(byte[])
 
 	/**
@@ -91,8 +88,6 @@ public final class ULUA extends IP6 {
 	 *
 	 * <p> This is 48 bits, the {@code FD00::/8} prefix and 40-bit global identifier format,
 	 * for Local IPv6 addresses.
-	 *
-	 * @return {@inheritDoc}
 	 */
 	@Override
 	public byte[] getGlobalID() { return globalID; }
@@ -101,15 +96,9 @@ public final class ULUA extends IP6 {
 	 * {@inheritDoc}
 	 *
 	 * <p> This is 16 bits for Local IPv6 addresses.
-	 *
-	 * @return {@inheritDoc}
 	 */
 	@Override
 	public byte[] getSubnetID() { return subnetID; }
-
-	/** {@inheritDoc} */
-	@Override
-	public byte[] getInterfaceID() { return interfaceID; }
 
 	/*
 	 ^ Checks a Global ID field of the Local IPv6 unicast address that follows
@@ -136,16 +125,14 @@ public final class ULUA extends IP6 {
 		return subnetID;
 	}//checkSubnetID(byte[])
 
-	/**
+	/*
 	 * Returns the time stamp in the 64-bit NTP format from a NTP server.
 	 *
 	 * @param address a NTP server address
 	 * @return the current time of day in 64-bit NTP format
 	 * @throws IOException If an error occurs while retrieving the time.
-	 * @throws UnknownHostException If the host could not be found.
-	 * @throws SocketException If the socket could not be opened which it might be not available any ports.
 	 */
-	public static long getNTPTime(String address) throws IOException {
+	private static long getNTPTime(String address) throws IOException {
 		NTPUDPClient client = new NTPUDPClient();
 		client.setVersion(NtpV3Packet.VERSION_4);
 
@@ -163,15 +150,21 @@ public final class ULUA extends IP6 {
 	 * href="https://tools.ietf.org/html/rfc4193#section-3.2.2">Section 3.2.2 of
 	 * RFC 4193</a>.
 	 *
-	 * @param timeStamp the current time of day in 64-bit NTP format
+	 * @param address a NTP server address
 	 * @param systemID the system-specific identifier, e.g. an EUI-64 identifier and system serial number
 	 * @return the generated Global ID
 	 */
-	public static byte[] generateGlobalID(long timeStamp, byte[] systemID) {
+	public static byte[] generateGlobalID(String address, byte[] systemID) {
 		ByteBuffer buf = ByteBuffer.allocate(16);
 
-		if (timeStamp == 0) timeStamp = TimeStamp.getCurrentTime().ntpValue();
-		buf.putLong(timeStamp);
+		long timeStamp = 0;
+		try {
+			timeStamp = getNTPTime(address);
+		} catch (IOException e) {
+			timeStamp = TimeStamp.getCurrentTime().ntpValue();
+		} finally {
+			buf.putLong(timeStamp);
+		}//try-catch
 
 		if (systemID == null || systemID.length != 8) {
 			try {
@@ -194,7 +187,7 @@ public final class ULUA extends IP6 {
 		} catch (NoSuchAlgorithmException ignored) {}
 
 		byte[] tmp = {GLOBAL_ID_PREFIX, 0, 0, 0, 0, 0};
-		System.arraycopy(digest,15, tmp, 1, 5);
+		System.arraycopy(digest, 15, tmp, 1, 5);
 
 		return tmp;
 	}//generateGlobalID

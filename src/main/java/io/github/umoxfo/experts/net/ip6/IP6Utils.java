@@ -13,7 +13,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with Experts Net.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package io.github.umoxfo.experts.net.ip6;
 
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  */
 public final class IP6Utils {
 	private static final short ZERO = 0;
-	static final short EUI64_ADDITIONAL_BITS = (short) 0xfffe;
+	private static final short EUI64_ADDITIONAL_BITS = (short) 0xfffe;
 
 	/**
 	 * Creates an IEEE EUI-64 identifier from an IEEE 48-bit MAC identifier.
