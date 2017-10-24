@@ -66,8 +66,8 @@ public final class ULUA extends IP6 {
 	 */
 	public ULUA(byte[] globalID, byte[] subnetID, byte[] interfaceID) {
 		this.globalID = checkGlobalID(globalID);
-		this.subnetID = checkSubnetID(subnetID);
-		this.interfaceID = checkInterfaceID(interfaceID);
+		this.subnetID = checkLength(subnetID, SUBNET_ID_LENGTH);
+		this.interfaceID = checkLength(interfaceID, INTERFACE_ID_LENGTH);
 	}//ULUA(byte[], byte[], byte[])
 
 	/**
@@ -113,15 +113,6 @@ public final class ULUA extends IP6 {
 
 		return gID;
 	}//checkGlobalID
-
-	/*
-	 * Checks a Subnet ID that is an identifier of a subnet within the site.
-	 */
-	private byte[] checkSubnetID(byte[] subnetID) {
-		if (subnetID.length != SUBNET_ID_LENGTH) throw new IllegalArgumentException("Subnet ID must be 16 bits.");
-
-		return subnetID;
-	}//checkSubnetID(byte[])
 
 	/*
 	 * Returns the time stamp in the 64-bit NTP format from a NTP server.

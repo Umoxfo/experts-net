@@ -72,12 +72,13 @@ public abstract class IP6 {
 	public byte[] getInterfaceID() { return interfaceID; }
 
 	/*
-	 * Sets an Interface ID which is used to identify interfaces on a link.
+	 * Convenience function to check the bit length of ID fields.
 	 *
-	 * @param id must be up to 64 bits
+	 * If the length of a byte array x is equal to {@code length},
+	 * returns x, throws an exception otherwise.
 	 */
-	byte[] checkInterfaceID(byte[] id) {
-		if (id.length != INTERFACE_ID_LENGTH) throw new IllegalArgumentException("Interface ID must be 64 bits.");
+	default byte[] checkLength(byte[] id, int length) {
+		if (id.length != length) throw new IllegalArgumentException("Value [" + id + "] must be " + length*8 + " bits");
 
 		return id;
 	}//checkInterfaceID
