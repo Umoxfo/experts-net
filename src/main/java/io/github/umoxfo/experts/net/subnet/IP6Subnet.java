@@ -101,9 +101,6 @@ public final class IP6Subnet extends SubnetInfo {
 		return isInRange(ia.getAddress());
 	}//isInRange(String)
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isInRange(byte[] address) {
 		int prefixSize = cidr / 8;
@@ -147,7 +144,7 @@ public final class IP6Subnet extends SubnetInfo {
 	 * @return the CIDR notation of the address, e.g. {@code 2001:db8::ff00:42:8329/48}
 	 */
 	@Override
-	public String getCIDRNotation() { return IP6Utils.toTextFormat(ip6Address) + "/" + cidr; }
+	public String getCIDRNotation() { return IP6Utils.toTextFormat(ip6Address) + '/' + cidr; }
 
 	/**
 	 * Returns the low address as a colon-separated IP address.
@@ -188,7 +185,7 @@ public final class IP6Subnet extends SubnetInfo {
 		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append("]\n")
 		   .append("First Address:\t[").append(getLowAddress()).append("]\n")
 		   .append("Last Address:\t[").append(getHighAddress()).append("]\n")
-		   .append("# Addresses:\t[").append(getAddressCount()).append("]");
+		   .append("# Addresses:\t[").append(getAddressCount()).append(']');
 
 		return buf.toString();
 	}//toString

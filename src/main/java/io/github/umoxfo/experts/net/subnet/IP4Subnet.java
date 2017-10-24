@@ -159,6 +159,15 @@ public final class IP4Subnet extends SubnetInfo {
 	@Override
 	public int getCIDR() { return cidr; }
 
+	/**
+	 * Returns a CIDR notation, in which the address is followed by
+	 * a slash character and the count of counting the 1-bit population in the subnet mask.
+	 *
+	 * @return the CIDR notation of the address, e.g. {@code 192.168.0.1/24}
+	 */
+	@Override
+	public String getCIDRNotation() { return SubnetUtils.format(address) + '/' + cidr; }
+
 	@Override
 	public String getNetmask() { return SubnetUtils.format(netmask); }
 
@@ -167,15 +176,6 @@ public final class IP4Subnet extends SubnetInfo {
 
 	@Override
 	public String getBroadcastAddress() { return SubnetUtils.format(broadcast); }
-
-	/**
-	 * Returns a CIDR notation, in which the address is followed by
-	 * a slash character and the count of counting the 1-bit population in the subnet mask.
-	 *
-	 * @return the CIDR notation of the address, e.g. {@code 192.168.0.1/24}
-	 */
-	@Override
-	public String getCIDRNotation() { return SubnetUtils.format(address) + "/" + cidr; }
 
 	/**
 	 * Return the low address as a dotted IP address.
@@ -227,13 +227,13 @@ public final class IP4Subnet extends SubnetInfo {
 	@Override
 	public String toString() {
 		StringBuilder buf = new StringBuilder();
-		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append("]")
+		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append(']')
 		   .append(" Netmask: [").append(getNetmask()).append("]\n")
 		   .append("Network:\t[").append(getNetworkAddress()).append("]\n")
 		   .append("Broadcast:\t[").append(getBroadcastAddress()).append("]\n")
 		   .append("First Address:\t[").append(getLowAddress()).append("]\n")
 		   .append("Last Address:\t[").append(getHighAddress()).append("]\n")
-		   .append("# Addresses:\t[").append(getAddressCountLong()).append("]");
+		   .append("# Addresses:\t[").append(getAddressCountLong()).append(']');
 
 		return buf.toString();
 	}//toString
