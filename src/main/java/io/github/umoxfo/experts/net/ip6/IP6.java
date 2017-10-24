@@ -24,8 +24,8 @@ package io.github.umoxfo.experts.net.ip6;
  * @version 2.0.6-dev
  * @since 2.0.6
  */
-public abstract class IP6 {
-	static final int INTERFACE_ID_LENGTH = 8;
+interface IP6 {
+	int INTERFACE_ID_LENGTH = 8;
 
 	/*
 	 * an identifier of a site (a cluster of subnets/links).
@@ -33,20 +33,20 @@ public abstract class IP6 {
 	 * the {@code FD00::/8} prefix and 40-bit global identifier format, or
 	 * 64 bits or less for Global Unicast Address (GUA).
 	 */
-	byte[] globalID;
+	// byte[] globalID;
 
 	/*
 	 * an identifier of a subnet within the site.
 	 * 16 bits for ULUA or 64 - n bits (these n bits equal GUA of the Global ID bits length) for GUA.
 	 *
 	 */
-	byte[] subnetID;
+	// byte[] subnetID;
 
 	/*
 	 * an identifier of interfaces on a link.
 	 * 64 bits for Interface ID.
 	 */
-	byte[] interfaceID;
+	// byte[] interfaceID;
 
 	/**
 	 * Returns the Global ID in binary.
@@ -55,21 +55,21 @@ public abstract class IP6 {
 	 *
 	 * @return the Global ID in a byte array
 	 */
-	public abstract byte[] getGlobalID();
+	byte[] getGlobalID();
 
 	/**
 	 * Returns the Subnet ID in binary.
 	 *
 	 * @return the Subnet ID in a byte array
 	 */
-	public abstract byte[] getSubnetID();
+	byte[] getSubnetID();
 
 	/**
 	 * Returns the Interface ID in binary.
 	 *
 	 * @return the Interface ID in a byte array
 	 */
-	public byte[] getInterfaceID() { return interfaceID; }
+	byte[] getInterfaceID();
 
 	/*
 	 * Convenience function to check the bit length of ID fields.
@@ -82,23 +82,4 @@ public abstract class IP6 {
 
 		return id;
 	}//checkInterfaceID
-
-	/**
-	 * Convert IPv6 binary address into a canonical format
-	 *
-	 * @return the IPv6 address in the colon 16-bit delimited hexadecimal format
-	 * @see IP6Utils#toTextFormat(byte[])
-	 */
-	@Override
-	public String toString() {
-		// Collect into a single array
-		byte[] addr = new byte[16];
-
-		System.arraycopy(globalID, 0, addr, 0, globalID.length);
-		System.arraycopy(subnetID, 0, addr, globalID.length, subnetID.length);
-		System.arraycopy(interfaceID, 0, addr, (globalID.length + subnetID.length), interfaceID.length);
-
-		// Replace consecutive sections of zeros to a double colon (::)
-		return IP6Utils.toTextFormat(addr);
-	}//toString
 }

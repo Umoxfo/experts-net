@@ -28,9 +28,9 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.security.SecureRandom;
-import java.util.Random;
 
 import static io.github.umoxfo.experts.net.ip6.IP6Utils.createEUI64;
+import static io.github.umoxfo.experts.net.ip6.IP6Utils.toTextFormat;
 
 /**
  * This class represents an Unique Local IPv6 unicast addresses.
@@ -40,13 +40,32 @@ import static io.github.umoxfo.experts.net.ip6.IP6Utils.createEUI64;
  * @author Makoto Sakaguchi
  * @version 2.0.6-dev
  */
-public final class ULUA extends IP6 {
+public final class ULUA implements IP6 {
 	private static final int GLOBAL_ID_LENGTH = 6;
 	private static final byte GLOBAL_ID_PREFIX = (byte) 0xfd;
 
 	private static final int SUBNET_ID_LENGTH = 2;
 
 	private static final String NTP_SERVER_ADDRESS = "pool.ntp.org";
+
+	/*
+	 * An identifier of a site (a cluster of subnets/links).
+	 * 48 bits, the {@code FD00::/8} prefix and 40-bit global identifier format,
+	 * for Unique Local IPv6 Unicast Addresses (ULUA).
+	 */
+	private final byte[] globalID;
+
+	/*
+	 * An identifier of a subnet within the site.
+	 * 16 bits for ULUA.
+	 */
+	private final byte[] subnetID;
+
+	/*
+	 * An identifier of interfaces on a link.
+	 * 64 bits for Interface ID.
+	 */
+	private final byte[] interfaceID;
 
 	/**
 	 * Constructor that takes a Global ID field, a Subnet ID, an Interface ID for Unique Local IPv6 Unicast Addresses.
@@ -88,7 +107,13 @@ public final class ULUA extends IP6 {
 	 * for Local IPv6 addresses.
 	 */
 	@Override
-	public byte[] getGlobalID() { return globalID; }
+	public byte[] getGlobalID() {
+		byte[] gID = new byte[globalID.length];
+
+		System.arraycopy(globalID, 0, gID, 0, globalID.length);
+
+		return gID;
+	}//getGlobalID
 
 	/**
 	 * {@inheritDoc}
@@ -96,7 +121,27 @@ public final class ULUA extends IP6 {
 	 * <p> This is 16 bits for Local IPv6 addresses.
 	 */
 	@Override
-	public byte[] getSubnetID() { return subnetID; }
+	public byte[] getSubnetID() {
+		byte[] sID = new byte[subnetID.length];
+
+		System.arraycopy(subnetID, 0, sID, 0, subnetID.length);
+
+		return sID;
+	}//getSubnetID
+
+	/**
+	 * Returns the Interface ID in binary.
+	 *
+	 * @return the Interface ID in a byte array
+	 */
+	@Override
+	public byte[] getInterfaceID() {
+		byte[] iID = new byte[interfaceID.length];
+
+		System.arraycopy(interfaceID, 0, iID, 0, interfaceID.length);
+
+		return iID;
+	}//getInterfaceID
 
 	/*
 	 ^ Checks a Global ID field of the Local IPv6 unicast address that follows
@@ -174,4 +219,13 @@ public final class ULUA extends IP6 {
 
 		return gID;
 	}//generateGlobalID
+
+	/**
+	 * Convert IPv6 binary address into a canonical format
+	 *
+	 * @return the IPv6 address in the colon 16-bit delimited hexadecimal format
+	 * @see IP6Utils#toTextFormat(byte[])
+	 */
+	@Override
+	public String toString() { return toTextFormat(globalID, subnetID, interfaceID); }
 }
