@@ -170,11 +170,10 @@ public final class ULUA extends IP6 {
 			} catch (NullPointerException | SocketException e) {
 				/* If the hardware address is not obtained, used random numbers as the system-specific identifier. */
 				systemID = new byte[8];
-				try {
-					SecureRandom.getInstanceStrong().nextBytes(systemID);
-				} catch (NoSuchAlgorithmException e1) {
-					new Random(timeStamp).nextBytes(systemID);
-				}//try-catch
+				SecureRandom random = new SecureRandom();
+				random.setSeed(new SecureRandom().generateSeed(16));
+
+				random.nextBytes(systemID);
 			}//try-catch
 		}//if
 		buf.put(systemID);
