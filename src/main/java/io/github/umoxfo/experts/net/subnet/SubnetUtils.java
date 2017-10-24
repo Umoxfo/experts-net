@@ -20,7 +20,6 @@ package io.github.umoxfo.experts.net.subnet;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.regex.Pattern;
 
 /**
  * This class that performs some subnet calculations given IP address in CIDR notation.
@@ -108,14 +107,13 @@ public final class SubnetUtils {
 	 * @return a SubnetInfo object, which is implication of {@link IP4Subnet} or
 	 *         {@link IP6Subnet}, created from the IP address.
 	 * @throws UnknownHostException see {@link InetAddress#getByName(String)}
-	 * @throws SecurityException if a security manager exists and its checkConnect method doesn't allow the operation
 	 */
 	public static SubnetInfo getByCIDRNotation(String cidrNotation) throws UnknownHostException {
-		if (cidrNotation.contains("/")) {
-			String[] arry = Pattern.compile("/").split(cidrNotation);
+		int index = cidrNotation.indexOf('/');
 
-			byte[] address = InetAddress.getByName(arry[0]).getAddress();
-			int cidr = Integer.parseInt(arry[1]);
+		if (index != -1) {
+			byte[] address = InetAddress.getByName(cidrNotation.substring(0, index)).getAddress();
+			int cidr = Integer.parseInt(cidrNotation.substring(index + 1));
 
 			if (address.length == IP.IPv4.fieldLength) {
 				return new IP4Subnet(address, checkRange(cidr, IP.IPv4.bits));
@@ -124,7 +122,7 @@ public final class SubnetUtils {
 			}//if-else
 		} else {
 			throw new IllegalArgumentException("Could not parse [" + cidrNotation + "]");
-		}//if
+		}//if-else
 	}//getByCIDRNotation
 
 	/**
