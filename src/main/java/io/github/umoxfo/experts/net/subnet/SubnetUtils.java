@@ -199,9 +199,9 @@ public final class SubnetUtils {
 	 * @param target a flag of the IP version
 	 * @return Number of available hosts, including the gateway
 	 */
-	public static String getHostCount(int prefix, IP target) {
+	public static Number getHostCount(int prefix, IP target) {
 		/* The sizes of address, either 32 or 128, - prefix is host bits, and "2 ^ the bits" is the number of hosts */
-		String hosts = "";
+		Number hosts = null;
 		switch (target) {
 			case IPv4:
 				long hl = (long) Math.pow(2, IP.IPv4.bits - checkRange(prefix, IP.IPv4.bits));
@@ -213,11 +213,11 @@ public final class SubnetUtils {
 					hl = 0;
 				}//if-else
 
-				hosts = String.format("%,3d", hl);
+				hosts = hl;
 				break;
 			case IPv6:
 				// The maximum subnet bits in IPv6
-				hosts = BigInteger.valueOf(2).pow(IP.IPv6.bits - checkRange(prefix, IP.IPv6.bits)).toString();
+				hosts = BigInteger.valueOf(2).pow(IP.IPv6.bits - checkRange(prefix, IP.IPv6.bits));
 				break;
 		}//switch
 
