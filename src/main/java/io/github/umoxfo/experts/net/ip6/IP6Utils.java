@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
  * @version 2.0.6-dev
  */
 public final class IP6Utils {
-	private static final short ZERO = 0;
+	private static final int ZERO = 0;
 	private static final short EUI64_ADDITIONAL_BITS = (short) 0xfffe;
 
 	/**
@@ -63,10 +63,10 @@ public final class IP6Utils {
 	 */
 	public static String toTextFormat(byte[] address) {
 		// Set into the Array List
-		ArrayList<Short> al =  new ArrayList<>(8);
+		ArrayList<Integer> al =  new ArrayList<>(8);
 		for (int i = 0; i < 8; i++) {
 			int j = i << 1;
-			al.add((short) ((address[j] << 8) | (address[j + 1] & 0xff)));
+			al.add((address[j] << 8) | (address[j + 1] & 0xff));
 		}//for
 
 		/*
