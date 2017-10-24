@@ -124,7 +124,7 @@ public final class IP6Utils {
 		}).collect(Collectors.joining(":"));
 
 		return ip6.endsWith(":") ? ip6.concat(":") : ip6;
-	}//toTextFormat(short[])
+	}//toTextFormat(byte[])
 
 	/**
 	 * Returns the Unique Local IPv6 Unicast Address of the hardware address.
