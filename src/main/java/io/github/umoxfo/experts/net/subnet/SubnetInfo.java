@@ -17,6 +17,7 @@
  */
 package io.github.umoxfo.experts.net.subnet;
 
+import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
@@ -151,12 +152,10 @@ public class SubnetInfo {
 
 	/**
 	 * Returns the number of available addresses.
-	 * Will be zero for CIDR/31 and CIDR/32 if the address is IPv4 address and
-	 * the inclusive flag is {@code false}.
 	 *
 	 * @return the count of addresses in a string, may be zero
 	 */
-	public String getAddressCount() { return null; }
+	public BigInteger getAddressCount() { return null; }
 
 	/**
 	 * Returns the number of available addresses.
