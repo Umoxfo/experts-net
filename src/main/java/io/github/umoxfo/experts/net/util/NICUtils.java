@@ -60,10 +60,9 @@ public final class NICUtils {
 	private static String format(byte[] macAddr) {
 		StringBuilder sb = new StringBuilder(17);
 
-		for (int i = 0; i < 6; i++) {
-			sb.append(DIGITS[(macAddr[i] >>> 4) & 0xf]).append(DIGITS[macAddr[i] & 0xf]);
-
-			if (i != 5) sb.append('-');
+		sb.append(DIGITS[(macAddr[0] >>> 4) & 0xf]).append(DIGITS[macAddr[0] & 0xf]);
+		for (int i = 1; i < 6; i++) {
+			sb.append('-').append(DIGITS[(macAddr[i] >>> 4) & 0xf]).append(DIGITS[macAddr[i] & 0xf]);
 		}//for
 
 		return sb.toString();
