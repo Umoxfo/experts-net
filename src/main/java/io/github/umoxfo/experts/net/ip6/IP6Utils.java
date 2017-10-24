@@ -51,6 +51,21 @@ public final class IP6Utils {
 		return eui64;
 	}//createEUI64
 
+	/*
+	 * Combine byte arrays of Global ID, Subnet ID, and Interface ID to a single array
+	 * before formatting to IPv6 address.
+	 */
+	static String toTextFormat(byte[] globalID, byte[] subnetID, byte[] interfaceID) {
+		// Collect into a single array
+		byte[] addr = new byte[16];
+
+		System.arraycopy(globalID, 0, addr, 0, globalID.length);
+		System.arraycopy(subnetID, 0, addr, globalID.length, subnetID.length);
+		System.arraycopy(interfaceID, 0, addr, (globalID.length + subnetID.length), interfaceID.length);
+
+		return toTextFormat(addr);
+	}//toTextFormat(byte[] globalID, byte[] subnetID, byte[] interfaceID)
+
 	/**
 	 * Convert IPv6 binary address into a canonical format based on
 	 * <a href="https://www.rfc-editor.org/rfc/rfc5952.txt">RFC 5952:
