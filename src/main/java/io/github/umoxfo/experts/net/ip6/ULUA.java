@@ -27,8 +27,6 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.nio.ByteBuffer;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Random;
 
@@ -181,14 +179,9 @@ public final class ULUA extends IP6 {
 		}//if
 		buf.put(systemID);
 
-		byte[] digest = null;
-		try {
-			digest = MessageDigest.getInstance("SHA-1").digest(buf.array());
-		} catch (NoSuchAlgorithmException ignored) {}
+		byte[] gID = SHA1.getSHA1Digest(buf.array());
+		gID[0] = GLOBAL_ID_PREFIX;
 
-		byte[] tmp = {GLOBAL_ID_PREFIX, 0, 0, 0, 0, 0};
-		System.arraycopy(digest, 15, tmp, 1, 5);
-
-		return tmp;
+		return gID;
 	}//generateGlobalID
 }
