@@ -3,7 +3,7 @@ buildscript {
 		mavenCentral()
 	}
 	dependencies {
-		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.1'
+		classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
 	}
 }
 
@@ -30,6 +30,8 @@ repositories {
 	mavenCentral()
 }
 
+ext.junitJupiterVersion = '5.0.2'
+ext.log4jVersion = '2.10.0'
 dependencies {
 	implementation 'commons-net:commons-net:3.6'
 
