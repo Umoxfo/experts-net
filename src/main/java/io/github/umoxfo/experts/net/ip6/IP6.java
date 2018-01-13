@@ -24,8 +24,8 @@ package io.github.umoxfo.experts.net.ip6;
  * @version 2.0.6-dev
  * @since 2.0.6
  */
-interface IP6 {
-	int INTERFACE_ID_LENGTH = 8;
+abstract class IP6 {
+	static final int INTERFACE_ID_LENGTH = 8;
 
 	/*
 	 * an identifier of a site (a cluster of subnets/links).
@@ -55,21 +55,21 @@ interface IP6 {
 	 *
 	 * @return the Global ID in a byte array
 	 */
-	byte[] getGlobalID();
+	public abstract byte[] getGlobalID();
 
 	/**
 	 * Returns the Subnet ID in binary.
 	 *
 	 * @return the Subnet ID in a byte array
 	 */
-	byte[] getSubnetID();
+	public abstract byte[] getSubnetID();
 
 	/**
 	 * Returns the Interface ID in binary.
 	 *
 	 * @return the Interface ID in a byte array
 	 */
-	byte[] getInterfaceID();
+	public abstract byte[] getInterfaceID();
 
 	/*
 	 * Convenience function to check the bit length of ID fields.
@@ -77,8 +77,8 @@ interface IP6 {
 	 * If the length of a byte array x is equal to {@code length},
 	 * returns x, throws an exception otherwise.
 	 */
-	default byte[] checkLength(byte[] id, int length) {
-		if (id.length != length) throw new IllegalArgumentException("Value [" + id + "] must be " + length*8 + " bits");
+	static byte[] checkLength(byte[] id, int length) {
+		if (id.length != length) throw new IllegalArgumentException("Must be " + length*8 + " bits");
 
 		return id;
 	}//checkInterfaceID
