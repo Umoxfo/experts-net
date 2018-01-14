@@ -17,9 +17,7 @@
  */
 package io.github.umoxfo.experts.net.subnet;
 
-import java.net.Inet4Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import io.github.umoxfo.experts.net.subnet.address.IPAddress;
 
 /**
  * Convenience container for IPv4 subnet summary information.
@@ -94,7 +92,17 @@ public final class IP4Subnet extends SubnetInfo {
 	 * - true the network address
 	 * - false the first address of the available as host addresses or 0 if no corresponding address.
 	 */
-	private int low() { return inclusiveHostCount ? network : (broadcastLong() - networkLong()) > 1 ? network + 1 : 0; }
+	private int low() {
+		if (inclusiveHostCount) {
+			return network;
+		} else {
+			if ((broadcastLong() - networkLong()) > 1) {
+				return network + 1;
+			} else {
+				return 0;
+			}//if-else
+		}//if
+	}
 
 	/*
 	 * Creates the minimum address in the network to which the address belongs.
@@ -103,7 +111,17 @@ public final class IP4Subnet extends SubnetInfo {
 	 * - true the network address
 	 * - false the last address of the available as host addresses or 0 if no corresponding address.
 	 */
-	private int high() { return inclusiveHostCount ? broadcast : (broadcastLong() - networkLong()) > 1 ? broadcast - 1 : 0; }
+	private int high() {
+		if (inclusiveHostCount) {
+			return broadcast;
+		} else {
+			if ((broadcastLong() - networkLong()) > 1) {
+				return broadcast - 1;
+			} else {
+				return 0;
+			}//if-else
+		}//if-else
+	}
 
 	/*
 	 * Converts a raw address in network byte order to a packed integer format
@@ -125,17 +143,10 @@ public final class IP4Subnet extends SubnetInfo {
 	 *
 	 * @param address a dot-delimited IPv4 address, e.g. {@code 192.168.0.1}
 	 * @return {@code true} if in range, {@code false} otherwise
-	 * @throws UnknownHostException see {@link InetAddress#getByName(String)}
 	 */
 	@Override
-	public boolean isInRange(String address) throws UnknownHostException {
-		InetAddress ia = InetAddress.getByName(address);
-
-		if (ia instanceof Inet4Address) {
-			throw new IllegalArgumentException(address + " is not IPv4 address.");
-		}//if
-
-		return isInRange(toInteger(ia.getAddress()));
+	public boolean isInRange(String address) {
+		return isInRange(toInteger(IPAddress.toNumericFormatIPv4(address)));
 	}//isInRange(String)
 
 	/**

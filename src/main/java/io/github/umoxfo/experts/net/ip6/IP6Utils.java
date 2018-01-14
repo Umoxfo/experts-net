@@ -17,12 +17,11 @@
  */
 package io.github.umoxfo.experts.net.ip6;
 
-import java.io.IOException;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.joining;
 
 /**
  * A class that helps to generate IPv6 address.
@@ -31,13 +30,14 @@ import java.util.stream.Collectors;
  * @version 2.0.6-dev
  */
 public final class IP6Utils {
-	private static final int ZERO = 0;
 	private static final short EUI64_ADDITIONAL_BITS = (short) 0xfffe;
+
+	private IP6Utils() { throw new IllegalStateException("Utility class"); }
 
 	/**
 	 * Creates an IEEE EUI-64 identifier from an IEEE 48-bit MAC identifier.
 	 * See <a href="https://tools.ietf.org/html/rfc4291#appendix-A">Appendix A:
-	 * <i>Creating Modified EUI-64 Format Interface Identifiers</i></a> of RFC 4291.
+	 * Creating Modified EUI-64 Format Interface Identifiers</a> of RFC 4291.
 	 *
 	 * @param macAddr the byte array containing a hardware address
 	 * @return the Interface ID by the EUI-64 format
@@ -69,9 +69,9 @@ public final class IP6Utils {
 	/**
 	 * Convert IPv6 binary address into a canonical format based on
 	 * <a href="https://www.rfc-editor.org/rfc/rfc5952.txt">RFC 5952:
-	 * <i>A Recommendation for IPv6 Address Text Representation</i></a>.
+	 * A Recommendation for IPv6 Address Text Representation</a>.
 	 *
-	 * <p>Consecutive sections of zeroes are replaced with a double colon (::).</p>
+	 * <p>Consecutive sections of zeroes are replaced with a double colon (::).
 	 *
 	 * @param address a binary IPv6 address
 	 * @return a String representing an IPv6 address in the colon 16-bit delimited hexadecimal format
@@ -79,51 +79,84 @@ public final class IP6Utils {
 	public static String toTextFormat(byte[] address) {
 		// Set into the Array List
 		ArrayList<Integer> al =  new ArrayList<>(8);
-		for (int i = 0; i < 8; i++) {
-			int j = i << 1;
-			al.add((address[j] << 8) | (address[j + 1] & 0xff));
+		for (int i = 0; i < address.length; i += 2) {
+			al.add(((address[i] & 0xff) << 8) | (address[i + 1] & 0xff));
 		}//for
 
 		/*
 		 * The longest run of consecutive 16-bit 0 fields MUST be shortened based on RFC5952.
 		 */
-		// Find the longest zero fields
-		final int lastIndex = al.lastIndexOf(ZERO);
-
 		int fromIndex = 0;
 		int toIndex = 0;
-		int maxCnt = 0;
-		for (int i = 0; i < lastIndex; i++) {
-			if (al.get(i) == ZERO) {
-				int j = i + 1;
-				while ((j <= lastIndex) && (al.get(j) == ZERO)) j++;
-
-				int cnt = j - i;
-				if (maxCnt < cnt) {
-					fromIndex = i;
-					toIndex = j;
-					maxCnt = cnt;
+		int bestRunLength = -1;
+		int runStart = -1;
+		for (int i = 0; i < 9; i++) {
+			if (i < 8 && al.get(i) == 0) {
+				if (runStart < 0) runStart = i;
+			} else if (runStart >= 0) {
+				int length = i - runStart;
+				if (length > bestRunLength) {
+					fromIndex = runStart;
+					toIndex = i;
+					bestRunLength = length;
 				}//if
 
-				i = j;
-			}//if
+				runStart = -1;
+			}//if-else if
 		}//for
 
 		// Remove the longest part of zeros
-		if (1 < maxCnt) {
+		if (bestRunLength > 1) {
 			al.subList(fromIndex, toIndex).clear();
 			al.add(fromIndex, null);
 		}//if
 
 		// Convert to a hexadecimal string being separated with colons for each 4-digit
-		String ip6 = al.stream().map(i -> {
-			String str = "";
-			if (i != null) str = Integer.toHexString(i & 0xffff);
+		return al.stream().map(i -> (i != null) ? Integer.toHexString(i) : "")
+		         .collect(collectingAndThen(joining(":"), ip6 -> ip6.endsWith(":") ? ip6.concat(":") : ip6));
 
-			return str;
-		}).collect(Collectors.joining(":"));
+/*		// Set into an integer array
+		int[] addr = new int[8];
+		for (int i = 0; i < 8; i++) {
+			int j = i << 1;
+			addr[i] = ((address[j] & 0xff) << 8) | (address[j + 1] & 0xff);
+		}//for
 
-		return ip6.endsWith(":") ? ip6.concat(":") : ip6;
+		int bestRunStart = -1;
+		int bestRunLength = -1;
+		int runStart = -1;
+		for (int i = 0; i < 9; i++) {
+			if (i < 8 && addr[i] == 0) {
+				if (runStart < 0) runStart = i;
+			} else if (runStart >= 0) {
+				int runLength = i - runStart;
+				if (runLength > bestRunLength) {
+					bestRunStart = runStart;
+					bestRunLength = runLength;
+				}//if
+
+				runStart = -1;
+			}//if-elseIf
+		}//for
+
+		StringBuilder buf = new StringBuilder(39);
+		boolean omitZero = bestRunLength > 1;
+		boolean lastWasNumber = false;
+		for (int i = 0; i < 8; i++) {
+			if (omitZero && i == bestRunStart) {
+				buf.append("::");
+				i += bestRunLength - 1;
+				lastWasNumber = false;
+			} else {
+				if (lastWasNumber) {
+					buf.append(':');
+				}
+				buf.append(Integer.toHexString(addr[i]));
+				lastWasNumber = true;
+			}//if-else
+		}//for
+
+		return buf.toString();*/
 	}//toTextFormat(byte[])
 
 	/**
@@ -131,11 +164,8 @@ public final class IP6Utils {
 	 *
 	 * @param nicAddress a hardware address of the machine that creates Unique Local IPv6 Unicast Addresses
 	 * @return the Unique Local IPv6 Unicast Address
-	 * @throws SocketException If the socket could not be opened which it might be not available any ports.
-	 * @throws UnknownHostException If the host could not be found.
-	 * @throws IOException If an error occurs while retrieving the time.
 	 */
-	public static String getULUAByHardwareAddress(byte[] nicAddress) throws IOException {
+	public static String getULUAByHardwareAddress(byte[] nicAddress) {
 		return new ULUA(nicAddress).toString();
 	}//getUniqueLocalUnicastAddressByHardwareAddress
 }

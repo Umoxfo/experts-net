@@ -52,9 +52,11 @@ public final class NICUtils {
 	};
 	private static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
+	private NICUtils() { throw new IllegalStateException("Utility class"); }
+
 	/*
-	 * Converts a byte array contains a hardware address to the printing MAC-48 addresses;
-	 * which is six groups of two hexadecimal digits, separated by hyphens in transmission order,
+	 * Converts a byte array contains a hardware address to the printing MAC-48 addresses,
+	 * which is six groups of two hexadecimal digits, separated by hyphens in transmission order:
 	 * e.g. 00-1B-63-84-45-E6.
 	 */
 	private static String format(byte[] macAddr) {

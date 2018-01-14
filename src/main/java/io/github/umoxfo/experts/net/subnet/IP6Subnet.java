@@ -18,11 +18,9 @@
 package io.github.umoxfo.experts.net.subnet;
 
 import io.github.umoxfo.experts.net.ip6.IP6Utils;
+import io.github.umoxfo.experts.net.subnet.address.IPAddress;
 
 import java.math.BigInteger;
-import java.net.Inet6Address;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * Convenience container for IPv6 subnet summary information.
@@ -77,7 +75,6 @@ public final class IP6Subnet extends SubnetInfo {
 
 		// Fill the following fields with 1-bits
 		for (int i = index + 1; i < 16; i++) highAddr[i] = (byte) 0xff;
-		//IntStream.range(index + 1, 8).forEach(i -> highAddr[i] = (short) 0xffff);
 
 		return highAddr;
 	}//high
@@ -88,17 +85,10 @@ public final class IP6Subnet extends SubnetInfo {
 	 *
 	 * @param address the colon-delimited address, e.g. {@code 2001:db8:0:0:0:ff00:42:8329}
 	 * @return {@code true} if in range, {@code false} otherwise
-	 * @throws UnknownHostException see {@link InetAddress#getByName(String)}
 	 */
 	@Override
-	public boolean isInRange(String address) throws UnknownHostException {
-		InetAddress ia = InetAddress.getByName(address);
-
-		if (ia instanceof Inet6Address) {
-			throw new IllegalArgumentException(address + " is not IPv6 address.");
-		}//if
-
-		return isInRange(ia.getAddress());
+	public boolean isInRange(String address) {
+		return isInRange(IPAddress.toNumericFormatIPv6(address));
 	}//isInRange(String)
 
 	@Override
@@ -114,7 +104,7 @@ public final class IP6Subnet extends SubnetInfo {
 		// The host identifier is in range between the lowest and the highest addresses
 		int addr = address[prefixSize] & 0xff;
 		int lowAddr = (ip6Address[prefixSize] & ~(0xff >> extraBits)) & 0xff;
-		int highAddr = (ip6Address[prefixSize] | (0xff >> extraBits)) & 0xff;
+		int highAddr = (ip6Address[prefixSize] & 0xff) | (0xff >> extraBits);
 
 		return (addr >= lowAddr) && (addr <= highAddr);
 	}//isInRange(byte[])

@@ -18,8 +18,6 @@
 package io.github.umoxfo.experts.net.subnet;
 
 import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * Convenience container for subnet summary information.
@@ -29,7 +27,7 @@ import java.net.UnknownHostException;
  * @version 2.0.6-dev
  * @since 2.0.6
  */
-public class SubnetInfo {
+public abstract class SubnetInfo {
 	/**
 	 * Returns {@code true} if the return value of {@link #getAddressCount()}
 	 * includes the network and broadcast addresses. (ONLY USE in IPv4)
@@ -54,9 +52,8 @@ public class SubnetInfo {
 	 * @param address a dot-delimited IPv4 address, e.g. {@code 192.168.0.1} or
 	 *            a colon-hexadecimal IPv6 address, e.g. {@code 2001:db8::ff00:42:8329}
 	 * @return {@code true} if in range, {@code false} otherwise
-	 * @throws UnknownHostException see {@link InetAddress#getByName(String)}
 	 */
-	public boolean isInRange(String address) throws UnknownHostException { return false; }
+	public abstract boolean isInRange(String address);
 
 	/**
 	 * Returns {@code true} if the parameter {@code address} is in the
@@ -87,7 +84,7 @@ public class SubnetInfo {
 	 *
 	 * @return the IP address in a string format
 	 */
-	public String getAddress() { return null; }
+	public abstract String getAddress();
 
 	/**
 	 * Returns the CIDR suffixes, the count of consecutive 1 bits in the subnet mask.
@@ -95,7 +92,7 @@ public class SubnetInfo {
 	 *
 	 * @return the CIDR suffixes of the address in an integer
 	 */
-	public int getCIDR() { return 0; }
+	public abstract int getCIDR();
 
 	/**
 	 * Returns the netmask in the address. (ONLY USE IPv4)
@@ -128,7 +125,7 @@ public class SubnetInfo {
 	 *
 	 * @return the CIDR notation of the address
 	 */
-	public String getCIDRNotation() { return null; }
+	public abstract String getCIDRNotation();
 
 	/**
 	 * Returns the low address as a dotted or colon-separated IP address.
@@ -138,7 +135,7 @@ public class SubnetInfo {
 	 * @return the IP address in dotted format or in a colon 16-bit delimited hexadecimal format,
 	 *         may be {@code 0.0.0.0} or {@code ::} if there is no valid address
 	 */
-	public String getLowAddress() { return null; }
+	public abstract String getLowAddress();
 
 	/**
 	 * Returns the high address as a dotted or colon-separated IP address.
@@ -148,7 +145,7 @@ public class SubnetInfo {
 	 * @return the IP address in dotted format or in a colon 16-bit delimited
 	 *         hexadecimal format, may be {@code 0.0.0.0} or {@code ::} if there is no valid address
 	 */
-	public String getHighAddress() { return null; }
+	public abstract String getHighAddress();
 
 	/**
 	 * Returns the number of available addresses.

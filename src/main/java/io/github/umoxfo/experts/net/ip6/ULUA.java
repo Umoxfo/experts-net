@@ -40,7 +40,7 @@ import static io.github.umoxfo.experts.net.ip6.IP6Utils.toTextFormat;
  * @author Makoto Sakaguchi
  * @version 2.0.6-dev
  */
-public final class ULUA implements IP6 {
+public final class ULUA extends IP6 {
 	private static final int GLOBAL_ID_LENGTH = 6;
 	private static final byte GLOBAL_ID_PREFIX = (byte) 0xfd;
 
@@ -85,8 +85,8 @@ public final class ULUA implements IP6 {
 	 */
 	public ULUA(byte[] globalID, byte[] subnetID, byte[] interfaceID) {
 		this.globalID = checkGlobalID(globalID);
-		this.subnetID = checkLength(subnetID, SUBNET_ID_LENGTH);
-		this.interfaceID = checkLength(interfaceID, INTERFACE_ID_LENGTH);
+		this.subnetID = IP6.checkLength(subnetID, SUBNET_ID_LENGTH);
+		this.interfaceID = IP6.checkLength(interfaceID, INTERFACE_ID_LENGTH);
 	}//ULUA(byte[], byte[], byte[])
 
 	/**
@@ -214,8 +214,8 @@ public final class ULUA implements IP6 {
 		}//if
 		buf.put(systemID);
 
-		byte[] gID = SHA1.getSHA1Digest(buf.array());
-		gID[0] = GLOBAL_ID_PREFIX;
+		byte[] gID = {GLOBAL_ID_PREFIX, 0, 0, 0, 0, 0};
+		System.arraycopy(SHA1.getSHA1Digest(buf.array()), 0, gID, 1, 5);
 
 		return gID;
 	}//generateGlobalID

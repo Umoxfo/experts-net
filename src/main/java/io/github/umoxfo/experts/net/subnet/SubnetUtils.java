@@ -17,9 +17,10 @@
  */
 package io.github.umoxfo.experts.net.subnet;
 
+import io.github.umoxfo.experts.net.subnet.address.IPAddress;
+import io.github.umoxfo.experts.net.subnet.address.IPAddressFormatException;
+
 import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 
 /**
  * This class that performs some subnet calculations given IP address in CIDR notation.
@@ -56,18 +57,12 @@ public final class SubnetUtils {
 	 * Converts a dotted decimal format address to a packed integer format
 	 */
 	private static int toInteger(String address) {
-		String[] addrArry = address.split("\\.");
+		byte[] rowAddr = IPAddress.toNumericFormatIPv4(address);
 
-		// Check the length of the array, must be 4
-		if (addrArry.length != 4) {
-			throw new IllegalArgumentException("Could not parse [" + address + "]");
-		}//if
-
-		/* Check range of each element and convert to integer */
+		// Convert the byte array to an integer
 		int addr = 0;
 		for (int i = 0; i < 4; i++) {
-			int n = checkRange(Integer.parseInt(addrArry[i]), 255);
-			addr = (addr << 8) | n;
+			addr = (addr << 8) | rowAddr[i] & 0xff;
 		}//for
 
 		return addr;
@@ -101,18 +96,19 @@ public final class SubnetUtils {
 
 	/**
 	 * Creates subnet summary information based on the provided in CIDR notation of IPv4 or IPv6 address,
-	 * e.g. "192.168.0.1/16" for IPv4 or "2001:db8:0:0:0:ff00:42:8329/46" for IPv6
+	 * e.g. "192.168.0.1/16" for IPv4 or "2001:db8::ff00:42:8329/46" for IPv6
 	 *
 	 * @param cidrNotation an IPv4 or IPv6 address in CIDR notation
 	 * @return a SubnetInfo object, which is implication of {@link IP4Subnet} or
 	 *         {@link IP6Subnet}, created from the IP address.
-	 * @throws UnknownHostException see {@link InetAddress#getByName(String)}
+	 * @throws IllegalArgumentException if the {@code cidrNotation} is not valid CIDR notation
+	 * @throws IPAddressFormatException If the IP address is invalid.
 	 */
-	public static SubnetInfo getByCIDRNotation(String cidrNotation) throws UnknownHostException {
+	public static SubnetInfo getByCIDRNotation(String cidrNotation) {
 		int index = cidrNotation.indexOf('/');
 
 		if (index != -1) {
-			byte[] address = InetAddress.getByName(cidrNotation.substring(0, index)).getAddress();
+			byte[] address = IPAddress.toNumericFormatAddress(cidrNotation.substring(0, index));
 			int cidr = Integer.parseInt(cidrNotation.substring(index + 1));
 
 			if (address.length == IP.IPv4.fieldLength) {
@@ -131,15 +127,15 @@ public final class SubnetUtils {
 	 * @param address An IP address, e.g. "192.168.0.1"
 	 * @param mask A dotted decimal netmask e.g. "255.255.0.0"
 	 * @return a IP4Subnet object created from the IP address.
-	 * @throws UnknownHostException see {@link InetAddress#getByName(String host)}
+	 * @throws IPAddressFormatException If the IP address is invalid.
 	 * @throws IllegalArgumentException
 	 *             if the address or mask is invalid,
 	 *             i.e. the address does not match n.n.n.n where n=1-3 decimal digits, or
 	 *             the mask does not match n.n.n.n which n=[0, 128, 192, 224, 240, 248, 252, 254, 255]
 	 *             and after the 0-field, it is all zeros.
 	 */
-	public static IP4Subnet getByMask(String address, String mask) throws UnknownHostException {
-		return new IP4Subnet(InetAddress.getByName(address).getAddress(), toCIDR(mask));
+	public static IP4Subnet getByMask(String address, String mask) {
+		return new IP4Subnet(IPAddress.toNumericFormatIPv4(address), toCIDR(mask));
 	}//getByMask
 
 	/**
