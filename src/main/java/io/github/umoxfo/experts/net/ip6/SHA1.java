@@ -25,6 +25,8 @@ class SHA1 {
 	private static final int ROUND3_KT = 0x8f1bbcdc;
 	private static final int ROUND4_KT = 0xca62c1d6;
 
+	private SHA1() { throw new IllegalStateException("Utility class"); }
+
 	/*
 	 * According to the standard, the message must be padded to the next
 	 * even multiple of 512 bits. The first padding bit must be a '1'.
@@ -140,7 +142,7 @@ class SHA1 {
 	}//processBlock
 
 	/*
-	 * Returns the message digest of a specified byte array.
+	 * Returns the least significant 40-bit message digest of a specified byte array.
 	 *
 	 * Performs a final update on the digest using the array,
 	 * then completes the digest computation.
@@ -153,11 +155,12 @@ class SHA1 {
 	static byte[] getSHA1Digest(byte[] input) {
 		int[] hash = padMessage(input);
 
-		int len = 6;
-		byte[] digest = new byte[len];
-		for (int i = 1, j = 15; i < len; i++, j++) {
-			digest[i] = (byte) (hash[j >> 2] >>> (8 * (3 - (j & 0x03))));
-		}//for
+		byte[] digest = new byte[5];
+		digest[0] = (byte) hash[3];
+		digest[1] = (byte) (hash[4] >>> 24);
+		digest[2] = (byte) (hash[4] >>> 16);
+		digest[3] = (byte) (hash[4] >>> 8);
+		digest[4] = (byte) hash[4];
 
 		return digest;
 	}//getSHA1Digest

@@ -20,13 +20,18 @@ package io.github.umoxfo.experts.net.ip6;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 class SHA1Test {
 	private static final byte[] MESSAGE = {0x35, 0x52, 0x69, 0x4c, (byte) 0xdf, 0x66, 0x3f, (byte) 0xd9, 0x4b, 0x22, 0x47, 0x47,
 	                                       (byte) 0xac, 0x40, 0x6a, (byte) 0xaf};
 	private static final int[] MD = {0xa150de92, 0x7454202d, 0x94e656de, 0x4c7c0ca6, 0x91de955d};
+	private static final byte[] LOWEST_40BIT_MD = {(byte) 0xa6, (byte) 0x91, (byte) 0xde, (byte) 0x95, 0x5d};
 
 	@Test
-	void testSHA1() { assertArrayEquals(MD, SHA1.getDigest(MESSAGE)); }
+	void testSHA1() {
+		assertAll(() -> assertArrayEquals(MD, SHA1.getDigest(MESSAGE), "Fail in the message digest"),
+		          () -> assertArrayEquals(LOWEST_40BIT_MD, SHA1.getSHA1Digest(MESSAGE), "Fail in the lowest 40-bit digest"));
+	}//testSHA1
 }
