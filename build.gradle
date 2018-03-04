@@ -3,9 +3,10 @@ plugins {
 	id 'idea'
 	id 'eclipse'
 
-	//id 'com.github.spotbugs' version '1.6.0'
+//	id 'com.github.spotbugs' version '1.6.1'
 }
 
+apply plugin: "jacoco"
 
 group 'io.github.umoxfo.experts'
 version '2.0.6-dev'
@@ -52,9 +53,22 @@ test {
 
 /*
 javadoc {
-options.encoding = 'UTF-8'
-classpath = files()
+	options.encoding = 'UTF-8'
+	classpath = files()
 }
 */
+
+jacoco {
+	toolVersion = "0.8.0"
+	reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+jacocoTestReport {
+	reports {
+		xml.enabled false
+		csv.enabled false
+		html.destination file("${buildDir}/jacocoHtml")
+	}
+}
 
 wrapper.gradleVersion = '4.6'
