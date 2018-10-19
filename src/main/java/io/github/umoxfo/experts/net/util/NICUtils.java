@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. Makoto Sakaguchi
+ * Copyright (c) 2018. Makoto Sakaguchi
  * This file is part of Experts Net.
  *
  * Experts Net is free software: you can redistribute it and/or modify
@@ -42,17 +42,82 @@ public final class NICUtils {
 		{0x0A, 0x00, 0x27},
 
 		/* Virtual-PC*/
-		{0x00, 0x03, (byte)0xFF},
+		{0x00, 0x03, (byte) 0xFF},
 
 		/* Hyper-V */
 		{0x00, 0x15, 0x5D},
 
 		/* TAP-Windows */
-		{0x00, (byte)0xFF, 0x69}
+		{0x00, (byte) 0xFF, 0x69}
 	};
 	private static final char[] DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
 	private NICUtils() { throw new IllegalStateException("Utility class"); }
+
+	/**
+	 * Returns the hardware address (usually MAC address) of the host interface
+	 *
+	 * @return a byte array containing the address, or {@code null}
+	 *
+	 * @throws SocketException If an I/O error occurs.
+	 * @see NetworkInterface#getHardwareAddress()
+	 */
+	public static byte[] getMACAddress() throws SocketException {
+		byte[] macAddress = null;
+
+		Iterator<NetworkInterface> nis = NetworkInterface.networkInterfaces().iterator();
+		while (nis.hasNext()) {
+			NetworkInterface ni = nis.next();
+			if (ni.isUp() && !ni.isLoopback()) macAddress = NICUtils.checkValidity(ni.getHardwareAddress());
+		}//while
+
+		return macAddress;
+	}//getMACAddress
+
+	/*
+	 * Returns false if the hardware address is not from a virtual machine.
+	 */
+	private static byte[] checkValidity(byte[] mac) {
+		for (byte[] vm : VIRTUAL_MACHINE_MAC_ADDRESSES) {
+			if (vm[0] == mac[0] && vm[1] == mac[1] && vm[2] == mac[2]) return null;
+		}//for
+
+		return mac;
+	}//checkValidity
+
+	/**
+	 * Returns the hardware address (usually MAC address) of the interface
+	 * that has the specified IP address or host name, e.g. {@code 10.0.0.1} or {@code example.com}
+	 * in the standard (IEEE 802) format for printing MAC-48 addresses in human-friendly form,
+	 * e.g. {@code 01-23-45-67-89-AB}.
+	 *
+	 * @param address a host name or a textual representation of its IP address
+	 * @return the address in the MAC address format, or {@code null}
+	 *
+	 * @throws SocketException If an I/O error occurs.
+	 * @throws UnknownHostException If no IP address for the {@code host} could be found
+	 * @see #getMACAddress(String)
+	 */
+	public static String getMACAddressString(String address) throws SocketException, UnknownHostException {
+		return format(getMACAddress(address));
+	}//getMACAddressString
+
+	/**
+	 * Returns the hardware address (usually MAC address) of the interface
+	 * that has the specified IP address or host name, e.g. {@code 10.0.0.1} or {@code example.com}.
+	 *
+	 * @param address the IP address or the host name
+	 * @return a byte array containing the address, or {@code null}
+	 *
+	 * @throws SocketException If an I/O error occurs.
+	 * @throws UnknownHostException If no IP address for the {@code host} could be found
+	 * @see InetAddress#getByName(String)
+	 * @see NetworkInterface#getHardwareAddress
+	 */
+	public static byte[] getMACAddress(String address) throws SocketException, UnknownHostException {
+		// Hardware address of the network interface corresponding to IP address or a host name
+		return NetworkInterface.getByInetAddress(InetAddress.getByName(address)).getHardwareAddress();
+	}//getMACAddress(String address)
 
 	/*
 	 * Converts a byte array contains a hardware address to the printing MAC-48 addresses,
@@ -69,73 +134,4 @@ public final class NICUtils {
 
 		return sb.toString();
 	}//format
-
-	/*
-	 * Returns false if the hardware address is not from a virtual machine.
-	 */
-	private static byte[] checkValidity(byte[] mac) {
-		for (byte[] vm: VIRTUAL_MACHINE_MAC_ADDRESSES) {
-			if (vm[0] == mac[0] && vm[1] == mac[1] && vm[2] == mac[2]) return null;
-		}//for
-
-		return mac;
-	}//checkValidity
-
-	/**
-	 * Returns the hardware address (usually MAC address) of the host interface
-	 *
-	 * @return a byte array containing the address, or {@code null}
-	 *         if the address doesn't exist, is not accessible or
-	 *         a security manager is set and the caller does not have
-	 *         the permission {@link java.net.NetPermission}("getNetworkInformation")
-	 * @throws SocketException If an I/O error occurs.
-	 */
-	public static byte[] getMACAddress() throws SocketException {
-		byte[] macAddress = null;
-
-		Iterator<NetworkInterface> nis = NetworkInterface.networkInterfaces().iterator();
-		while (nis.hasNext()) {
-			NetworkInterface ni = nis.next();
-			if (ni.isUp() && !ni.isLoopback()) macAddress = NICUtils.checkValidity(ni.getHardwareAddress());
-		}//while
-
-		return macAddress;
-	}//getMACAddress
-
-	/**
-	 * Returns the hardware address (usually MAC address) of the interface
-	 * that has the specified IP address or host name, e.g. {@code 10.0.0.1} or {@code example.com}.
-	 *
-	 * @param address the IP address or the host name
-	 * @return a byte array containing the address, or {@code null}
-	 *         if the address doesn't exist, is not accessible or
-	 *         a security manager is set and the caller does not have
-	 *         the permission {@link java.net.NetPermission}("getNetworkInformation")
-	 * @throws SocketException If an I/O error occurs.
-	 * @throws UnknownHostException If no IP address for the {@code host} could be found,
-	 *                              or a scope_id was specified for a global IPv6 address.
-	 */
-	public static byte[] getMACAddress(String address) throws SocketException, UnknownHostException {
-		// Hardware address of the network interface corresponding to IP address or a host name
-		return NetworkInterface.getByInetAddress(InetAddress.getByName(address)).getHardwareAddress();
-	}//getMACAddress(String address)
-
-	/**
-	 * Returns the hardware address (usually MAC address) of the interface
-	 * that has the specified IP address or host name, e.g. {@code 10.0.0.1} or {@code example.com}
-	 * in the standard (IEEE 802) format for printing MAC-48 addresses in human-friendly form,
-	 * e.g. {@code 01-23-45-67-89-AB}.
-	 *
-	 * @param address a host name or a textual representation of its IP address
-	 * @return the address in the MAC address format, or {@code null}
-	 *         if the address doesn't exist, is not accessible or
-	 *         a security manager is set and the caller does not have
-	 *         the permission {@link java.net.NetPermission}("getNetworkInformation")
-	 * @throws SocketException If an I/O error occurs.
-	 * @throws UnknownHostException If no IP address for the {@code host} could be found,
-	 *             or a scope_id was specified for a global IPv6 address.
-	 */
-	public static String getMACAddressString(String address) throws SocketException, UnknownHostException {
-		return format(getMACAddress(address));
-	}//getMACAddressString
 }

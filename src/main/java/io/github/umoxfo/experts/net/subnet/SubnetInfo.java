@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. Makoto Sakaguchi
+ * Copyright (c) 2018. Makoto Sakaguchi
  * This file is part of Experts Net.
  *
  * Experts Net is free software: you can redistribute it and/or modify
@@ -45,41 +45,10 @@ public abstract class SubnetInfo {
 	public void setInclusiveHostCount(boolean inclusiveHostCount) {}
 
 	/**
-	 * Returns {@code true} if the parameter {@code address} is in the
-	 * range of usable endpoint addresses for this subnet. This excludes the
-	 * network and broadcast addresses if the address is IPv4 address.
-	 *
-	 * @param address a dot-delimited IPv4 address, e.g. {@code 192.168.0.1} or
-	 *            a colon-hexadecimal IPv6 address, e.g. {@code 2001:db8::ff00:42:8329}
-	 * @return {@code true} if in range, {@code false} otherwise
-	 */
-	public abstract boolean isInRange(String address);
-
-	/**
-	 * Returns {@code true} if the parameter {@code address} is in the
-	 * range of usable endpoint addresses for this subnet. This excludes the
-	 * network and broadcast addresses if the address is IPv4 address.
-	 *
-	 * @param address the IP address in an integer
-	 * @return {@code true} if it is in range
-	 */
-	public boolean isInRange(int address) { return false; }
-
-	/**
-	 * Returns {@code true} if the parameter {@code address} is in the
-	 * range of usable endpoint addresses for this subnet. This excludes the
-	 * network and broadcast addresses if the address is IPv4 address.
-	 *
-	 * @param address the IP address in network byte order
-	 * @return {@code true} if it is in range
-	 */
-	public boolean isInRange(byte[] address) { return false; }
-
-	/**
 	 * Returns the IP address.
-	 ^ <ul style="list-style-type: none">
-	 *     <li>IPv4 format: a dot-decimal format, e.g. {@code 192.168.0.1}</li>
-	 *     <li>IPv6 format: a colon-hexadecimal format, e.g. {@code 2001:db8::ff00:42:8329}</li>
+	 * <ul style="list-style-type: none">
+	 * <li>IPv4 format: a dot-decimal format, e.g. {@code 192.168.0.1}</li>
+	 * <li>IPv6 format: a colon-hexadecimal format, e.g. {@code 2001:db8::ff00:42:8329}</li>
 	 * </ul>
 	 *
 	 * @return the IP address in a string format
@@ -119,8 +88,8 @@ public abstract class SubnetInfo {
 	 * Returns the CIDR notation, in which the address is followed by a slash and
 	 * the count of counting the 1-bit population in the subnet mask.
 	 * <ul style="list-style-type: none">
-	 *     <li>IPv4 CIDR notation: e.g. {@code 192.168.0.1/24}</li>
-	 *     <li>IPv6 CIDR notation: e.g. {@code 2001:db8::ff00:42:8329/48}</li>
+	 * <li>IPv4 CIDR notation: e.g. {@code 192.168.0.1/24}</li>
+	 * <li>IPv6 CIDR notation: e.g. {@code 2001:db8::ff00:42:8329/48}</li>
 	 * </ul>
 	 *
 	 * @return the CIDR notation of the address
@@ -133,7 +102,7 @@ public abstract class SubnetInfo {
 	 * the inclusive flag is {@code false}.
 	 *
 	 * @return the IP address in dotted format or in a colon 16-bit delimited hexadecimal format,
-	 *         may be {@code 0.0.0.0} or {@code ::} if there is no valid address
+	 * 	may be {@code 0.0.0.0} or {@code ::} if there is no valid address
 	 */
 	public abstract String getLowAddress();
 
@@ -143,7 +112,7 @@ public abstract class SubnetInfo {
 	 * the inclusive flag is {@code false}.
 	 *
 	 * @return the IP address in dotted format or in a colon 16-bit delimited
-	 *         hexadecimal format, may be {@code 0.0.0.0} or {@code ::} if there is no valid address
+	 * 	hexadecimal format, may be {@code 0.0.0.0} or {@code ::} if there is no valid address
 	 */
 	public abstract String getHighAddress();
 
@@ -162,4 +131,35 @@ public abstract class SubnetInfo {
 	 * @return the count of addresses, may be zero
 	 */
 	public long getAddressCountLong() { return 0; }
+
+	/**
+	 * Returns {@code true} if the parameter {@code address} is in the
+	 * range of usable endpoint addresses for this subnet. This excludes the
+	 * network and broadcast addresses if the address is IPv4 address.
+	 *
+	 * @param address a dot-delimited IPv4 address, e.g. {@code 192.168.0.1} or
+	 * 	a colon-hexadecimal IPv6 address, e.g. {@code 2001:db8::ff00:42:8329}
+	 * @return {@code true} if in range, {@code false} otherwise
+	 */
+	public abstract boolean isInRange(String address);
+
+	/**
+	 * Returns {@code true} if the parameter {@code address} is in the
+	 * range of usable endpoint addresses for this subnet. This excludes the
+	 * network and broadcast addresses if the address is IPv4 address.
+	 *
+	 * @param address the IP address in an integer
+	 * @return {@code true} if it is in range
+	 */
+	public boolean isInRange(int address) { return false; }
+
+	/**
+	 * Returns {@code true} if the parameter {@code address} is in the
+	 * range of usable endpoint addresses for this subnet. This excludes the
+	 * network and broadcast addresses if the address is IPv4 address.
+	 *
+	 * @param address the IP address in network byte order
+	 * @return {@code true} if it is in range
+	 */
+	public boolean isInRange(byte[] address) { return false; }
 }

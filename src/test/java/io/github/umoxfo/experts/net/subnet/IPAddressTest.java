@@ -27,29 +27,33 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestFactory;
 
-import java.util.Random;
+import java.util.StringJoiner;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.joining;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
 
 class IPAddressTest {
+	private final byte[] IP4 = {(byte) 192, (byte) 168, 0, 1};
+	private final byte[] IP6 = {0x20, 0x1, 0xd, (byte) 0xb8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x2, 0x0, 0x0, 0x0, 0x0, (byte) 0x9a,
+	                            (byte) 0xbc};
+	private final byte[] MAPPED_ADDRESS = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xc0,
+	                                       (byte) 0xa8, 0x0, 0x1};
+	private ThreadLocalRandom random;
+
+	@BeforeEach
+	void setUp() { random = ThreadLocalRandom.current(); }
+
 	@Nested
 	@DisplayName("IP address")
 	class Address {
-		private final byte[] IP4 = {(byte) 192, (byte) 168, 0, 1};
-		private final byte[] IP6 = {0x20, 0x1, 0xd, (byte) 0xb8, 0x0, 0x0, 0x0, 0x0, 0x0, 0x2, 0x0, 0x0, 0x0, 0x0, (byte) 0x9a,
-		                            (byte) 0xbc};
-		private final byte[] MAPPED_ADDRESS = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, (byte) 0xff, (byte) 0xff, (byte) 0xc0,
-		                                       (byte) 0xa8, 0x0, 0x1};
-
 		@Test
 		@DisplayName("is Valid")
-		void isValid() {
+		void testValidAddress() {
 			assertAll(() -> assertArrayEquals(IP4, IPAddress.toNumericFormatAddress("192.168.0.1"), "IPv4 address"),
 			          () -> assertArrayEquals(IP6, IPAddress.toNumericFormatAddress("2001:db8::2:0:0:9abc"), "IPv6 address"),
 			          () -> assertArrayEquals(MAPPED_ADDRESS, IPAddress.toNumericFormatAddress("::ffff:192.168.0.1"),
@@ -58,7 +62,7 @@ class IPAddressTest {
 
 		@Test
 		@DisplayName("is Invalid")
-		void isNotValid() {
+		void testInvalidAddress() {
 			assertAll(() -> assertThrows(IPAddressFormatException.class,
 			                             () -> IPAddress.toNumericFormatAddress("ffff19216801"), "No dots and colons"),
 			          () -> assertThrows(IPAddressFormatException.class,
@@ -71,95 +75,160 @@ class IPAddressTest {
 	@Nested
 	@DisplayName("IPv4 address")
 	class IPv4Address {
-		private Random random;
-
-		@BeforeEach
-		void init() { random = new Random(); }
-
 		@Test
 		@DisplayName("is Valid")
 		void isValid() {
-			String addr = random.ints(4, 0, 256)
-			                    .mapToObj(Integer::toString).collect(joining("."));
+			byte[] rowAddress = new byte[4];
+			random.nextBytes(rowAddress);
 
-			assertNotNull(IPAddress.toNumericFormatIPv4(addr));
+			StringJoiner sj = new StringJoiner(".");
+			for (int i = 0; i < 4; i++) {
+				sj.add(Integer.toString(rowAddress[i] & 0xff));
+			}//for
+
+			assertArrayEquals(rowAddress, IPAddress.toNumericFormatIPv4(sj.toString()));
 		}//isValid
 
-		@TestFactory
+		@Nested
 		@DisplayName("is Invalid")
-		Stream<DynamicTest> isInValid() {
-			String[] addr = random.ints(4, 256, Integer.MAX_VALUE)
-			                      .mapToObj(Integer::toString).toArray(String[]::new);
+		class Invalid {
+			private Stream<String> addr;
 
-			//@formatter:off
-			return Stream.of(
-				dynamicTest("No Dots", () -> assertThrows(IPAddressFormatException.class,
-				                                          () -> IPAddress.toNumericFormatIPv4(String.join("", addr)))),
-				dynamicTest("Out of Range", () -> assertThrows(IPAddressFormatException.class,
-				                                               () -> IPAddress.toNumericFormatIPv4(String.join(".", addr)))),
-				dynamicTest("Too many dots",
-				            () -> assertThrows(IPAddressFormatException.class,
-				                               () -> {
-					                                String tmp = String.join(".", addr) + '.' + random.nextInt();
-					                                IPAddress.toNumericFormatIPv4(tmp);
-				                               }))
-			);
-			//@formatter:on
-		}//isInValid
+			@BeforeEach
+			void setUp() {
+				addr = random.ints(4, 256, Short.MAX_VALUE).mapToObj(Integer::toString);
+			}
+
+			@Test
+			@DisplayName("Operation Error")
+			void testWrongMethod() {
+				assertThrows(IPAddressFormatException.class, () -> IPAddress.toNumericFormatIPv4("2001:db8::2:0:0:9abc"));
+			}//testWrongMethod
+
+			@Test
+			@DisplayName("No Dots")
+			void testNoDotsError() {
+				assertThrows(IPAddressFormatException.class, () -> IPAddress.toNumericFormatIPv4(addr.collect(joining(""))));
+			}//testNoDotsError
+
+			@Test
+			@DisplayName("Out of Range")
+			void testOutOfRangeError() {
+				assertThrows(IPAddressFormatException.class, () -> IPAddress.toNumericFormatIPv4(addr.collect(joining("."))));
+			}//testOutOfRangeError
+
+			@Test
+			@DisplayName("Length")
+			void testLengthError() {
+				assertThrows(IPAddressFormatException.class,
+				             () -> IPAddress.toNumericFormatIPv4(random.ints(5, 0, 256)
+				                                                       .mapToObj(Integer::toString)
+				                                                       .collect(joining("."))));
+			}//testLengthError
+		}//Invalid
 	}//IPv4Address
 
 	@Nested
 	@DisplayName("IPv6 address")
 	class IPv6Address {
-		private Random random;
-
-		@BeforeEach
-		void init() { random = new Random(); }
-
-		@Test
+		@Nested
 		@DisplayName("is Valid")
-		void isValid() {
-			String addr = random.ints(8, 0, 0xffff)
-			                    .mapToObj(Integer::toHexString).collect(joining(":"));
+		class Valid {
+			private final byte[] LINK_LOCAL_ADDRESS = {(byte) 0xfe, (byte) 0x80, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x1, 0x23, 0x45, 0x67,
+			                                           (byte) 0x89, (byte) 0xab, (byte) 0xcd, (byte) 0xef};
 
-			assertAll(() -> assertNotNull(IPAddress.toNumericFormatIPv6(addr)),
-			          () -> assertNotNull(IPAddress.toNumericFormatIPv6("2001:db8::2:0:0:9abc"), "Zero Compression"),
-			          () -> assertNotNull(IPAddress.toNumericFormatIPv6("fe80::0123:4567:89ab:cdef%fxp0"),
-			                              "Expect to ignore following a percent '%'"),
-			          () -> {
-				          String tmp = random.ints(4, 0, 256)
-				                             .mapToObj(Integer::toString).collect(joining(".", "::ffff:", ""));
-				          assertNotNull(IPAddress.toNumericFormatIPv6(tmp), "IPv4-Mapped IPv6 Address");
-			          });
-		}//isValid
+			private byte[] rowAddress = new byte[16];
+			private String address;
 
-		@TestFactory
+			@BeforeEach
+			void setUp() {
+				random.nextBytes(rowAddress);
+
+				StringJoiner sj = new StringJoiner(":");
+				for (int i = 0; i < 16; i += 2) {
+					sj.add(Integer.toHexString(((rowAddress[i] & 0xff) << 8) | (rowAddress[i + 1] & 0xff)));
+				}//for
+				address = sj.toString();
+			}//setUp
+
+			@Test
+			@DisplayName("Standard IPv6 address")
+			void testStandardAddress() {
+				assertArrayEquals(rowAddress, IPAddress.toNumericFormatIPv6(address));
+			}//testStandardAddress
+
+			@Test
+			@DisplayName("IPv4-mapped IPv6 address")
+			void testMappedAddress() {
+				assertArrayEquals(MAPPED_ADDRESS, IPAddress.toNumericFormatIPv6("::ffff:192.168.0.1"),
+				                  "Expect to ignore following a percent '%'");
+			}//testMappedAddress
+
+			@Test
+			@DisplayName("Zero Compression")
+			void testZeroCompression() {
+				assertArrayEquals(IP6, IPAddress.toNumericFormatIPv6("2001:db8::2:0:0:9abc"));
+			}//testZeroCompression
+
+			@Test
+			@DisplayName("Ignore Interface number")
+			void testIgnoreInterface() {
+				assertArrayEquals(LINK_LOCAL_ADDRESS, IPAddress.toNumericFormatIPv6("fe80::0123:4567:89ab:cdef%fxp0"),
+				                  "Expect to ignore following a percent '%'");
+			}//testIgnoreInterface
+		}//Valid
+
+		@Nested
 		@DisplayName("is Invalid")
-		Stream<DynamicTest> isInValid() {
-			String[] addr = random.ints(8, 0x10000, Integer.MAX_VALUE)
-			                      .mapToObj(Integer::toHexString).toArray(String[]::new);
+		class Invalid {
+			private Stream<String> testAddr;
 
-			//@formatter:off
-			return Stream.of(
-				dynamicTest("No Colons", () -> assertThrows(IPAddressFormatException.class,
-			                                            () -> IPAddress.toNumericFormatIPv6(String.join("", addr)))),
-				dynamicTest("Zero Compression", () -> assertThrows(IPAddressFormatException.class,
-				                                                   () -> {
-					                                                   String tmp = ':' + String.join(":", addr);
-					                                                   IPAddress.toNumericFormatIPv6(tmp);
-				                                                   })),
-				dynamicTest("Many double colons", () -> assertThrows(IPAddressFormatException.class,
-			                                                     () -> IPAddress.toNumericFormatIPv6("2001:db8::2::9abc"))),
-				dynamicTest("Out of Range", () -> assertThrows(IPAddressFormatException.class,
-			                                               () -> IPAddress.toNumericFormatIPv6(String.join(":", addr)))),
-				dynamicTest("Too many dots",
-				            () -> assertThrows(IPAddressFormatException.class,
-				                               () -> {
-					                                String tmp = String.join(":", addr) + ':' + random.nextInt();
-					                                IPAddress.toNumericFormatIPv6(tmp);
-				                               }))
-			);
-			//@formatter:on
-		}//isInValid
+			@BeforeEach
+			void setUp() {
+				testAddr = random.ints(8, 0x10000, Integer.MAX_VALUE).mapToObj(Integer::toHexString);
+			}
+
+			@Test
+			@DisplayName("Operation Error")
+			void testWrongMethod() {
+				assertThrows(IPAddressFormatException.class, () -> IPAddress.toNumericFormatIPv6("192.168.0.1"));
+			}//testWrongMethod
+
+			@TestFactory
+			@DisplayName("No Colons")
+			Stream<DynamicTest> testNoDotsError() {
+				return Stream.of(testAddr.collect(joining("")))
+				             .map(addr -> dynamicTest("Addr: " + addr, () -> assertThrows(IPAddressFormatException.class,
+				                                                                          () -> IPAddress.toNumericFormatIPv6(addr))));
+			}//testNoDotsError
+
+			@TestFactory
+			@DisplayName("Out of Range")
+			Stream<DynamicTest> testOutOfRangeError() {
+				return Stream.of(testAddr.collect(joining(":")))
+				             .map(addr -> dynamicTest("Addr: " + addr, () -> assertThrows(IPAddressFormatException.class,
+				                                                                          () -> IPAddress.toNumericFormatIPv6(addr))));
+			}//testNoDotsError
+
+			@Test
+			@DisplayName("Beginning a Colon")
+			void testLeadDoubleColonError() {
+				assertThrows(IPAddressFormatException.class, () -> IPAddress.toNumericFormatIPv6(":2001:db8:0:2:0:9abc"));
+			}//testLeadDoubleColonError
+
+			@Test
+			@DisplayName("Zero Compression")
+			void testZeroCompressionError() {
+				assertThrows(IPAddressFormatException.class, () -> IPAddress.toNumericFormatIPv6("2001:db8::2::9abc"));
+			}//testZeroCompressionError
+
+			@TestFactory
+			@DisplayName("Length")
+			Stream<DynamicTest> testLengthError() {
+				return Stream.of(random.ints(9, 0x0, 0xffff).mapToObj(Integer::toHexString).collect(joining(":")))
+				             .map(addr -> dynamicTest("Addr: " + addr, () -> assertThrows(IPAddressFormatException.class,
+				                                                                          () -> IPAddress.toNumericFormatIPv6(addr))));
+			}//testLengthError
+		}//Invalid
 	}//IPv6Address
 }

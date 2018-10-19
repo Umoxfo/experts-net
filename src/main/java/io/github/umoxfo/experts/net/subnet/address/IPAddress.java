@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. Makoto Sakaguchi
+ * Copyright (c) 2018. Makoto Sakaguchi
  * This file is part of Experts Net.
  *
  * Experts Net is free software: you can redistribute it and/or modify
@@ -23,6 +23,27 @@ package io.github.umoxfo.experts.net.subnet.address;
 public final class IPAddress {
 	private IPAddress() { throw new IllegalStateException("Utility class"); }
 
+	/**
+	 * Convert an IP address into a byte array.
+	 *
+	 * @param address a string representing an IP address in textual format
+	 * @return a byte array representing the IP numeric address
+	 *
+	 * @throws IPAddressFormatException If the IP address is invalid.
+	 */
+	public static byte[] toNumericFormatAddress(String address) {
+		switch (getAddressType(address)) {
+			case IPv4:
+				return toNumericFormatV4(address);
+			case IPv6:
+				return toNumericFormatV6(address);
+			case IPv4MappedIPv6:
+				return toNumericFormatV6(convertDottedQuadToHex(address));
+			default:
+				throw new IPAddressFormatException('[' + address + "]: invalid IP address");
+		}//switch
+	}//toNumericFormatAddress
+
 	/*
 	 * Convert an IPv4-Mapped address into the IPv6 address text format.
 	 */
@@ -39,12 +60,28 @@ public final class IPAddress {
 		return initialPart + penultimate + ":" + ultimate;
 	}//convertDottedQuadToHex
 
+	/**
+	 * Convert an IPv4 address in its textual presentation form into a byte array.
+	 *
+	 * @param address a string representing an IPv4 address in textual format
+	 * @return a byte array representing the IPv4 numeric address
+	 *
+	 * @throws IPAddressFormatException If the IPv4 address is invalid.
+	 */
+	public static byte[] toNumericFormatIPv4(String address) {
+		if (!getAddressType(address).equals(AddressType.IPv4)) {
+			throw new IPAddressFormatException('[' + address + "] is invalid IPv4 address");
+		}//if
+
+		return toNumericFormatV4(address);
+	}//toNumericFormatIPv4
+
 	/*
 	 * Convert IPv4 address in its textual presentation form into the numeric binary form.
 	 */
 	private static byte[] toNumericFormatV4(String address) {
-		final int addressLength = address.length();
-		byte[] res = new byte[4];
+		int addressLength = address.length();
+		byte[] des = new byte[4];
 
 		int octets = 0;
 		for (int i = 0; i < addressLength; i++) {
@@ -57,12 +94,12 @@ public final class IPAddress {
 			// Check range of an octet
 			int octet = Integer.parseInt(address.substring(i, pos));
 			if (octet < 0 || octet > 255) throw new IPAddressFormatException('[' + address + "]: invalid IPv4 address");
-			res[octets++] = (byte) octet;
+			des[octets++] = (byte) octet;
 
 			i = pos;
 		}//for
 
-		return res;
+		return des;
 	}//toNumericFormatV4
 
 	/*
@@ -73,7 +110,7 @@ public final class IPAddress {
 		int addressLength = address.length();
 		byte[] dst = new byte[16];
 
-		// Leading :: requires some special handling.
+		// If the first character is a colon, the second is also a colon.
 		if (address.charAt(0) == ':' && address.charAt(1) != ':') {
 			throw new IPAddressFormatException('[' + address + "]: invalid IPv6 address");
 		}
@@ -87,12 +124,14 @@ public final class IPAddress {
 		int index = 0;
 		int doubleColon = -1;
 		for (int i = 0; i < addressLength; i++) {
-			if (octets >= 8) return new byte[0];
+			if (octets >= 8) throw new IPAddressFormatException('[' + address + "]: invalid IPv6 address");
 
 			int pos = address.indexOf(':', i);
 			if (pos != -1) {
 				if (pos == i) {
-					if (pos != 1 && doubleColon != -1) throw new IPAddressFormatException('[' + address + "]: invalid IPv6 address");
+					if (pos != 1 && doubleColon != -1) {
+						throw new IPAddressFormatException('[' + address + "]: invalid IPv6 address");
+					}
 
 					doubleColon = index;
 					octets++;
@@ -125,71 +164,50 @@ public final class IPAddress {
 	}//toNumericFormatV6
 
 	/*
-	 * Convert the given address into a byte array.
-	 *
-	 * @param address the IP address as a String.
-	 * @return true if a valid address, false otherwise
-	 * @throws IPAddressFormatException If the IP address is invalid.
+	 * Identify the address format
 	 */
-	public static byte[] toNumericFormatAddress(String address) {
+	private static AddressType getAddressType(String address) {
 		int indexDot = address.indexOf('.');
 		int indexColon = address.indexOf(':');
 
-		// Colons must not appear after dots.
-		if (indexDot == -1 && indexColon == -1 || ((indexDot != -1) && (indexDot < indexColon))) {
-			throw new IPAddressFormatException('[' + address + "]: invalid IP address");
-		}//if
+		if (indexDot > 0) {
+			// IPv4 or IPv4-Mapped IPv6 address
+			if (indexColon == -1) {
+				return AddressType.IPv4;
+			} else if (indexDot > indexColon) {
+				return AddressType.IPv4MappedIPv6;
+			}//if-elseIf
+		} else if (indexColon != -1) { // IPv6 address
+			return AddressType.IPv6;
+		}//if-elseIf
 
-		byte[] addr;
-		if (indexColon == -1) {
-			addr = toNumericFormatV4(address);
-		} else {
-			if (indexDot != -1) {
-				address = convertDottedQuadToHex(address);
-			}//if
-			addr = toNumericFormatV6(address);
-		}//if-else
+		return AddressType.Unknown;
+	}//checkAddressFormat
 
-		return addr;
-	}//toNumericFormatAddress
-
-	/*
-	 * Convert IPv4 address in its textual presentation form into a byte array.
-	 *
-	 * @param src a String representing an IPv4 address in standard format
-	 * @return a byte array representing the IPv4 numeric address
-	 * @throws IPAddressFormatException If the IPv4 address is invalid.
-	 */
-	public static byte[] toNumericFormatIPv4(String address) {
-		int indexDot = address.indexOf('.');
-
-		if (indexDot == -1) {
-			throw new IPAddressFormatException('[' + address + "] is invalid IPv4 address");
-		}//if
-
-		return toNumericFormatV4(address);
-	}//toNumericFormatIPv4
-
-	/*
-	 * Convert IPv6 presentation level address to network order binary form.
+	/**
+	 * Convert an IPv6 presentation level address to network order binary form.
 	 * Any component of the string following a per-cent % is ignored.
 	 *
-	 * @param src a String representing an IPv6 address in textual format
+	 * @param address a string representing an IPv6 address in textual format
 	 * @return a byte array representing the IPv6 numeric address
+	 *
 	 * @throws IPAddressFormatException If the IPv6 address is invalid.
 	 */
 	public static byte[] toNumericFormatIPv6(String address) {
-		int indexDot = address.indexOf('.');
-		int indexColon = address.indexOf(':');
-
-		// Colons must not appear after dots.
-		if (indexColon == -1 || ((indexDot != -1) && (indexDot < indexColon))) {
-			throw new IPAddressFormatException('[' + address + "] is invalid IPv6 address");
-		}//if
-
-		// IPv4-Mapped IPv6 Address
-		if (indexDot != -1) address = convertDottedQuadToHex(address);
-
-		return toNumericFormatV6(address);
+		switch (getAddressType(address)) {
+			case IPv6:
+				return toNumericFormatV6(address);
+			case IPv4MappedIPv6:
+				return toNumericFormatV6(convertDottedQuadToHex(address));
+			default:
+				throw new IPAddressFormatException('[' + address + "] is invalid IPv6 address");
+		}//switch
 	}//toNumericFormatIPv6
+
+	private enum AddressType {
+		IPv4,
+		IPv6,
+		IPv4MappedIPv6,
+		Unknown;
+	}
 }

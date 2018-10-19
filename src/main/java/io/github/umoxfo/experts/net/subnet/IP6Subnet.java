@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. Makoto Sakaguchi
+ * Copyright (c) 2018. Makoto Sakaguchi
  * This file is part of Experts Net.
  *
  * Experts Net is free software: you can redistribute it and/or modify
@@ -42,6 +42,108 @@ public final class IP6Subnet extends SubnetInfo {
 		this.cidr = cidr;
 	}//IP6Subnet
 
+	/**
+	 * Returns the {@code address}, that is a colon 16-bit delimited
+	 * hexadecimal format for IPv6 addresses, e.g. {@code 2001:db8::ff00:42:8329}.
+	 *
+	 * @return the IP address in a colon 16-bit delimited hexadecimal format
+	 */
+	@Override
+	public String getAddress() { return IP6Utils.toTextFormat(ip6Address); }
+
+	/**
+	 * Returns the CIDR suffixes, the count of consecutive 1-bit in the subnet mask.
+	 * The IPv6 address is between 0 and 128, but it is actually less than 64.
+	 *
+	 * @return the CIDR suffixes of the address
+	 */
+	@Override
+	public int getCIDR() { return cidr; }
+
+	/**
+	 * Returns an IPv6-CIDR notation, in which the address is followed by a slash character and
+	 * the count of counting the 1-bit population in the subnet mask.
+	 *
+	 * @return the CIDR notation of the address, e.g. {@code 2001:db8::ff00:42:8329/48}
+	 */
+	@Override
+	public String getCIDRNotation() { return IP6Utils.toTextFormat(ip6Address) + '/' + cidr; }
+
+	/**
+	 * Returns the low address as a colon-separated IP address.
+	 *
+	 * @return the IP address in a colon 16-bit delimited hexadecimal format,
+	 * 	may be {@code ::} if there is no valid address
+	 */
+	@Override
+	public String getLowAddress() { return IP6Utils.toTextFormat(low()); }
+
+	/**
+	 * Returns the high address as a colon-separated IP address.
+	 *
+	 * @return the IP address in a colon 16-bit delimited hexadecimal format,
+	 * 	may be {@code ::} if there is no valid address
+	 */
+	@Override
+	public String getHighAddress() { return IP6Utils.toTextFormat(high()); }
+
+	/**
+	 * Returns the number of available addresses.
+	 *
+	 * @return the number of addresses in a string, may be zero
+	 */
+	@Override
+	public BigInteger getAddressCount() { return BigInteger.valueOf(2).pow(128 - cidr); }
+
+	/**
+	 * Returns {@code true} if the parameter {@code address} is in
+	 * the range of usable endpoint addresses for this subnet.
+	 *
+	 * @param address the colon-delimited address, e.g. {@code 2001:db8:0:0:0:ff00:42:8329}
+	 * @return {@code true} if in range, {@code false} otherwise
+	 */
+	@Override
+	public boolean isInRange(String address) {
+		return isInRange(IPAddress.toNumericFormatIPv6(address));
+	}//isInRange(String)
+
+	@Override
+	public boolean isInRange(byte[] address) {
+		int prefixSize = cidr / 8;
+		int extraBits = cidr % 8;
+
+		// Have the same network prefix
+		for (int i = 0; i < prefixSize; i++) {
+			if (address[i] != ip6Address[i]) return false;
+		}//for
+
+		// The host identifier is in range between the lowest and the highest addresses
+		int addr = address[prefixSize] & 0xff;
+		int lowAddr = (ip6Address[prefixSize] & ~(0xff >> extraBits)) & 0xff;
+		int highAddr = (ip6Address[prefixSize] & 0xff) | (0xff >> extraBits);
+
+		return (addr >= lowAddr) && (addr <= highAddr);
+	}//isInRange(byte[])
+
+	/**
+	 * Returns subnet summary information of the address,
+	 * which includes an IP address by CIDR-Notation, the first and
+	 * the last addresses of the network, and the number of available addresses
+	 * in the network which includes all-zero and all-ones in the host fields,
+	 * known as network or broadcast addresses.
+	 */
+	@Override
+	public String toString() {
+		@SuppressWarnings("StringBufferReplaceableByString")
+		StringBuilder buf = new StringBuilder();
+		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append("]\n")
+		   .append("First Address:\t[").append(getLowAddress()).append("]\n")
+		   .append("Last Address:\t[").append(getHighAddress()).append("]\n")
+		   .append("# Addresses:\t[").append(getAddressCount()).append(']');
+
+		return buf.toString();
+	}//toString
+
 	/*
 	 * Creates the minimum address in the network
 	 * to which the address belongs, it has all-zero in the host fields.
@@ -78,105 +180,4 @@ public final class IP6Subnet extends SubnetInfo {
 
 		return highAddr;
 	}//high
-
-	/**
-	 * Returns {@code true} if the parameter {@code address} is in
-	 * the range of usable endpoint addresses for this subnet.
-	 *
-	 * @param address the colon-delimited address, e.g. {@code 2001:db8:0:0:0:ff00:42:8329}
-	 * @return {@code true} if in range, {@code false} otherwise
-	 */
-	@Override
-	public boolean isInRange(String address) {
-		return isInRange(IPAddress.toNumericFormatIPv6(address));
-	}//isInRange(String)
-
-	@Override
-	public boolean isInRange(byte[] address) {
-		int prefixSize = cidr / 8;
-		int extraBits = cidr % 8;
-
-		// Have the same network prefix
-		for (int i = 0; i < prefixSize; i++) {
-			if (address[i] != ip6Address[i]) return false;
-		}//for
-
-		// The host identifier is in range between the lowest and the highest addresses
-		int addr = address[prefixSize] & 0xff;
-		int lowAddr = (ip6Address[prefixSize] & ~(0xff >> extraBits)) & 0xff;
-		int highAddr = (ip6Address[prefixSize] & 0xff) | (0xff >> extraBits);
-
-		return (addr >= lowAddr) && (addr <= highAddr);
-	}//isInRange(byte[])
-
-	/**
-	 * Returns the {@code address}, that is a colon 16-bit delimited
-	 * hexadecimal format for IPv6 addresses, e.g. {@code 2001:db8::ff00:42:8329}.
-	 *
-	 * @return the IP address in a colon 16-bit delimited hexadecimal format
-	 */
-	@Override
-	public String getAddress() { return IP6Utils.toTextFormat(ip6Address); }
-
-	/**
-	 * Returns the CIDR suffixes, the count of consecutive 1-bit in the subnet mask.
-	 * The IPv6 address is between 0 and 128, but it is actually less than 64.
-	 *
-	 * @return the CIDR suffixes of the address
-	 */
-	@Override
-	public int getCIDR() { return cidr; }
-
-	/**
-	 * Returns an IPv6-CIDR notation, in which the address is followed by a slash character and
-	 * the count of counting the 1-bit population in the subnet mask.
-	 *
-	 * @return the CIDR notation of the address, e.g. {@code 2001:db8::ff00:42:8329/48}
-	 */
-	@Override
-	public String getCIDRNotation() { return IP6Utils.toTextFormat(ip6Address) + '/' + cidr; }
-
-	/**
-	 * Returns the low address as a colon-separated IP address.
-	 *
-	 * @return the IP address in a colon 16-bit delimited hexadecimal format,
-	 *         may be {@code ::} if there is no valid address
-	 */
-	@Override
-	public String getLowAddress() { return IP6Utils.toTextFormat(low()); }
-
-	/**
-	 * Returns the high address as a colon-separated IP address.
-	 *
-	 * @return the IP address in a colon 16-bit delimited hexadecimal format,
-	 *         may be {@code ::} if there is no valid address
-	 */
-	@Override
-	public String getHighAddress() { return IP6Utils.toTextFormat(high()); }
-
-	/**
-	 * Returns the number of available addresses.
-	 *
-	 * @return the number of addresses in a string, may be zero
-	 */
-	@Override
-	public BigInteger getAddressCount() { return BigInteger.valueOf(2).pow(128 - cidr); }
-
-	/**
-	 * Returns subnet summary information of the address,
-	 * which includes an IP address by CIDR-Notation, the first and
-	 * the last addresses of the network, and the number of available addresses
-	 * in the network which includes all-zero and all-ones in the host fields,
-	 * known as network or broadcast addresses.
-	 */
-	@Override
-	public String toString() {
-		StringBuilder buf = new StringBuilder();
-		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append("]\n")
-		   .append("First Address:\t[").append(getLowAddress()).append("]\n")
-		   .append("Last Address:\t[").append(getHighAddress()).append("]\n")
-		   .append("# Addresses:\t[").append(getAddressCount()).append(']');
-
-		return buf.toString();
-	}//toString
 }

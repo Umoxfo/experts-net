@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. Makoto Sakaguchi
+ * Copyright (c) 2018. Makoto Sakaguchi
  * This file is part of Experts Net.
  *
  * Experts Net is free software: you can redistribute it and/or modify
@@ -27,6 +27,31 @@ class SHA1 {
 
 	private SHA1() { throw new IllegalStateException("Utility class"); }
 
+	// TEST ACCESSOR
+	@SuppressWarnings("SameParameterValue")
+	static int[] getDigest(byte[] input) { return padMessage(input); }
+
+	/*
+	 * Returns the least significant 40-bit message digest of a specified byte array.
+	 *
+	 * Performs a final update on the digest using the array,
+	 * then completes the digest computation.
+	 *
+	 * @param input the input to be updated before the digest is completed
+	 */
+	static byte[] getSHA1Digest(byte[] input) {
+		int[] hash = padMessage(input);
+
+		byte[] digest = new byte[5];
+		digest[0] = (byte) hash[3];
+		digest[1] = (byte) (hash[4] >>> 24);
+		digest[2] = (byte) (hash[4] >>> 16);
+		digest[3] = (byte) (hash[4] >>> 8);
+		digest[4] = (byte) hash[4];
+
+		return digest;
+	}//getSHA1Digest
+
 	/*
 	 * According to the standard, the message must be padded to the next
 	 * even multiple of 512 bits. The first padding bit must be a '1'.
@@ -44,7 +69,7 @@ class SHA1 {
 		messageBlock[data.length] = (byte) 0x80;
 
 		// Store the message length as the last 8 octets
-		final long bitsProcessed = data.length * 8L;
+		long bitsProcessed = data.length * 8L;
 		for (int i = 56, cnt = 7; i < 64; i++, cnt--) {
 			messageBlock[i] = (byte) (bitsProcessed >>> (8 * cnt));
 		}//for
@@ -64,7 +89,7 @@ class SHA1 {
 		                          0x10325476,
 		                          0xc3d2e1f0};
 
-		// Initialize the first 16 elements (32-bit words) in the array W (word sequence)
+		// Initialize the first 16 elements (32-bit words) in the array 'W' (word sequence)
 		int[] W = new int[80];
 		for (int outer = 0; outer < 16; outer++) {
 			int j = outer * 4;
@@ -140,30 +165,4 @@ class SHA1 {
 
 		return intermediateHash;
 	}//processBlock
-
-	/*
-	 * Returns the least significant 40-bit message digest of a specified byte array.
-	 *
-	 * Performs a final update on the digest using the array,
-	 * then completes the digest computation.
-	 *
-	 * @param input the input to be updated before the digest is completed
-	 * @param offset offset into output buffer to begin storing the digest
-	 * @param pos position of the computed digest to begin storing in output buffer
-	 * @param len number of bytes within input allotted for the digest
-	 */
-	static byte[] getSHA1Digest(byte[] input) {
-		int[] hash = padMessage(input);
-
-		byte[] digest = new byte[5];
-		digest[0] = (byte) hash[3];
-		digest[1] = (byte) (hash[4] >>> 24);
-		digest[2] = (byte) (hash[4] >>> 16);
-		digest[3] = (byte) (hash[4] >>> 8);
-		digest[4] = (byte) hash[4];
-
-		return digest;
-	}//getSHA1Digest
-
-	static int[] getDigest(byte[] input) { return padMessage(input); }
 }

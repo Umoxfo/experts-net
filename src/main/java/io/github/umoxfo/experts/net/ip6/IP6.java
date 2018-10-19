@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. Makoto Sakaguchi
+ * Copyright (c) 2018. Makoto Sakaguchi
  * This file is part of Experts Net.
  *
  * Experts Net is free software: you can redistribute it and/or modify
@@ -78,7 +78,7 @@ abstract class IP6 {
 	 * returns x, throws an exception otherwise.
 	 */
 	static byte[] checkLength(byte[] id, int length) {
-		if (id.length != length) throw new IllegalArgumentException("Must be " + length*8 + " bits");
+		if (id.length != length) throw new IllegalArgumentException("Must be " + length * 8 + " bits");
 
 		return id;
 	}//checkInterfaceID

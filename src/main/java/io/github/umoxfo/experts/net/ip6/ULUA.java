@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. Makoto Sakaguchi
+ * Copyright (c) 2018. Makoto Sakaguchi
  * This file is part of Experts Net.
  *
  * Experts Net is free software: you can redistribute it and/or modify
@@ -68,6 +68,17 @@ public final class ULUA extends IP6 {
 	private final byte[] interfaceID;
 
 	/**
+	 * Constructor that takes a hardware address in a byte array.
+	 *
+	 * @param address the hardware address of the machine that creates a Local IPv6 unicast address
+	 */
+	public ULUA(byte[] address) {
+		interfaceID = createEUI64(address);
+		subnetID = new byte[SUBNET_ID_LENGTH];
+		globalID = generateGlobalID(NTP_SERVER_ADDRESS, interfaceID);
+	}//ULUA(byte[])
+
+	/**
 	 * Constructor that takes a Global ID field, a Subnet ID, an Interface ID for Unique Local IPv6 Unicast Addresses.
 	 *
 	 * <p> Global ID is an identifier of a site (a cluster of subnets/links).
@@ -88,17 +99,6 @@ public final class ULUA extends IP6 {
 		this.subnetID = IP6.checkLength(subnetID, SUBNET_ID_LENGTH);
 		this.interfaceID = IP6.checkLength(interfaceID, INTERFACE_ID_LENGTH);
 	}//ULUA(byte[], byte[], byte[])
-
-	/**
-	 * Constructor that takes a hardware address in a byte array.
-	 *
-	 * @param address the hardware address of the machine that creates a Local IPv6 unicast address
-	 */
-	public ULUA(byte[] address) {
-		interfaceID = createEUI64(address);
-		subnetID = new byte[SUBNET_ID_LENGTH];
-		globalID = generateGlobalID(NTP_SERVER_ADDRESS, interfaceID);
-	}//ULUA(byte[])
 
 	/**
 	 * {@inheritDoc}
@@ -143,21 +143,45 @@ public final class ULUA extends IP6 {
 		return iID;
 	}//getInterfaceID
 
-	/*
-	 ^ Checks a Global ID field of the Local IPv6 unicast address that follows
-	 * the FD00::/8 prefix and 40-bit global identifier format.
+	/**
+	 * Generates a Global ID according to
+	 * <a href="https://tools.ietf.org/html/rfc4193#section-3.2.2">Section 3.2.2 of RFC 4193</a>.
+	 *
+	 * @param address a NTP server address
+	 * @param systemID the system-specific identifier, e.g. an EUI-64 identifier and system serial number
+	 * @return the generated Global ID
 	 */
-	private byte[] checkGlobalID(byte[] gID) {
-		// Check length
-		if (gID.length != GLOBAL_ID_LENGTH) {
-			throw new IllegalArgumentException("The Global ID field of ULUA must be 48 bits.");
-		}//if
+	public static byte[] generateGlobalID(String address, byte[] systemID) {
+		ByteBuffer buf = ByteBuffer.allocate(16);
 
-		// Check prefix
-		if (gID[1] != GLOBAL_ID_PREFIX) throw new IllegalArgumentException("ULUA must be with 0xfd00::/8 prefix.");
+		long timeStamp = 0;
+		try {
+			timeStamp = getNTPTime(address);
+		} catch (IOException e) {
+			timeStamp = TimeStamp.getCurrentTime().ntpValue();
+		} finally {
+			buf.putLong(timeStamp);
+		}//try-catch
+
+		if (systemID == null || systemID.length != 8) {
+			try {
+				systemID = createEUI64(NICUtils.getMACAddress());
+			} catch (NullPointerException | SocketException e) {
+				/* If the hardware address is not obtained, used random numbers as the system-specific identifier. */
+				systemID = new byte[8];
+				SecureRandom random = new SecureRandom();
+				random.setSeed(random.generateSeed(16));
+
+				random.nextBytes(systemID);
+			}//try-catch
+		}//if
+		buf.put(systemID);
+
+		byte[] gID = {GLOBAL_ID_PREFIX, 0, 0, 0, 0, 0};
+		System.arraycopy(SHA1.getSHA1Digest(buf.array()), 0, gID, 1, 5);
 
 		return gID;
-	}//checkGlobalID
+	}//generateGlobalID
 
 	/*
 	 * Returns the time stamp in the 64-bit NTP format from a NTP server.
@@ -179,51 +203,27 @@ public final class ULUA extends IP6 {
 		return time.getMessage().getReceiveTimeStamp().ntpValue();
 	}//getNTPTime
 
-	/**
-	 * Generates a Global ID according to <a
-	 * href="https://tools.ietf.org/html/rfc4193#section-3.2.2">Section 3.2.2 of
-	 * RFC 4193</a>.
-	 *
-	 * @param address a NTP server address
-	 * @param systemID the system-specific identifier, e.g. an EUI-64 identifier and system serial number
-	 * @return the generated Global ID
+	/*
+	 * Checks a Global ID field of the Local IPv6 unicast address that follows
+	 * the FD00::/8 prefix and 40-bit global identifier format.
 	 */
-	public static byte[] generateGlobalID(String address, byte[] systemID) {
-		ByteBuffer buf = ByteBuffer.allocate(16);
-
-		long timeStamp = 0;
-		try {
-			timeStamp = getNTPTime(address);
-		} catch (IOException e) {
-			timeStamp = TimeStamp.getCurrentTime().ntpValue();
-		} finally {
-			buf.putLong(timeStamp);
-		}//try-catch
-
-		if (systemID == null || systemID.length != 8) {
-			try {
-				systemID = IP6Utils.createEUI64(NICUtils.getMACAddress());
-			} catch (NullPointerException | SocketException e) {
-				/* If the hardware address is not obtained, used random numbers as the system-specific identifier. */
-				systemID = new byte[8];
-				SecureRandom random = new SecureRandom();
-				random.setSeed(new SecureRandom().generateSeed(16));
-
-				random.nextBytes(systemID);
-			}//try-catch
+	private byte[] checkGlobalID(byte[] gID) {
+		// Check length
+		if (gID.length != GLOBAL_ID_LENGTH) {
+			throw new IllegalArgumentException("The Global ID field of ULUA must be 48 bits.");
 		}//if
-		buf.put(systemID);
 
-		byte[] gID = {GLOBAL_ID_PREFIX, 0, 0, 0, 0, 0};
-		System.arraycopy(SHA1.getSHA1Digest(buf.array()), 0, gID, 1, 5);
+		// Check prefix
+		if (gID[1] != GLOBAL_ID_PREFIX) throw new IllegalArgumentException("ULUA must be with 0xfd00::/8 prefix.");
 
 		return gID;
-	}//generateGlobalID
+	}//checkGlobalID
 
 	/**
 	 * Convert IPv6 binary address into a canonical format
 	 *
 	 * @return the IPv6 address in the colon 16-bit delimited hexadecimal format
+	 *
 	 * @see IP6Utils#toTextFormat(byte[])
 	 */
 	@Override

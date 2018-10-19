@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. Makoto Sakaguchi
+ * Copyright (c) 2018. Makoto Sakaguchi
  * This file is part of Experts Net.
  *
  * Experts Net is free software: you can redistribute it and/or modify
@@ -80,104 +80,11 @@ public final class IP4Subnet extends SubnetInfo {
 	@Override
 	public void setInclusiveHostCount(boolean inclusiveHostCount) { this.inclusiveHostCount = inclusiveHostCount; }
 
-	// long versions of the values (as unsigned int) which are more suitable for range checking
-	private long networkLong() { return network & UNSIGNED_INT_MASK; }
-
-	private long broadcastLong() { return broadcast & UNSIGNED_INT_MASK; }
-
-	/*
-	 * Creates the minimum address in the network to which the address belongs.
-	 *
-	 * inclusiveHostCount
-	 * - true the network address
-	 * - false the first address of the available as host addresses or 0 if no corresponding address.
-	 */
-	private int low() {
-		if (inclusiveHostCount) {
-			return network;
-		} else {
-			if ((broadcastLong() - networkLong()) > 1) {
-				return network + 1;
-			} else {
-				return 0;
-			}//if-else
-		}//if
-	}
-
-	/*
-	 * Creates the minimum address in the network to which the address belongs.
-	 *
-	 * inclusiveHostCount
-	 * - true the network address
-	 * - false the last address of the available as host addresses or 0 if no corresponding address.
-	 */
-	private int high() {
-		if (inclusiveHostCount) {
-			return broadcast;
-		} else {
-			if ((broadcastLong() - networkLong()) > 1) {
-				return broadcast - 1;
-			} else {
-				return 0;
-			}//if-else
-		}//if-else
-	}
-
-	/*
-	 * Converts a raw address in network byte order to a packed integer format
-	 */
-	private static int toInteger(byte[] address) {
-		/* Check range of each element and convert to integer */
-		int addr = 0;
-		for (int i = 0; i < 4; i++) {
-			addr = (addr << 8) | (address[i] & 0xff);
-		}//for
-
-		return addr;
-	}//toInteger
-
-	/**
-	 * Returns {@code true} if the parameter {@code address} is in
-	 * the range of usable endpoint addresses for this subnet.
-	 * This excludes the network and broadcast addresses.
-	 *
-	 * @param address a dot-delimited IPv4 address, e.g. {@code 192.168.0.1}
-	 * @return {@code true} if in range, {@code false} otherwise
-	 */
-	@Override
-	public boolean isInRange(String address) {
-		return isInRange(toInteger(IPAddress.toNumericFormatIPv4(address)));
-	}//isInRange(String)
-
-	/**
-	 * Returns {@code true} if the parameter {@code address} is in
-	 * the range of usable endpoint addresses for this subnet.
-	 * This excludes the network and broadcast addresses.
-	 *
-	 * @param address an IPv4 address in binary
-	 * @return {@code true} if in range, {@code false} otherwise
-	 */
-	@Override
-	public boolean isInRange(int address) {
-		long addLong = address & UNSIGNED_INT_MASK;
-
-		return (addLong > networkLong()) && (addLong < broadcastLong());
-	}//isInRange(int)
-
 	@Override
 	public String getAddress() { return SubnetUtils.format(address); }
 
 	@Override
 	public int getCIDR() { return cidr; }
-
-	/**
-	 * Returns a CIDR notation, in which the address is followed by
-	 * a slash character and the count of counting the 1-bit population in the subnet mask.
-	 *
-	 * @return the CIDR notation of the address, e.g. {@code 192.168.0.1/24}
-	 */
-	@Override
-	public String getCIDRNotation() { return SubnetUtils.format(address) + '/' + cidr; }
 
 	@Override
 	public String getNetmask() { return SubnetUtils.format(netmask); }
@@ -187,6 +94,15 @@ public final class IP4Subnet extends SubnetInfo {
 
 	@Override
 	public String getBroadcastAddress() { return SubnetUtils.format(broadcast); }
+
+	/**
+	 * Returns a CIDR notation, in which the address is followed by
+	 * a slash character and the count of counting the 1-bit population in the subnet mask.
+	 *
+	 * @return the CIDR notation of the address, e.g. {@code 192.168.0.1/24}
+	 */
+	@Override
+	public String getCIDRNotation() { return SubnetUtils.format(address) + '/' + cidr; }
 
 	/**
 	 * Return the low address as a dotted IP address.
@@ -228,6 +144,52 @@ public final class IP4Subnet extends SubnetInfo {
 		return count;
 	}//getAddressCount
 
+	/*
+	 * Converts a raw address in network byte order to a packed integer format
+	 */
+	private static int toInteger(byte[] address) {
+		/* Check range of each element and convert to integer */
+		int addr = (address[0] & 0xff) << 24;
+		addr |= (address[1] & 0xff) << 16;
+		addr |= (address[2] & 0xff) << 8;
+		addr |= address[3] & 0xff;
+
+		return addr;
+	}//toInteger
+
+	/**
+	 * Returns {@code true} if the parameter {@code address} is in
+	 * the range of usable endpoint addresses for this subnet.
+	 * This excludes the network and broadcast addresses.
+	 *
+	 * @param address a dot-delimited IPv4 address, e.g. {@code 192.168.0.1}
+	 * @return {@code true} if in range, {@code false} otherwise
+	 */
+	@Override
+	public boolean isInRange(String address) {
+		return isInRange(toInteger(IPAddress.toNumericFormatIPv4(address)));
+	}//isInRange(String)
+
+	/**
+	 * Returns {@code true} if the parameter {@code address} is in
+	 * the range of usable endpoint addresses for this subnet.
+	 * This excludes the network and broadcast addresses.
+	 *
+	 * @param address an IPv4 address in binary
+	 * @return {@code true} if in range, {@code false} otherwise
+	 */
+	@Override
+	public boolean isInRange(int address) {
+		long addLong = address & UNSIGNED_INT_MASK;
+
+		return (addLong > networkLong()) && (addLong < broadcastLong());
+	}//isInRange(int)
+
+	// long versions of the values (as unsigned int) which are more suitable for range checking
+	private long networkLong() { return network & UNSIGNED_INT_MASK; }
+
+	private long broadcastLong() { return broadcast & UNSIGNED_INT_MASK; }
+
 	/**
 	 * Returns the subnet summary information of the address,
 	 * which includes an IP address by CIDR-Notation with the netmask,
@@ -237,6 +199,7 @@ public final class IP4Subnet extends SubnetInfo {
 	 */
 	@Override
 	public String toString() {
+		@SuppressWarnings("StringBufferReplaceableByString")
 		StringBuilder buf = new StringBuilder();
 		buf.append("CIDR-Notation:\t[").append(getCIDRNotation()).append(']')
 		   .append(" Netmask: [").append(getNetmask()).append("]\n")
@@ -248,4 +211,42 @@ public final class IP4Subnet extends SubnetInfo {
 
 		return buf.toString();
 	}//toString
+
+	/*
+	 * Creates the minimum address in the network to which the address belongs.
+	 *
+	 * inclusiveHostCount
+	 * - true the network address
+	 * - false the first address of the available as host addresses or 0 if no corresponding address.
+	 */
+	private int low() {
+		if (inclusiveHostCount) {
+			return network;
+		} else {
+			if ((broadcastLong() - networkLong()) > 1) {
+				return network + 1;
+			} else {
+				return 0;
+			}//if-else
+		}//if
+	}
+
+	/*
+	 * Creates the minimum address in the network to which the address belongs.
+	 *
+	 * inclusiveHostCount
+	 * - true the network address
+	 * - false the last address of the available as host addresses or 0 if no corresponding address.
+	 */
+	private int high() {
+		if (inclusiveHostCount) {
+			return broadcast;
+		} else {
+			if ((broadcastLong() - networkLong()) > 1) {
+				return broadcast - 1;
+			} else {
+				return 0;
+			}//if-else
+		}//if-else
+	}
 }

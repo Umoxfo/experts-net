@@ -19,6 +19,7 @@
 package io.github.umoxfo.experts.net.subnet;
 
 import io.github.umoxfo.experts.net.ip6.IP6Utils;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,21 +37,10 @@ class IP6SubnetTest {
 	                                            (byte) 0x9e, (byte) 0xc3, (byte) 0xa5, 0x56, (byte) 0xc9};
 	private static final int CIDR = 58;
 
-	private IP6Subnet ip6Subnet;
+	private static IP6Subnet ip6Subnet;
 
-	private static byte[] createAddress() {
-		byte[] addr = new byte[16];
-
-		System.arraycopy(TEST_ADDRESS, 0, addr, 0, 8);
-		for (int i = 8; i < 16; i++) {
-			addr[i] = (byte) new Random().nextInt();
-		}//for
-
-		return addr;
-	}//createAddress
-
-	@BeforeEach
-	void setUp() { ip6Subnet = new IP6Subnet(TEST_ADDRESS, CIDR); }
+	@BeforeAll
+	static void init() { ip6Subnet = new IP6Subnet(TEST_ADDRESS, CIDR); }
 
 	@Test
 	void testParseSimpleAddress() {
@@ -62,15 +52,24 @@ class IP6SubnetTest {
 	@Nested
 	@DisplayName("An address")
 	class AddressRange {
-		byte[] targetAddress = createAddress();
+		byte[] targetAddress = new byte[16];
+
+		@BeforeEach
+		void setUp() {
+			System.arraycopy(TEST_ADDRESS, 0, targetAddress, 0, 8);
+
+			byte[] ramAddr = new byte[8];
+			new Random().nextBytes(ramAddr);
+			System.arraycopy(ramAddr, 0, targetAddress, 8, 8);
+		}//setUp
 
 		@Test
 		@DisplayName("is in range")
-		void isInRange() { assertTrue(ip6Subnet.isInRange(targetAddress), IP6Utils.toTextFormat(targetAddress)); }
+		void testInRange() { assertTrue(ip6Subnet.isInRange(targetAddress), IP6Utils.toTextFormat(targetAddress)); }
 
 		@Test
-		@DisplayName("is not in range")
-		void isNotInRange() {
+		@DisplayName("is out of range")
+		void testOutOfRange() {
 			assertAll(() -> {
 				          targetAddress[7] = 0x3f;
 

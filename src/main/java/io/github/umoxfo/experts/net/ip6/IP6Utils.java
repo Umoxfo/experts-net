@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017. Makoto Sakaguchi
+ * Copyright (c) 2018. Makoto Sakaguchi
  * This file is part of Experts Net.
  *
  * Experts Net is free software: you can redistribute it and/or modify
@@ -78,7 +78,7 @@ public final class IP6Utils {
 	 */
 	public static String toTextFormat(byte[] address) {
 		// Set into the Array List
-		ArrayList<Integer> al =  new ArrayList<>(8);
+		ArrayList<Integer> al = new ArrayList<>(8);
 		for (int i = 0; i < address.length; i += 2) {
 			al.add(((address[i] & 0xff) << 8) | (address[i + 1] & 0xff));
 		}//for
