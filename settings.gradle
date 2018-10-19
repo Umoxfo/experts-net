@@ -1,1 +1,3 @@
 rootProject.name = 'experts-net'
+
+enableFeaturePreview 'IMPROVED_POM_SUPPORT'

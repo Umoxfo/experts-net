@@ -1,74 +1,69 @@
 plugins {
-	id 'java-library'
-	id 'idea'
-	id 'eclipse'
+    id 'java-library'
+    id 'idea'
+    id 'eclipse'
+    id 'jacoco'
 
 //	id 'com.github.spotbugs' version '1.6.1'
 }
 
-apply plugin: "jacoco"
-
-group 'io.github.umoxfo.experts'
-version '2.0.6-dev'
-description "Experts Net library contains a collection of network utilities."
+group = 'io.github.umoxfo.experts'
+version = '2.0.6-dev'
+description = "Experts Net library contains a collection of network utilities."
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
-ext.junitJupiterVersion = '5.1.0'
+ext.junitJupiterVersion = '5.3.1'
 dependencies {
-	implementation 'commons-net:commons-net:3.6'
+    implementation 'commons-net:commons-net:3.6'
 
-	// JUnit Jupiter API and TestEngine implementation
-	testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
-	testImplementation "org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion"
-	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+    // JUnit Jupiter API and TestEngine implementation
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
 
-//	spotbugsPlugins 'com.mebigfatguy.fb-contrib:fb-contrib:7.0.5.sb'
-//	spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.7.1'
+//    spotbugsPlugins 'com.mebigfatguy.fb-contrib:fb-contrib:7.0.5.sb'
+//    spotbugsPlugins 'com.h3xstream.findsecbugs:findsecbugs-plugin:1.7.1'
 }
 
-/*
-spotbugs {
-	ignoreFailures = true
-}
-*/
+//spotbugs {
+//    ignoreFailures = true
+//}
 
 compileJava {
-	inputs.property("moduleName", 'io.github.umoxfo.experts.net')
-	doFirst {
-		options.encoding = 'UTF-8'
-		options.compilerArgs = [
-			'--release', '9',
-			'--module-path', classpath.asPath,
-		]
-		classpath = files()
-	}
+    doFirst {
+        options.encoding = 'UTF-8'
+        options.compilerArgs = [
+            '--release', '11',
+            '--module-path', classpath.asPath,
+        ]
+    }
 }
 
 test {
-	useJUnitPlatform()
+    useJUnitPlatform {
+        failFast = true
+    }
 }
 
-/*
 javadoc {
-	options.encoding = 'UTF-8'
-	classpath = files()
+    options.encoding = 'UTF-8'
+    options.memberLevel = 'PROTECTED'
+    options.addStringOption 'splitindex', 'html5'
 }
-*/
 
 jacoco {
-	toolVersion = "0.8.0"
-	reportsDir = file("$buildDir/customJacocoReportDir")
+    reportsDir = file("$buildDir/customJacocoReportDir")
 }
 
 jacocoTestReport {
-	reports {
-		xml.enabled false
-		csv.enabled false
-		html.destination file("${buildDir}/jacocoHtml")
-	}
+    reports {
+        xml.enabled = false
+        csv.enabled = false
+        html.destination file("$buildDir/jacocoHtml")
+    }
 }
 
-wrapper.gradleVersion = '4.6'
+wrapper.gradleVersion = '4.10.2'
